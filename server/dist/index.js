@@ -10,6 +10,7 @@ const cors_1 = __importDefault(require("cors"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const express_fileupload_1 = __importDefault(require("express-fileupload"));
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const User_1 = __importDefault(require("./routes/User"));
 const cloudinary_1 = __importDefault(require("./config/cloudinary"));
 //    CONFIGURATION
@@ -22,6 +23,7 @@ app.use((0, morgan_1.default)("common"));
 app.use((0, cors_1.default)());
 app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: false }));
+app.use((0, cookie_parser_1.default)());
 app.use((0, express_fileupload_1.default)({
     useTempFiles: true,
     tempFileDir: '/tmp/'

@@ -5,6 +5,7 @@ import cors from "cors"
 import bodyParser from "body-parser";
 import dotenv from "dotenv"
 import fileUpload from 'express-fileupload'
+import cookieParser from 'cookie-parser'
 
 import UserRouter from './routes/User'
 import cloudinaryConnect from "./config/cloudinary";
@@ -20,6 +21,7 @@ app.use(morgan("common"));
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
 app.use(fileUpload({
     useTempFiles : true,
     tempFileDir : '/tmp/'
