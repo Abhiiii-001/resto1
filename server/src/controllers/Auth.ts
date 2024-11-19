@@ -1,19 +1,22 @@
 import { Request , Response } from "express"
 import { PrismaClient } from "@prisma/client"
 import bcrypt from 'bcrypt'
-import fs from 'fs'
+import jwt from 'jsonwebtoken'
+
 import mailSender from '../utils/mailSender'
 import uploadToCloudinary from "../utils/cloudinaryUploader"
 
+import dotenv from "dotenv"
+dotenv.config();
 
 //  ********************   INTERFACES   ************************
 interface UserSignupInterface{
     email: string
     password: string
     name?: string
-    number: string
+    number: number
     canModify?: boolean
-    restaurantId: string
+    restaurantId: number
 }
 
 interface RestaurantSignupInterface {
@@ -25,7 +28,16 @@ interface RestaurantSignupInterface {
     password: string
 };
 
-const prisma = new PrismaClient()
+interface LoginInterface {
+   email: string
+   password: string
+}
+
+const prisma = new PrismaClient({
+  datasources: {
+      db: { url: process.env.DATABASE_URL },
+  },
+});
 
 //  *************** SIGNUP ENDPOINTS  *****************
 
@@ -71,9 +83,9 @@ export const UserSignup = async(req: Request,res: Response): Promise<any> => {
             email,
             password:hashedPassword,
             name,
-            number:parseInt(number),
+            number,
             canModify,
-            restaurantId:parseInt(restaurantId),
+            restaurantId:restaurantId,
             verificationToken
         }
       });
@@ -97,7 +109,7 @@ export const UserSignup = async(req: Request,res: Response): Promise<any> => {
 
      } catch (error:any) {
       console.log("Error",error.message);
-      return res.status(500).json({message:"Internal server error"});
+      return res.status(500).json({message:"Signup Failed!"});
    }
 }
 
@@ -164,12 +176,72 @@ export const RestaurantSignup = async(req: Request,res: Response): Promise<any> 
       );
 
       res.status(200).json({
-        message:"User created! , Waiting for verification by Restaurant",
+        message:"User created! , Waiting for verification",
         user:restaurant,
         mailResponse:mailResponse?.response
     });
    } catch (error:any) {
       console.log("Error",error.message);
-      return res.status(500).json({message:"Internal server error"});
+      return res.status(500).json({message:"Signup Failed!"});
+   }
+}
+
+export const Login = async(req: Request,res: Response): Promise<any> => {
+     try {
+      const { email , password }: LoginInterface = req.body;
+
+      if(!email || !password){
+         return res.status(403).json({ message: "All field are required!"});
+      }
+ 
+      const user = await prisma.restaurant.findUnique({
+         where:{email}
+      });
+ 
+      if(!user){
+         const user = await prisma.user.findUnique({
+           where:{email}
+         });
+      }
+ 
+      if(!user){
+         return res.status(404).json({message: "User not found!"})
+      }
+ 
+      const hashedPassword = await bcrypt.hash(password,10);
+      const match = bcrypt.compare(user?.password,hashedPassword);
+ 
+      if(!match){
+         return res.status(404).json({message: "Incorrect Password!"});
+      }
+ 
+      const secret:string = process.env.JWT_SECRET || "secret";
+ 
+      const token = jwt.sign(
+         {id: user.id , email: user?.email,role: user?.role},
+         secret,
+         {expiresIn: 24 * 60 * 60 * 1000}
+      );
+ 
+      res.cookie('token',token,{
+         httpOnly: true,        // Prevent client-side access
+         secure: process.env.NODE_ENV === 'production', // Use secure in production
+         maxAge: 3600000 * 8        // 8 hour
+      })
+ 
+      return res.status(200).set('Authorization', `Bearer ${token}`).json({ message: "Login successful" });
+     } catch (error:any) {
+      console.log("Error",error.message);
+      return res.status(500).json({message:"Login Failed!"});
+   }
+}
+
+export const Logout = async(req: Request,res: Response): Promise<any> => {
+   try {
+      res.clearCookie('token'); // Clear the cookie
+      res.status(200).json({ message: "Logged out successfully" });
+   } catch (error) {
+        console.log(error);
+        return res.status(405).json({message: "Logout Failed!"});
    }
 }
