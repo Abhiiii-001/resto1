@@ -11,6 +11,13 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        'custom-gray': 'rgba(207, 210, 198, 1)',
+      },
+      backgroundImage: {
+        'my_bg_image' : "url('../public/Full-background.png')",
+      },
+      fontFamily: {
+        'clash': ['Clash Display', 'sans-serif'],
       },
     },
   },
