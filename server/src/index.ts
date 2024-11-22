@@ -7,7 +7,9 @@ import dotenv from "dotenv"
 import fileUpload from 'express-fileupload'
 import cookieParser from 'cookie-parser'
 
-import UserRouter from './routes/User'
+import UserRouter from './routes/Auth'
+import CategoryRouter from './routes/Category'
+import ProductRouter from './routes/Product'
 import cloudinaryConnect from "./config/cloudinary";
 
 
@@ -31,6 +33,8 @@ cloudinaryConnect();
 
 //Routes
 app.use("/api/auth",UserRouter);
+app.use("/api/category",CategoryRouter);
+app.use("/api/product",ProductRouter);
 
 //    SERVER
 const PORT = process.env.PORT || 8000

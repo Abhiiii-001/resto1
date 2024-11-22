@@ -129,22 +129,22 @@ export const RestaurantSignup = async(req: Request,res: Response): Promise<any> 
     const file:any = req.files?.thumbnail;
     console.log(file);
 
-    const thumbnailUploadRes = await uploadToCloudinary(file,'my-files');
-    console.log("UPLOAD FILE RESPONSE : ",thumbnailUploadRes);
-    // fs.unlinkSync(file.tempFilePath); 
-
+    
     
     const existingUser = await prisma.user.findUnique({
-        where:{email}
-    });
-
-    const existingRestraurant = await prisma.restaurant.findUnique({
-          where:{email}
-    })
-
-    if(existingRestraurant || existingUser){
-        return res.status(401).json({message:"Email Already Taken!"})
-    }
+       where:{email}
+      });
+      
+      const existingRestraurant = await prisma.restaurant.findUnique({
+         where:{email}
+      })
+      
+      if(existingRestraurant || existingUser){
+         return res.status(401).json({message:"Email Already Taken!"})
+      }
+      const thumbnailUploadRes = await uploadToCloudinary(file,'my-files');
+      console.log("UPLOAD FILE RESPONSE : ",thumbnailUploadRes);
+      // fs.unlinkSync(file.tempFilePath); 
 
 
     const hashedPassword: string = (await bcrypt.hash(password,10)).toString();
@@ -197,11 +197,14 @@ export const Login = async(req: Request,res: Response): Promise<any> => {
       const user = await prisma.restaurant.findUnique({
          where:{email}
       });
+
+      let restaurantId = user?.id;
  
       if(!user){
          const user = await prisma.user.findUnique({
            where:{email}
          });
+         restaurantId = user?.restaurantId;
       }
  
       if(!user){
@@ -218,7 +221,7 @@ export const Login = async(req: Request,res: Response): Promise<any> => {
       const secret:string = process.env.JWT_SECRET || "secret";
  
       const token = jwt.sign(
-         {id: user.id , email: user?.email,role: user?.role},
+         {id: user.id , email: user?.email,role: user?.role,restaurantId: restaurantId},
          secret,
          {expiresIn: 24 * 60 * 60 * 1000}
       );

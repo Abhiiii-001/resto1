@@ -7,7 +7,7 @@ dotenv.config();
 
 const prisma = new PrismaClient();
 
-export const auth = async(req: Request,res: Response,next: NextFunction) => {
+export const Auth = async(req: Request,res: Response,next: NextFunction): Promise<any> => {
     try {
         const token = req.cookies.token ||
                       req.body.token    ||
@@ -19,7 +19,7 @@ export const auth = async(req: Request,res: Response,next: NextFunction) => {
         const secret: string = process.env.JWT_SECRET || "secret";
         const decoded =  jwt.verify(token,secret);
 
-        console.log(decoded);
+        console.log(decoded);    //id email role restaurantId
         //@ts-ignore
         req.user = decoded;   
         next();
@@ -30,7 +30,7 @@ export const auth = async(req: Request,res: Response,next: NextFunction) => {
 }
 
 
-export const isRestaurant = async(req: Request,res: Response,next: NextFunction) => {
+export const IsRestaurant = async(req: Request,res: Response,next: NextFunction) => {
     try {
         const user = await prisma.restaurant.findUnique({
             // @ts-ignore
@@ -46,7 +46,7 @@ export const isRestaurant = async(req: Request,res: Response,next: NextFunction)
     }
 }
 
-export const isUser = async(req: Request,res: Response,next: NextFunction) => {
+export const IsUser = async(req: Request,res: Response,next: NextFunction) => {
     try {
         const user = await prisma.user.findUnique({
             //@ts-ignore
@@ -63,7 +63,7 @@ export const isUser = async(req: Request,res: Response,next: NextFunction) => {
     }
 }
 
-export const isAdmin = async(req: Request,res: Response,next: NextFunction) => {
+export const IsAdmin = async(req: Request,res: Response,next: NextFunction) => {
     try {
         const user = await prisma.user.findUnique({
             //@ts-ignore

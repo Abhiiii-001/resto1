@@ -1,0 +1,98 @@
+import { PrismaClient } from "@prisma/client";
+import { Request, Response } from "express";
+import uploadToCloudinary from "../utils/cloudinaryUploader";
+
+const prisma = new PrismaClient();
+export const AddCategory = async(req: Request,res: Response): Promise<any> => {
+    try {
+
+        //Get all requried data
+        const { name } : {name: string}= req.body;
+        const thumbnail = req.files?.thumbnail;
+        //@ts-ignore
+        const restaurantId = req.user.restaurantId;
+
+        //check if anyone is null
+        if(!name || !restaurantId || !thumbnail) 
+            return res.status(402).json({message: "All fields requried!"});
+
+        //update thumbanil to cloudinary
+        const uploadFileRes =  await uploadToCloudinary(thumbnail,"my-files");
+
+        const currentTime = new Date(Date.now()).toISOString();
+
+        //create entry
+        const result = await prisma.category.create({
+            data:{
+                name: name,
+                thumbnail: uploadFileRes?.secure_url,
+                restaurantId: restaurantId,
+                createdAt: currentTime
+            }
+        });
+
+        return res.status(200).json({message: "Category created!",category: result});
+
+
+    } catch (error) {
+         console.log(error);
+         return res.status(499).json({message:"Something wrong during category creation!"});
+    }
+}
+
+export const RemoveCategory = async(req: Request,res: Response): Promise<any> => {
+    try {
+        const { categoryId } = req.params;
+        if(!categoryId) return res.status(402).json({message:"Empty category id"});
+
+        const categoryRes = await prisma.category.delete({
+            where:{
+                id: categoryId
+            }
+        });
+
+        return res.status(200).json({message: "Category deleted!"})
+
+    } catch (error) {
+        console.log(error);
+        return res.status(499).json({message:"Something wrong during category deletion!"});
+   }
+
+}
+
+export const UpdateCategory = async(req: Request,res: Response): Promise<any> => {
+    try {
+        let updatedData = req.body;
+        const thumbanil = req.files?.thumbanil;
+        const { categoryId } = req.params;
+
+        if(thumbanil){
+        const thumbnailUploadRes = await uploadToCloudinary(thumbanil,"my-files"); 
+            updatedData.thumbanil = thumbnailUploadRes?.secure_url;
+        }
+        const result = await prisma.category.update({
+            where:{
+                id: categoryId
+            },
+            data:updatedData
+        });
+
+        return res.status(200).json({message: "Category updated!",result: result});
+    } catch (error) {
+        console.log(error);
+        return res.status(499).json({message:"Something wrong during category updation!"});
+   }
+
+}
+
+export const GetAllCategories = async(req: Request,res: Response): Promise<any> => {
+    try {
+        
+        const categories = await prisma.category.findMany();
+        return res.status(200).json({message:"Category retrieved",data:categories});
+
+    } catch (error) {
+        console.log(error);
+        return res.status(499).json({message:"Something wrong during category retrive!"});
+   }
+}

@@ -85,9 +85,6 @@ const RestaurantSignup = (req, res) => __awaiter(void 0, void 0, void 0, functio
         const { name, slogan, number, address, email, password, } = reqData;
         const file = (_a = req.files) === null || _a === void 0 ? void 0 : _a.thumbnail;
         console.log(file);
-        const thumbnailUploadRes = yield (0, cloudinaryUploader_1.default)(file, 'my-files');
-        console.log("UPLOAD FILE RESPONSE : ", thumbnailUploadRes);
-        // fs.unlinkSync(file.tempFilePath); 
         const existingUser = yield prisma.user.findUnique({
             where: { email }
         });
@@ -97,6 +94,9 @@ const RestaurantSignup = (req, res) => __awaiter(void 0, void 0, void 0, functio
         if (existingRestraurant || existingUser) {
             return res.status(401).json({ message: "Email Already Taken!" });
         }
+        const thumbnailUploadRes = yield (0, cloudinaryUploader_1.default)(file, 'my-files');
+        console.log("UPLOAD FILE RESPONSE : ", thumbnailUploadRes);
+        // fs.unlinkSync(file.tempFilePath); 
         const hashedPassword = (yield bcrypt_1.default.hash(password, 10)).toString();
         const verificationToken = crypto.randomUUID().toString();
         console.log("verification token", verificationToken);
@@ -138,10 +138,12 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const user = yield prisma.restaurant.findUnique({
             where: { email }
         });
+        let restaurantId = user === null || user === void 0 ? void 0 : user.id;
         if (!user) {
             const user = yield prisma.user.findUnique({
                 where: { email }
             });
+            restaurantId = user === null || user === void 0 ? void 0 : user.restaurantId;
         }
         if (!user) {
             return res.status(404).json({ message: "User not found!" });
@@ -152,7 +154,7 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             return res.status(404).json({ message: "Incorrect Password!" });
         }
         const secret = process.env.JWT_SECRET || "secret";
-        const token = jsonwebtoken_1.default.sign({ id: user.id, email: user === null || user === void 0 ? void 0 : user.email, role: user === null || user === void 0 ? void 0 : user.role }, secret, { expiresIn: 24 * 60 * 60 * 1000 });
+        const token = jsonwebtoken_1.default.sign({ id: user.id, email: user === null || user === void 0 ? void 0 : user.email, role: user === null || user === void 0 ? void 0 : user.role, restaurantId: restaurantId }, secret, { expiresIn: 24 * 60 * 60 * 1000 });
         res.cookie('token', token, {
             httpOnly: true, // Prevent client-side access
             secure: process.env.NODE_ENV === 'production', // Use secure in production

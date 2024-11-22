@@ -11,7 +11,9 @@ const body_parser_1 = __importDefault(require("body-parser"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const express_fileupload_1 = __importDefault(require("express-fileupload"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
-const User_1 = __importDefault(require("./routes/User"));
+const Auth_1 = __importDefault(require("./routes/Auth"));
+const Category_1 = __importDefault(require("./routes/Category"));
+const Product_1 = __importDefault(require("./routes/Product"));
 const cloudinary_1 = __importDefault(require("./config/cloudinary"));
 //    CONFIGURATION
 dotenv_1.default.config();
@@ -30,7 +32,9 @@ app.use((0, express_fileupload_1.default)({
 }));
 (0, cloudinary_1.default)();
 //Routes
-app.use("/api/auth", User_1.default);
+app.use("/api/auth", Auth_1.default);
+app.use("/api/category", Category_1.default);
+app.use("/api/product", Product_1.default);
 //    SERVER
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {

@@ -5,6 +5,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 //    ENUMS
@@ -16,14 +17,22 @@ enum Role {
 }
 
 enum Duration {
+  Day
   Week
   Month
+}
+
+enum Status {
+  Ready
+  Pending
+  Cancelled
+  Completed
 }
 
 // MODELS
 
 model Restaurant {
-  id           Int         @id   @default(autoincrement())
+  id           Int            @id @default(autoincrement())
   name         String
   slogan       String?
   thumbnail    String
@@ -50,46 +59,61 @@ model User {
   restaurantId      Int
   verificationToken String     @unique
   isVerified        Boolean    @default(false)
-  restaurant        Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurant        Restaurant @relation(fields: [restaurantId], references: [id],onDelete: Cascade)
 }
 
 model Category {
   id           String     @id @default(uuid())
-  name         String
+  name         String     @unique
+  thumbnail    String
   restaurantId Int
   createdAt    String
   products     Product[]
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id],onDelete: Cascade)
 }
 
 model Product {
   id              String           @id @default(uuid())
   name            String
   thumbnail       String
+  sold            Int                @default(0)
+  rating          Decimal?
   productVariants ProductVariant[]
   categoryId      String
-  category        Category         @relation(fields: [categoryId], references: [id])
+  category        Category         @relation(fields: [categoryId], references: [id],onDelete: Cascade)
 }
 
 model ProductVariant {
-  id           String  @id @default(uuid())
+  id           String     @id @default(uuid())
   size         String
   price        Int
-  isOutOfStock Boolean @default(false)
-  sold         Int
+  isOutOfStock Boolean    @default(false)
   productId    String
-  product      Product @relation(fields: [productId], references: [id])
+  product      Product    @relation(fields: [productId], references: [id],onDelete: Cascade)
+  orders       subOrder[]
 }
 
 model Order {
   id           String     @id @default(uuid())
-  orders       String
-  isDone       Boolean    @default(false)
+  name         String
+  note         String?
+  orders       subOrder[]
+  status       Status     @default(Pending)
   amount       Int
   isPaid       Boolean    @default(false)
   createdAt    String
   restaurantId Int
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id],onDelete: Cascade)
+}
+
+model subOrder {
+  id               String         @id @default(uuid())
+  productVariantId String
+  quantity         Int
+  unitPrice        Int
+  orderId          String
+  order            Order          @relation(fields: [orderId], references: [id],onDelete: Cascade)
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
 }
 
 model SaleSummary {
@@ -98,7 +122,7 @@ model SaleSummary {
   duration     Duration
   cratedAt     String
   restaurantId Int
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id],onDelete: Cascade)
 }
 
 model OrderSummary {
@@ -108,5 +132,5 @@ model OrderSummary {
   duration     Duration
   createdAt    String
   restaurantId Int
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id],onDelete: Cascade)
 }
