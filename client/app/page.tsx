@@ -1,13 +1,15 @@
-import Image from "next/image";
-
 import Herosection from "./_component/Herosection";
 import HeRosection2 from "./_component/HeRosection2";
+import TeamSection from "./_component/TeamSection";
+import EventSlide from "./_component/EventSlide";
 
 export default function Home() {
   return (
-  <div>
-    <Herosection/>
-    <HeRosection2/>
-  </div>
+    <div>
+      <Herosection />
+      <HeRosection2 />
+      <TeamSection />
+      <EventSlide/>
+    </div>
   );
 }
