@@ -22,9 +22,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   
  const DashboardWrapper = ({ children }: { children: React.ReactNode }) => {
     return (
-      <StoreProvider>
         <DashboardLayout>{children}</DashboardLayout>
-      </StoreProvider>
     );
   };
 

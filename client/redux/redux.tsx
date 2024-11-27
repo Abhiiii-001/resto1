@@ -8,7 +8,9 @@ import {
   Provider,
 } from "react-redux";
 import globalReducer from "@/redux/states/globalSlice";
+import authReducer from "@/redux/states/authSlice"
 import { authApi } from "@/redux/api/auth";
+import { restaurantApi } from "./api/restaurant";
 import { setupListeners } from "@reduxjs/toolkit/query";
 
 import {
@@ -47,11 +49,13 @@ const storage =
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["global"],
+  whitelist: ["global" , "auth"],
 };
 const rootReducer = combineReducers({
   global: globalReducer,
+  auth: authReducer,
   [authApi.reducerPath]: authApi.reducer,
+  [restaurantApi.reducerPath]: restaurantApi.reducer
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
@@ -64,7 +68,7 @@ export const makeStore = () => {
         serializableCheck: {
           ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
         },
-      }).concat(authApi.middleware),
+      }).concat(authApi.middleware).concat(restaurantApi.middleware),
   });
 };
 

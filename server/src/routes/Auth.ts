@@ -5,7 +5,7 @@ const router = Router();
 
 router.post('/user/signup', UserSignup)
 router.post('/restaurant/signup',RestaurantSignup)
-router.get('/login',Login);
+router.post('/login',Login);
 router.post('/logout',Logout);
 
 export default router;

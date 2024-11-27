@@ -15,6 +15,7 @@ const Auth_1 = __importDefault(require("./routes/Auth"));
 const Category_1 = __importDefault(require("./routes/Category"));
 const Product_1 = __importDefault(require("./routes/Product"));
 const cloudinary_1 = __importDefault(require("./config/cloudinary"));
+const Restaurant_1 = __importDefault(require("./routes/Restaurant"));
 //    CONFIGURATION
 dotenv_1.default.config();
 const app = (0, express_1.default)();
@@ -35,6 +36,7 @@ app.use((0, express_fileupload_1.default)({
 app.use("/api/auth", Auth_1.default);
 app.use("/api/category", Category_1.default);
 app.use("/api/product", Product_1.default);
+app.use("/api/restaurant", Restaurant_1.default);
 //    SERVER
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
