@@ -10,6 +10,7 @@ export default {
   theme: {
     extend: {
       colors: {
+        border: '#cccccc',
         background: "var(--background)",
         foreground: "var(--foreground)",
         'custom-gray': 'rgba(207, 210, 198, 1)',
@@ -23,6 +24,8 @@ export default {
     },
   },
   plugins: [
-      require("tailwindcss-animate")
+      require("tailwindcss-animate"),
+      
 ],
+
 } satisfies Config;
