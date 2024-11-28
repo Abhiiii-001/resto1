@@ -11,6 +11,7 @@ import UserRouter from './routes/Auth'
 import CategoryRouter from './routes/Category'
 import ProductRouter from './routes/Product'
 import cloudinaryConnect from "./config/cloudinary";
+import RestaurantRouter from "./routes/Restaurant"
 
 
 //    CONFIGURATION
@@ -35,6 +36,7 @@ cloudinaryConnect();
 app.use("/api/auth",UserRouter);
 app.use("/api/category",CategoryRouter);
 app.use("/api/product",ProductRouter);
+app.use("/api/restaurant",RestaurantRouter);
 
 //    SERVER
 const PORT = process.env.PORT || 8000

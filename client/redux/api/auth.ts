@@ -1,11 +1,16 @@
+import { RestaturantSignupInterface } from "@/app/Interfaces/Auth";
 import { createApi , fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+export interface LoginInterface {
+    email: string;
+    password: string;
+}
 export const authApi = createApi({
-    baseQuery: fetchBaseQuery({ baseUrl: `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth`}),
+    baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8000/api/auth"},),
     reducerPath:"authApi",
     tagTypes:["UserSignup" , "RestaurnatSignup" , "Login" , "Logout"],
     endpoints:(build) => ({
-        userSignup: build.mutation({
+        userSignup: build.mutation<any,any>({
             query:(formData) => ({
                 url: "user/signup",
                 method: "POST",
@@ -13,7 +18,7 @@ export const authApi = createApi({
             }),
             invalidatesTags:["UserSignup"]
         }),
-        restaurantSignup: build.mutation({
+        restaurantSignup: build.mutation<any,any>({
             query: (data) => ({
                 url: "restaurant/signup",
                 method: "POST",
@@ -21,17 +26,18 @@ export const authApi = createApi({
             }),
             invalidatesTags: ["RestaurnatSignup"]
         }),
-        login: build.query({
+        login: build.mutation<any,LoginInterface>({
             query: (data) => ({
                 url: "/login",
+                method:"POST",
                 body: data
             }),
-            providesTags: ["Login"]
         }),
-        logout: build.mutation({
-            query:() => ({
+        logout: build.mutation<null,string>({
+            query:(token) => ({
                 url: "/logout",
-                method: "POST"
+                method: "POST",
+                body: token
             }),
             invalidatesTags: ["Logout"]
         })
@@ -41,6 +47,6 @@ export const authApi = createApi({
 export const {
     useUserSignupMutation,
     useRestaurantSignupMutation,
-    useLoginQuery,
+    useLoginMutation,
     useLogoutMutation
 } = authApi

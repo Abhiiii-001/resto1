@@ -19,6 +19,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const mailSender_1 = __importDefault(require("../utils/mailSender"));
 const cloudinaryUploader_1 = __importDefault(require("../utils/cloudinaryUploader"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const randomCode_1 = require("../utils/randomCode");
 dotenv_1.default.config();
 ;
 const prisma = new client_1.PrismaClient({
@@ -85,28 +86,43 @@ const RestaurantSignup = (req, res) => __awaiter(void 0, void 0, void 0, functio
         const { name, slogan, number, address, email, password, } = reqData;
         const file = (_a = req.files) === null || _a === void 0 ? void 0 : _a.thumbnail;
         console.log(file);
+        //check user is already present
         const existingUser = yield prisma.user.findUnique({
-            where: { email }
+            where: { email: email }
         });
         const existingRestraurant = yield prisma.restaurant.findUnique({
-            where: { email }
+            where: { email: email }
         });
         if (existingRestraurant || existingUser) {
             return res.status(401).json({ message: "Email Already Taken!" });
         }
+        //upload file
         const thumbnailUploadRes = yield (0, cloudinaryUploader_1.default)(file, 'my-files');
         console.log("UPLOAD FILE RESPONSE : ", thumbnailUploadRes);
         // fs.unlinkSync(file.tempFilePath); 
+        //hash password
         const hashedPassword = (yield bcrypt_1.default.hash(password, 10)).toString();
         const verificationToken = crypto.randomUUID().toString();
         console.log("verification token", verificationToken);
-        const parsedNumber = parseInt(number);
+        //generate resCode
+        let code = (0, randomCode_1.generateRandomNumber)(4).toString();
+        while (true) {
+            const res = yield prisma.restaurant.findFirst({
+                where: {
+                    resCode: code
+                }
+            });
+            if (!res)
+                break;
+            code = (0, randomCode_1.generateRandomNumber)(4).toString();
+        }
         const restaurant = yield prisma.restaurant.create({
             data: {
                 name,
                 slogan,
+                resCode: code,
                 thumbnail: thumbnailUploadRes.secure_url,
-                number: parsedNumber,
+                number,
                 address,
                 email,
                 password: hashedPassword,
@@ -160,7 +176,13 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             secure: process.env.NODE_ENV === 'production', // Use secure in production
             maxAge: 3600000 * 8 // 8 hour
         });
-        return res.status(200).set('Authorization', `Bearer ${token}`).json({ message: "Login successful" });
+        return res.status(200)
+            .set('Authorization', `Bearer ${token}`)
+            .json({
+            message: "Login successful",
+            user: user,
+            token: token
+        });
     }
     catch (error) {
         console.log("Error", error.message);

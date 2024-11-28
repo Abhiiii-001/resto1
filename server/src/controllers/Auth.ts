@@ -7,6 +7,7 @@ import mailSender from '../utils/mailSender'
 import uploadToCloudinary from "../utils/cloudinaryUploader"
 
 import dotenv from "dotenv"
+import { generateRandomNumber } from "../utils/randomCode"
 dotenv.config();
 
 //  ********************   INTERFACES   ************************
@@ -14,9 +15,9 @@ interface UserSignupInterface{
     email: string
     password: string
     name?: string
-    number: number
+    number: string
     canModify?: boolean
-    restaurantId: number
+    restaurantId: string
 }
 
 interface RestaurantSignupInterface {
@@ -126,38 +127,52 @@ export const RestaurantSignup = async(req: Request,res: Response): Promise<any> 
         password,
     } = reqData;
 
-    const file:any = req.files?.thumbnail;
+    const file = req.files?.thumbnail;
     console.log(file);
 
     
-    
+    //check user is already present
     const existingUser = await prisma.user.findUnique({
-       where:{email}
+       where:{email:email}
       });
       
       const existingRestraurant = await prisma.restaurant.findUnique({
-         where:{email}
+         where:{email:email}
       })
       
       if(existingRestraurant || existingUser){
          return res.status(401).json({message:"Email Already Taken!"})
       }
+
+      //upload file
       const thumbnailUploadRes = await uploadToCloudinary(file,'my-files');
       console.log("UPLOAD FILE RESPONSE : ",thumbnailUploadRes);
       // fs.unlinkSync(file.tempFilePath); 
 
-
+    //hash password
     const hashedPassword: string = (await bcrypt.hash(password,10)).toString();
     const verificationToken =  crypto.randomUUID().toString();
     console.log("verification token",verificationToken);
 
-    const parsedNumber = parseInt(number)
+    //generate resCode
+    let code = generateRandomNumber(4).toString();
+    while(true){
+      const res = await prisma.restaurant.findFirst({
+         where:{
+            resCode: code
+         }
+      })
+      if(!res) break;
+      code = generateRandomNumber(4).toString();
+    }
+
     const restaurant = await prisma.restaurant.create({
         data:{
             name,
             slogan,
+            resCode:code,
             thumbnail:thumbnailUploadRes.secure_url,
-            number:parsedNumber,
+            number,
             address,
             email,
             password:hashedPassword,
@@ -232,7 +247,13 @@ export const Login = async(req: Request,res: Response): Promise<any> => {
          maxAge: 3600000 * 8        // 8 hour
       })
  
-      return res.status(200).set('Authorization', `Bearer ${token}`).json({ message: "Login successful" });
+      return res.status(200)
+      .set('Authorization', `Bearer ${token}`)
+      .json({
+          message: "Login successful",
+          user:user,
+          token:token
+       });
      } catch (error:any) {
       console.log("Error",error.message);
       return res.status(500).json({message:"Login Failed!"});
