@@ -8,23 +8,7 @@ export default {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-<<<<<<< HEAD
-    extend: {
-      colors: {
-        border: '#cccccc',
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-        'custom-gray': 'rgba(207, 210, 198, 1)',
-      },
-      backgroundImage: {
-        'my_bg_image' : "url('../public/Full-background.png')",
-      },
-      fontFamily: {
-        'clash': ['Clash Display', 'sans-serif'],
-      },
-    },
-=======
-  	extend: {
+  extend: {
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
@@ -76,8 +60,7 @@ export default {
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
   		}
-  	}
->>>>>>> afa6c76ca41d99142c92c5a118280652a8e02161
+  }
   },
   plugins: [
       require("tailwindcss-animate"),
