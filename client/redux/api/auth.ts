@@ -6,7 +6,7 @@ export interface LoginInterface {
     password: string;
 }
 export const authApi = createApi({
-    baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8000/api/auth"},),
+    baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8000/api/auth" , credentials: "include"},),
     reducerPath:"authApi",
     tagTypes:["UserSignup" , "RestaurnatSignup" , "Login" , "Logout"],
     endpoints:(build) => ({

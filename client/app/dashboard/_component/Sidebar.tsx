@@ -70,8 +70,8 @@ const Sidebar = () => {
   };
 
   const sidebarClassNames = `fixed flex flex-col ${
-    isSidebarCollapsed ? "w-0 md:w-16" : "w-72 md:w-64"
-  } bg-white transition-all duration-300 overflow-hidden h-full shadow-md z-40`;
+    isSidebarCollapsed ? "w-10 md:w-16" : "w-72 md:w-64"
+  } bg-white transition-all duration-300 overflow-hidden h-full shadow-md z-50`;
 
   return (
     <div className={sidebarClassNames}>
@@ -108,25 +108,25 @@ const Sidebar = () => {
           isCollapsed={isSidebarCollapsed}
         />
          <SidebarLink
-            href="/products"
+            href="/dashboard/products"
             icon={Clipboard}
             label="Products"
             isCollapsed={isSidebarCollapsed}
           />
         <SidebarLink
-          href="/orders"
+          href="/dashboard/orders"
           icon={Archive}
           label="Orders"
           isCollapsed={isSidebarCollapsed}
         />
         <SidebarLink
-          href="/employee"
+          href="/dashboard/employee"
           icon={User}
           label="Employee"
           isCollapsed={isSidebarCollapsed}
         />
         <SidebarLink
-          href="/qr-code"
+          href="/dashoboard/qr-code"
           icon={QrCode}
           label="QR Code"
           isCollapsed={isSidebarCollapsed}

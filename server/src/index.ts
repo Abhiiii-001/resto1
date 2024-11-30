@@ -21,7 +21,10 @@ app.use(express.json());
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy:"cross-origin"}));
 app.use(morgan("common"));
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000', // Frontend origin
+    credentials: true,              // Allow credentials (cookies, headers)
+  }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());

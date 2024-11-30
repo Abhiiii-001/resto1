@@ -81,6 +81,7 @@ model Category {
 model Product {
   id              String           @id @default(uuid())
   name            String
+  description     String
   thumbnail       String
   sold            Int                @default(0)
   rating          Decimal?

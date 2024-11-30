@@ -9,6 +9,7 @@ export const AddCategory = async(req: Request,res: Response): Promise<any> => {
         //Get all requried data
         const { name } : {name: string}= req.body;
         const thumbnail = req.files?.thumbnail;
+        console.log(name,thumbnail);
         //@ts-ignore
         const restaurantId = req.user.restaurantId;
 
@@ -31,7 +32,7 @@ export const AddCategory = async(req: Request,res: Response): Promise<any> => {
             }
         });
 
-        return res.status(200).json({message: "Category created!",category: result});
+        return res.status(200).json({message: "Category created!"});
 
 
     } catch (error) {
@@ -88,8 +89,14 @@ export const UpdateCategory = async(req: Request,res: Response): Promise<any> =>
 export const GetAllCategories = async(req: Request,res: Response): Promise<any> => {
     try {
         
-        const categories = await prisma.category.findMany();
-        return res.status(200).json({message:"Category retrieved",data:categories});
+        const categories = await prisma.category.findMany({
+            select:{
+                name: true,
+                id: true,
+                thumbnail: true
+            }
+        });
+        return res.status(200).json({categories});
 
     } catch (error) {
         console.log(error);

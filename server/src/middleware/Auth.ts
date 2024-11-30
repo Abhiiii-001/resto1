@@ -12,7 +12,9 @@ export const Auth = async(req: Request,res: Response,next: NextFunction): Promis
         const token = req.cookies.token ||
                       req.body.token    ||
                       req.headers.authorization?.split(" ")[1];
-        
+        // console.log("cookie",req.cookies);
+        // console.log("body",req.body);
+        // console.log("headers",req.headers);
         if(!token)
             return res.status(401).json({message: "Missing data"});
 

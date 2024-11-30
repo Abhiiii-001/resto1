@@ -1,4 +1,5 @@
 import { RestaturantSignupInterface } from "@/app/Interfaces/Auth";
+import FileUploader from "@/components/common/FileUploader";
 import Loader from "@/components/common/Loader";
 import { useRestaurantSignupMutation } from "@/redux/api/auth";
 import { useRouter } from "next/navigation";
@@ -25,19 +26,19 @@ function RestaurantForm({}: Props) {
   // Watch thumbnail field to display a preview
   const thumbnail = watch("thumbnail");
 
-  const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
-      // Update the thumbnail value in the form
-      setValue("thumbnail", acceptedFiles[0]);
-    },
-    [setValue]
-  );
+  // const onDrop = useCallback(
+  //   (acceptedFiles: File[]) => {
+  //     // Update the thumbnail value in the form
+  //     setValue("thumbnail", acceptedFiles[0]);
+  //   },
+  //   [setValue]
+  // );
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    multiple: false,
-    accept: { "image/*": [] }, // Accept only image files
-  });
+  // const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  //   onDrop,
+  //   multiple: false,
+  //   accept: { "image/*": [] }, // Accept only image files
+  // });
 
   const onSubmitHandler = async(data: RestaturantSignupInterface) => {
     const toastId = toast.loading("Loading...")
@@ -209,31 +210,7 @@ function RestaurantForm({}: Props) {
           >
             Thumbnail <span className="text-pink-800 pl-1">*</span>
           </label>
-      <div
-        {...getRootProps()}
-        className={`border-2 border-dashed rounded-md p-6 text-center bg-[#E7E9E2] ${
-          isDragActive ? "border-blue-400" : "border-gray-300"
-        }`}
-      >
-        <input {...getInputProps()}/>
-        {thumbnail ? (
-          <div>
-            <img
-              src={URL.createObjectURL(thumbnail)}
-              alt="Thumbnail Preview"
-              className="w-16 h-16 object-cover mx-auto mb-2 rounded-md"
-            />
-            <p className="text-xs text-gray-500">{thumbnail.name}</p>
-          </div>
-        ) : (
-          <p className="text-gray-500">
-            {isDragActive
-              ? "Drop the file here..."
-              : "Drag and drop an image here, or click to select one."}
-          </p>
-        )}
-        
-      </div>
+      <FileUploader thumbnail={thumbnail} setValue={setValue} />
 
       {/* Submit Button */}
       <button disabled={isLoading} type="submit" className="w-full px-4 py-3 text-center bg-blue-400 hover:bg-blue-500 transition-all duration-200 rounded-lg text-lg font-semibold mt-2 text-gray-50">Submit</button>

@@ -172,8 +172,9 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const secret = process.env.JWT_SECRET || "secret";
         const token = jsonwebtoken_1.default.sign({ id: user.id, email: user === null || user === void 0 ? void 0 : user.email, role: user === null || user === void 0 ? void 0 : user.role, restaurantId: restaurantId }, secret, { expiresIn: 24 * 60 * 60 * 1000 });
         res.cookie('token', token, {
-            httpOnly: true, // Prevent client-side access
-            secure: process.env.NODE_ENV === 'production', // Use secure in production
+            // httpOnly: true,        // Prevent client-side access
+            secure: false, // Use secure in production,
+            sameSite: "lax",
             maxAge: 3600000 * 8 // 8 hour
         });
         return res.status(200)

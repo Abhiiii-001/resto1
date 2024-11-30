@@ -242,8 +242,9 @@ export const Login = async(req: Request,res: Response): Promise<any> => {
       );
  
       res.cookie('token',token,{
-         httpOnly: true,        // Prevent client-side access
-         secure: process.env.NODE_ENV === 'production', // Use secure in production
+         // httpOnly: true,        // Prevent client-side access
+         secure: false, // Use secure in production,
+         sameSite: "lax",
          maxAge: 3600000 * 8        // 8 hour
       })
  
