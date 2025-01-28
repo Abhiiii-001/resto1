@@ -17,7 +17,7 @@ export interface GetProductVariantInterface {
 export interface CreateProductVariantInterface {
   size: string;
   price: number;
-  salePrice: number;
+  salePrice?: number;
   productId: string;
 }
 export interface UpdateProductVariantInterface {
@@ -33,7 +33,10 @@ export interface ProductInterface {
   sold: number;
   rating?: number;
   categoryId: string;
-  productVariant: ProductVariantInterface[];
+  productVariants: ProductVariantInterface[];
+  category:{
+    name: string
+  }
 }
 
 export interface GetProductInterface {
@@ -66,10 +69,10 @@ export const productApi = createApi({
   endpoints: (build) => ({
     getProducts: build.query<any, void>({
       query: () => "/",
-      providesTags: ["Products"],
+      providesTags: ["Products","ProductVariants"],
     }),
 
-    createProduct: build.mutation<string, AddProductInterface>({
+    createProduct: build.mutation<string, File>({
       query: (data) => ({
         url: "/",
         method: "POST",
@@ -78,8 +81,8 @@ export const productApi = createApi({
       invalidatesTags: ["Products"],
     }),
 
-    updateProduct: build.mutation<string, UpdateProductInterface>({
-      query: (id, ...data) => ({
+    updateProduct: build.mutation<string, {id: string, data: File}>({
+      query: ({id,data}) => ({
         url: `/${id}`,
         method: "PUT",
         body: data,
@@ -87,7 +90,7 @@ export const productApi = createApi({
       invalidatesTags: ["Products"],
     }),
 
-    deleteProduct: build.mutation<void, void>({
+    deleteProduct: build.mutation<void, string>({
       query: (id) => ({
         url: `/${id}`,
         method: "DELETE",
@@ -96,7 +99,7 @@ export const productApi = createApi({
     }),
     getAllProductVariant: build.query<GetProductVariantInterface, void>({
       query: () => "/variant",
-      providesTags: ["ProductVariants"],
+      providesTags: ["ProductVariants","Products"],
     }),
     createProductVariant: build.mutation<string, CreateProductVariantInterface>(
       {
@@ -105,25 +108,25 @@ export const productApi = createApi({
           method: "POST",
           body: data,
         }),
-        invalidatesTags: ["ProductVariants"],
+        invalidatesTags: ["Products"],
       }
     ),
-    updateProductVariant: build.mutation<string, UpdateProductVariantInterface>(
+    updateProductVariant: build.mutation<string,any>(
       {
-        query: (id, ...data) => ({
-          url: `/variant/${id}`,
+        query: (data) => ({
+          url: `/variant/${data.id}`,
           method: "PUT",
           body: data,
         }),
-        invalidatesTags: ["ProductVariants"],
+        invalidatesTags: ["ProductVariants","Products"],
       }
     ),
-    deleteProductVariant: build.mutation<void, void>({
+    deleteProductVariant: build.mutation<void, string>({
       query: (id) => ({
         url: `/variant/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["ProductVariants"],
+      invalidatesTags: ["Products"],
     }),
   }),
 });
