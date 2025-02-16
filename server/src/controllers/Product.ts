@@ -4,11 +4,22 @@ import uploadToCloudinary from "../utils/cloudinaryUploader";
 
 const prisma = new PrismaClient
 
+interface ProductVariantInterface{
+    size: string;
+    salePrice?: string;
+    price: string;
+}
+
 export const CreateProduct = async(req: Request,res: Response):Promise<any> => {
     try {
         
-        const { name , categoryId ,description}: {name: string,categoryId: string,description: string} = req.body;
+        const { name , categoryId ,description , variants }: {name: string,categoryId: string,description: string,variants:string} = req.body;
         const file = req.files?.thumbnail;
+        console.log("variants",variants);
+        const productVariants:ProductVariantInterface[] = JSON.parse(variants);
+        console.log("json variant",productVariants)
+
+        console.log("Create product file",file)
 
         const fileUploadRes = await uploadToCloudinary(file,"my-files");
 
@@ -24,6 +35,26 @@ export const CreateProduct = async(req: Request,res: Response):Promise<any> => {
             }
         })
 
+        try {
+            productVariants.forEach(async(v) => {
+                const result = await prisma.productVariant.create({
+                    data:{
+                        size:v.size,
+                        price:parseInt(v?.price),
+                        // salePrice:parseInt(v?.salePrice),
+                        productId: productRes.id
+                    },
+                    select:{
+                        id: true,
+                    }
+                });
+            });
+        } catch (error) {
+            await prisma.product.delete({where:{id: productRes.id}});
+            return res.status(410).json({message:"Failed to create product variants"});
+        }
+
+
         return res.status(200).json({productRes})
 
     } catch (error) {
@@ -34,20 +65,21 @@ export const CreateProduct = async(req: Request,res: Response):Promise<any> => {
 
 export const UpdateProduct = async(req: Request,res: Response):Promise<any> => {
     try {
-        let updatedData = req.body;
-        const file = req.files?.thumbnail;
+        let { ...productData  } = req.body;
+        const file = req.files?.thumbnail || null;
         const productId = req.params.productId;
 
         if(file){
             const uploadRes = await uploadToCloudinary(file,"my-files");
-            updatedData.thumbnail = uploadRes.secure_url;
+            productData.thumbnail = uploadRes.secure_url;
+            console.log("Product update thumbnail",productData.thumbnail)
         }
 
         const result = await prisma.product.update({
             where:{
                 id:productId
             },
-            data: updatedData,
+            data: productData,
             select:{
                 id: true
             }
@@ -90,7 +122,12 @@ export const GetAllProducts = async(req: Request,res: Response):Promise<any> => 
 
         const allProducts = await prisma.product.findMany({
             include:{
-               productVariants: true 
+               productVariants: true,
+               category:{
+                  select:{
+                    name: true
+                  }
+               } 
             }
         });
 
@@ -151,8 +188,9 @@ export const GetAllProductsByCategory = async(req: Request,res: Response):Promis
 
 export const CreateProductVaraint = async(req: Request,res: Response): Promise<any> => {
     try {
+        console.log(req.body)
         const { size , price , salePrice , productId } = req.body;
-        if(!size || !price || !salePrice || !productId)
+        if(!size || !price  || !productId)
             return res.status(401).json({message: "All fields are required"});
 
         const result = await prisma.productVariant.create({
@@ -177,6 +215,8 @@ export const UpdateProductVaraint = async(req: Request,res: Response): Promise<a
     try {
         const {...updatedData} = req.body;
         const { id } = req.params;
+        console.log(updatedData)
+        console.log(id)
 
         const result = await prisma.productVariant.update({
             where:{

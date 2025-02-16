@@ -126,6 +126,7 @@ const RestaurantSignup = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 address,
                 email,
                 password: hashedPassword,
+                verificationToken
             }
         });
         console.log(restaurant);

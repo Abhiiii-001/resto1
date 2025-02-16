@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.uploadPDFToCloudinary = void 0;
 const cloudinary_1 = require("cloudinary");
 // Promisify the Cloudinary uploader for easier async/await usage
 const uploadToCloudinary = (file, folder) => __awaiter(void 0, void 0, void 0, function* () {
@@ -17,4 +18,17 @@ const uploadToCloudinary = (file, folder) => __awaiter(void 0, void 0, void 0, f
         folder: folder || 'uploads', // Upload to a specific folder
     });
 });
+const uploadPDFToCloudinary = (fileBuffer_1, ...args_1) => __awaiter(void 0, [fileBuffer_1, ...args_1], void 0, function* (fileBuffer, folder = 'invoices') {
+    return new Promise((resolve, reject) => {
+        const uploadStream = cloudinary_1.v2.uploader.upload_stream({ resource_type: 'raw', folder }, // 'raw' is used for non-image files like PDFs
+        (error, result) => {
+            if (error)
+                reject(error);
+            else
+                resolve(result);
+        });
+        uploadStream.end(fileBuffer); // Pass the buffer to the upload stream
+    });
+});
+exports.uploadPDFToCloudinary = uploadPDFToCloudinary;
 exports.default = uploadToCloudinary;

@@ -3,14 +3,16 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Swiper from "swiper";
 import { useAppSelector } from "@/redux/redux";
-import ProductsItem from "./_components/ProductsItem";
 import { AddCategoryInterface, Category, useAddCategoryMutation, useGetAllCategoriesQuery } from "@/redux/api/category";
 import Loader from "@/components/common/Loader";
 import Image from "next/image";
 import Dialog from "@/components/common/Dialog";
 import CreateCategory from "./_components/CreateCategory";
 import { toast } from "react-toastify";
-import { useGetProductsQuery } from "@/redux/api/products";
+import { ProductInterface, useGetProductsQuery } from "@/redux/api/products";
+import ProductGrid from "./_components/ProductGrid";
+import { useRouter } from "next/navigation";
+import CreateProduct from "./_components/CreateProductDialog";
 
 
 
@@ -97,24 +99,39 @@ type Props = {};
 
 
 
-function Products({}: Props) {
+function Products() {
 
-  const [ isOpen , setIsOpen ] = useState<boolean>(false);
+  const router = useRouter();
+
   const { isSidebarCollapsed } = useAppSelector((state) => state.global);
-
+  const [ isOpen , setIsOpen ] = useState<boolean>(false);
+  const [ selectedCategory , setSelectedCategroy] = useState<string>("all");
+  const [ createProductModal , setCreateProductModal ] = useState<boolean>(false);
+  
+  //Category Data Query
   const {data , isSuccess ,isLoading} = useGetAllCategoriesQuery();
   const category: Category[] | undefined = data?.categories;
+  
+  //Product Data Query
+  const {data:getProductQueryData , isSuccess:isSuccess1 ,error, isLoading:isLoading2} = useGetProductsQuery();
+  const [ products , setProducts ] =  useState<ProductInterface[]>(getProductQueryData?.products);
 
+  //Add category mutation
   const [ createCategoryApi ,{ isLoading:isLoading1 } ] = useAddCategoryMutation();
 
-  const {data:products , isSuccess:isSuccess1 ,error, isLoading:isLoading2} = useGetProductsQuery();
-  console.log("Products",products);
-  // console.log(products.products)
   useEffect(() => {
-    if (error) {
-      console.log('RTK Query Error:', error);
-    }
-  }, [error]);
+      setProducts(getProductQueryData?.products);
+      console.log("getProductQueryData",getProductQueryData?.products)
+  }, [isSuccess1,getProductQueryData]);
+  let p: any;
+  useEffect(() => {
+    console.log("Selected CategoryId",selectedCategory)
+     if(selectedCategory == "all")
+      setProducts(getProductQueryData?.products);
+      else
+      setProducts(getProductQueryData?.products.filter(p => p.categoryId === selectedCategory ))
+      console.log(products)
+  },[selectedCategory]);
 
   console.log(data)
 
@@ -137,16 +154,18 @@ function Products({}: Props) {
       toast.dismiss(toastId);
   }
 
-  if(isLoading || isLoading1) return <Loader/>
+  if(isLoading || isLoading1 || isLoading2) return <Loader/>
 
   return (
-    <div className="w-full h-full py-8 px-10">
+    <div className="w-full h-full py-8 px-10 mr-6">
       {/* Header section */}
       <div className="flex flex-col items-start justify-between gap-1">
         <div className="w-full flex items-center justify-between py-2">
           <h2 className="text-3xl font-semibold text-gray-900">Products</h2>
           <div className="flex items-center flex-wrap gap-3">
-            <button className="bg-blue-400 px-4 py-3 text-gray-100 rounded-xl text-sm font-semibold hover:bg-blue-300 transition-all duration-200">
+            <button
+            onClick={() => setCreateProductModal(true)}
+            className="bg-blue-400 px-4 py-3 text-gray-100 rounded-xl text-sm font-semibold hover:bg-blue-300 transition-all duration-200">
                 + Create Product
             </button>
             <div 
@@ -177,35 +196,48 @@ function Products({}: Props) {
         </div>
       </div>
 
-      {/* Category section */}
-      <div className="w-full mt-6 mb-12 flex items-center justify-between">
+      {/* Category Section */}
+       <div className="w-full mt-2 flex items-center justify-between">
         <div
           className={`${
             isSidebarCollapsed ? "w-full" : "lg:w-[1500px]"
           } flex flex-row items-center gap-6 my-6 no-scrollbar overflow-x-scroll`}
         >
+          <div
+          className={`flex flex-col items-center justify-center cursor-pointer hover:shadow-xl hover:scale-95 px-5 py-3 border ${selectedCategory == "all" ? "border-gray-800 border-2" : "border-gray-400"} border-opacity-50 bg-gray-100 rounded-xl`}
+          onClick={() => setSelectedCategroy("all")}
+          >
+                <p className="text-sm lg:text-[16px] font-semibold text-gray-600">All</p>
+          </div>
           { isSuccess &&
            category?.map((cat, index) => {
             return (
               <div
-                key={index}
-                className="flex flex-col items-center justify-center hover:drop-shadow-[0_0_10px_rgba(37,99,235,0.7)] "
+              key={index}
+              className={`flex flex-col items-center justify-center cursor-pointer hover:shadow-xl hover:scale-95 px-5 py-3 border ${selectedCategory == cat.id ? "border-gray-800 border-2" : "border-gray-400"} border-opacity-50 bg-gray-100 rounded-xl`}
+              onClick={() => setSelectedCategroy(cat.id)}
               >
-                <Image src={cat.thumbnail} alt="category-logo" width={120} height={120} />
                 <p className="text-sm lg:text-[16px] font-semibold text-gray-600">{cat.name}</p>
               </div>
             );
           })}
-        </div>
-       
+        </div>    
       </div>
 
-      {/* Products section */}
-     {
-      isSuccess1 && <div>
-                       <ProductsItem products={products.products}/>
-                    </div>
-     }
+      {/* Products */}
+      {
+          isSuccess1 && products && products.length > 0 ? <ProductGrid products={products}/> : <div className="w-full h-[60vh] flex items-center justify-center text-2xl">No Product Found</div>
+      }
+
+      {
+        selectedCategory !== "all" && <div className="underline text-sm text-blue-500 mt-2 cursor-pointer">Manage category</div>
+      }
+
+      {/* Create product dialog */}
+      {
+        createProductModal && <CreateProduct isEdit = {false} product={null} setModal={setCreateProductModal} />
+      }
+
     </div>
   );
 }

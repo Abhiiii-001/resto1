@@ -14,5 +14,5 @@
   border-bottom: 1px;
 }
 .input-style{
-  @apply mt-1 w-full px-4 py-2 border rounded-md shadow-xl focus:ring-2 focus:ring-blue-400 bg-[#E7E9E2]  text-black border-black;
+  @apply mt-1 w-full px-4 py-2 border border-gray-600 border-opacity-45 rounded-md shadow-xl focus:ring-2 focus:ring-blue-400 bg-[#E7E9E2]  text-black ;
 }
