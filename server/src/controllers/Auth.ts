@@ -176,6 +176,7 @@ export const RestaurantSignup = async(req: Request,res: Response): Promise<any> 
             address,
             email,
             password:hashedPassword,
+            verificationToken
         }
     });
     console.log(restaurant)

@@ -9,4 +9,17 @@ const uploadToCloudinary = async(file:any, folder:string) => {
   });
 };
 
+export const uploadPDFToCloudinary = async (fileBuffer: any, folder:string = 'invoices') => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { resource_type: 'raw', folder },  // 'raw' is used for non-image files like PDFs
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      }
+    );
+    uploadStream.end(fileBuffer);  // Pass the buffer to the upload stream
+  });
+};
+
 export default uploadToCloudinary;
