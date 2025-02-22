@@ -81,3 +81,27 @@ export const IsAdmin = async(req: Request,res: Response,next: NextFunction) => {
         return res.status(405).json({message:"Autorization Failed!"});
     }
 }
+
+export const IsModifier = async(req: Request,res: Response,next: NextFunction):Promise<any> => {
+    try {
+        //@ts-ignore
+        if(req.user.role == "User"){
+            const user = await prisma.user.findUnique({
+                //@ts-ignore
+                where:{email: req.user.email}
+            })
+
+            if(!user || !user.canModify){
+                return res.status(401).json({
+                    success: false,
+                    message: "Not authorized"
+                })
+            }
+        }
+        next();
+
+    } catch (error) {
+        console.log(error);
+        return res.status(405).json({message:"Autorization Failed!"});
+    }
+}
