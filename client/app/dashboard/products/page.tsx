@@ -18,84 +18,84 @@ import CreateProduct from "./_components/CreateProductDialog";
 
 type Props = {};
 
-// const category = [
-//   {
-//     id: "drinks",
-//     name: "Drinks",
-//   },
-//   {
-//     id: "burger",
-//     name: "Burger",
-//   },
-//   {
-//     id: "pizza",
-//     name: "Pizza",
-//   },
-//   {
-//     id: "roti",
-//     name: "Roti",
-//   },
-//   {
-//     id: "chicken",
-//     name: "Chicken",
-//   },
-//   {
-//     id: "roti",
-//     name: "Roti",
-//   },
-//   {
-//     id: "chicken",
-//     name: "Chicken",
-//   },
-//   {
-//     id: "roti",
-//     name: "Roti",
-//   },
-//   {
-//     id: "chicken",
-//     name: "Chicken",
-//   },
-//   {
-//     id: "roti",
-//     name: "Roti",
-//   },
-//   {
-//     id: "chicken",
-//     name: "Chicken",
-//   },
-//   {
-//     id: "roti",
-//     name: "Roti",
-//   },
-//   {
-//     id: "chicken",
-//     name: "Chicken",
-//   },
-//   {
-//     id: "roti",
-//     name: "Roti",
-//   },
-//   {
-//     id: "chicken",
-//     name: "Chicken",
-//   },
-//   {
-//     id: "roti",
-//     name: "Roti",
-//   },
-//   {
-//     id: "chicken",
-//     name: "Chicken",
-//   },
-//   {
-//     id: "roti",
-//     name: "Roti",
-//   },
-//   {
-//     id: "chicken",
-//     name: "Chicken",
-//   },
-// ];
+const category = [
+  {
+    id: "drinks",
+    name: "Drinks",
+  },
+  {
+    id: "burger",
+    name: "Burger",
+  },
+  {
+    id: "pizza",
+    name: "Pizza",
+  },
+  {
+    id: "roti",
+    name: "Roti",
+  },
+  {
+    id: "chicken",
+    name: "Chicken",
+  },
+  {
+    id: "roti",
+    name: "Roti",
+  },
+  {
+    id: "chicken",
+    name: "Chicken",
+  },
+  {
+    id: "roti",
+    name: "Roti",
+  },
+  {
+    id: "chicken",
+    name: "Chicken",
+  },
+  {
+    id: "roti",
+    name: "Roti",
+  },
+  {
+    id: "chicken",
+    name: "Chicken",
+  },
+  {
+    id: "roti",
+    name: "Roti",
+  },
+  {
+    id: "chicken",
+    name: "Chicken",
+  },
+  {
+    id: "roti",
+    name: "Roti",
+  },
+  {
+    id: "chicken",
+    name: "Chicken",
+  },
+  {
+    id: "roti",
+    name: "Roti",
+  },
+  {
+    id: "chicken",
+    name: "Chicken",
+  },
+  {
+    id: "roti",
+    name: "Roti",
+  },
+  {
+    id: "chicken",
+    name: "Chicken",
+  },
+];
 
 
 

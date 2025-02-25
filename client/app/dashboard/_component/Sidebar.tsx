@@ -69,7 +69,7 @@ const Sidebar = () => {
     dispatch(setIsSidebarCollapsed(!isSidebarCollapsed));
   };
 
-  const sidebarClassNames = `fixed flex flex-col ${
+  const sidebarClassNames = `fixed flex flex-col  ${
     isSidebarCollapsed ? "w-10 md:w-16" : "w-72 md:w-64"
   } bg-white transition-all duration-300 overflow-hidden h-full shadow-md z-50`;
 
@@ -126,13 +126,13 @@ const Sidebar = () => {
           isCollapsed={isSidebarCollapsed}
         />
         <SidebarLink
-          href="/dashoboard/qr-code"
+          href="/dashboard/qrcode"
           icon={QrCode}
           label="QR Code"
           isCollapsed={isSidebarCollapsed}
         />
         <SidebarLink
-          href="/settings"
+          href="/dashboard/settings"
           icon={SlidersHorizontal}
           label="Settings"
           isCollapsed={isSidebarCollapsed}

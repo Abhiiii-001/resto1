@@ -13,6 +13,7 @@ import { authApi } from "@/redux/api/auth";
 import { restaurantApi } from "./api/restaurant";
 import { categoryApi } from "./api/category";
 import { productApi } from "./api/products";
+import { employeeApi } from "./api/employee";
 import { setupListeners } from "@reduxjs/toolkit/query";
 
 import {
@@ -60,6 +61,7 @@ const rootReducer = combineReducers({
   [restaurantApi.reducerPath]: restaurantApi.reducer,
   [categoryApi.reducerPath]: categoryApi.reducer,
   [productApi.reducerPath]: productApi.reducer,
+  [employeeApi.reducerPath]:employeeApi.reducer,
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
@@ -76,6 +78,7 @@ export const makeStore = () => {
       .concat(restaurantApi.middleware)
       .concat(categoryApi.middleware)
       .concat(productApi.middleware)
+      .concat(employeeApi.middleware)
   });
 };
 
