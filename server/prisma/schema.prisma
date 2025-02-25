@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
@@ -37,21 +37,25 @@ enum PaymentOption {
 // MODELS
 
 model Restaurant {
-  id           String            @id @default(uuid())
-  resCode      String
-  name         String
-  slogan       String?
-  thumbnail    String
-  number       String
-  address      String
-  email        String         @unique
-  password     String
-  role         Role           @default(Restaurant)
-  users        User[]
-  categories   Category[]
-  orders       Order[]
-  saleSummary  SaleSummary[]
-  orderSummary OrderSummary[]
+  id                String         @id @default(uuid())
+  resCode           String
+  name              String
+  slogan            String?
+  thumbnail         String
+  isOpen            Boolean        @default(false)
+  number            String
+  address           String
+  email             String         @unique
+  password          String
+  verificationToken String         @unique
+  isVerified        Boolean        @default(false)
+  autoAcceptOrder   Boolean        @default(true)
+  role              Role           @default(Restaurant)
+  users             User[]
+  categories        Category[]
+  orders            Order[]
+  saleSummary       SaleSummary[]
+  orderSummary      OrderSummary[]
 }
 
 model User {
@@ -65,7 +69,7 @@ model User {
   restaurantId      String
   verificationToken String     @unique
   isVerified        Boolean    @default(false)
-  restaurant        Restaurant @relation(fields: [restaurantId], references: [id],onDelete: Cascade)
+  restaurant        Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
 }
 
 model Category {
@@ -75,7 +79,7 @@ model Category {
   restaurantId String
   createdAt    String
   products     Product[]
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id],onDelete: Cascade)
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
 }
 
 model Product {
@@ -83,11 +87,11 @@ model Product {
   name            String
   description     String
   thumbnail       String
-  sold            Int                @default(0)
+  sold            Int              @default(0)
   rating          Decimal?
   productVariants ProductVariant[]
   categoryId      String
-  category        Category         @relation(fields: [categoryId], references: [id],onDelete: Cascade)
+  category        Category         @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 }
 
 model ProductVariant {
@@ -97,32 +101,37 @@ model ProductVariant {
   salePrice    Int?
   isOutOfStock Boolean    @default(false)
   productId    String
-  product      Product    @relation(fields: [productId], references: [id],onDelete: Cascade)
+  product      Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
   orders       subOrder[]
 }
 
 model Order {
-  id           String     @id @default(uuid())
-  orderCode    String
-  name         String
-  note         String?
-  orders       subOrder[]
-  status       Status     @default(Pending)
-  amount       Int
-  isPack       Boolean
+  id            String        @id @default(uuid())
+  orderCode     String        @unique
+  name          String?
+  note          String?
+  orders        subOrder[]
+  status        Status        @default(Pending)
+  amount        Int
+  isPack        Boolean
+  isVerified    Boolean       @default(false)
+  subscription  String?
+  invoice       String?
   paymentOption PaymentOption
-  createdAt    String
-  restaurantId String
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id],onDelete: Cascade)
+  createdAt     String
+  restaurantId  String
+  restaurant    Restaurant    @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
 }
 
 model subOrder {
   id               String         @id @default(uuid())
+  name             String
+  variant          String
   productVariantId String
   quantity         Int
   unitPrice        Int
   orderId          String
-  order            Order          @relation(fields: [orderId], references: [id],onDelete: Cascade)
+  order            Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
   productVariant   ProductVariant @relation(fields: [productVariantId], references: [id])
 }
 
@@ -132,7 +141,7 @@ model SaleSummary {
   duration     Duration
   cratedAt     String
   restaurantId String
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id],onDelete: Cascade)
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
 }
 
 model OrderSummary {
@@ -142,5 +151,5 @@ model OrderSummary {
   duration     Duration
   createdAt    String
   restaurantId String
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id],onDelete: Cascade)
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
 }

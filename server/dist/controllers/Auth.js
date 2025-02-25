@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Logout = exports.Login = exports.RestaurantSignup = exports.UserSignup = void 0;
+exports.VerifyToken = exports.Logout = exports.Login = exports.RestaurantSignup = exports.UserSignup = void 0;
 const client_1 = require("@prisma/client");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -126,6 +126,7 @@ const RestaurantSignup = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 address,
                 email,
                 password: hashedPassword,
+                verificationToken
             }
         });
         console.log(restaurant);
@@ -151,18 +152,26 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (!email || !password) {
             return res.status(403).json({ message: "All field are required!" });
         }
-        const user = yield prisma.restaurant.findUnique({
-            where: { email }
+        let user = yield prisma.restaurant.findUnique({
+            where: { email },
         });
         let restaurantId = user === null || user === void 0 ? void 0 : user.id;
         if (!user) {
-            const user = yield prisma.user.findUnique({
+            //@ts-ignore
+            user = yield prisma.user.findUnique({
                 where: { email }
             });
+            //@ts-ignore
             restaurantId = user === null || user === void 0 ? void 0 : user.restaurantId;
         }
         if (!user) {
             return res.status(404).json({ message: "User not found!" });
+        }
+        if (!user.isVerified) {
+            return res.status(401).json({
+                success: false,
+                message: "User not verified!"
+            });
         }
         const hashedPassword = yield bcrypt_1.default.hash(password, 10);
         const match = bcrypt_1.default.compare(user === null || user === void 0 ? void 0 : user.password, hashedPassword);
@@ -202,3 +211,71 @@ const Logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.Logout = Logout;
+const VerifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { token } = req.body;
+        if (!token) {
+            return res.status(404).json({
+                success: false,
+                message: "Token not found"
+            });
+        }
+        let user = yield prisma.restaurant.findUnique({
+            where: {
+                verificationToken: token
+            },
+            select: {
+                id: true,
+                role: true,
+            }
+        });
+        if (!user) {
+            user = yield prisma.user.findUnique({
+                where: {
+                    verificationToken: token
+                },
+                select: {
+                    id: true,
+                    role: true,
+                }
+            });
+        }
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid Token"
+            });
+        }
+        if (user.role == "Restaurant") {
+            yield prisma.restaurant.update({
+                where: {
+                    verificationToken: token
+                },
+                data: {
+                    isVerified: true
+                }
+            });
+        }
+        else {
+            yield prisma.user.update({
+                where: {
+                    verificationToken: token
+                },
+                data: {
+                    isVerified: true
+                }
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            message: "User verified successfully!"
+        });
+    }
+    catch (error) {
+        return res.status(499).json({
+            success: false,
+            message: "Something went wrong!"
+        });
+    }
+});
+exports.VerifyToken = VerifyToken;

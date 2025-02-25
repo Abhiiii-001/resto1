@@ -119,8 +119,15 @@ export const GetAllProducts = async(req: Request,res: Response):Promise<any> => 
         //         sold:"desc"
         //     }
         // });
-
+       
+        //@ts-ignore
+       const restaurantId = req.user.restaurantId;
         const allProducts = await prisma.product.findMany({
+            where:{
+                category:{
+                    restaurantId: restaurantId
+                }
+            },
             include:{
                productVariants: true,
                category:{
@@ -152,11 +159,14 @@ export const GetAllProducts = async(req: Request,res: Response):Promise<any> => 
 
 export const GetProductByQuery = async(req: Request,res: Response):Promise<any> => {
     try {
-        const { search } = req.params;
+        const { search , restaurantId } = req.params;
         const products = await prisma.product.findMany({
             where:{
                 name:{
                     contains: search
+                },
+                category:{
+                    restaurantId: restaurantId
                 }
             }
         });
@@ -171,7 +181,11 @@ export const GetProductByQuery = async(req: Request,res: Response):Promise<any> 
 
 export const GetAllProductsByCategory = async(req: Request,res: Response):Promise<any> => {
     try {
+        const {restaurantId} = req.params;
         const products = await prisma.category.findMany({
+            where:{
+                restaurantId: restaurantId,
+            },
             include:{
                 products: true
             }

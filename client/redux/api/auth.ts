@@ -40,6 +40,15 @@ export const authApi = createApi({
                 body: token
             }),
             invalidatesTags: ["Logout"]
+        }),
+        verifyToken: build.mutation<string,string>({
+            query: (token) => ({
+                url: "/verify-token",
+                method: "POST",
+                body: {
+                    token: token
+                }
+            })
         })
     })
 })
@@ -48,5 +57,6 @@ export const {
     useUserSignupMutation,
     useRestaurantSignupMutation,
     useLoginMutation,
-    useLogoutMutation
+    useLogoutMutation,
+    useVerifyTokenMutation
 } = authApi

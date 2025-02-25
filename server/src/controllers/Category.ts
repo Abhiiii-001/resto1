@@ -88,8 +88,12 @@ export const UpdateCategory = async(req: Request,res: Response): Promise<any> =>
 
 export const GetAllCategories = async(req: Request,res: Response): Promise<any> => {
     try {
-        
+        //@ts-ignore
+        const restaurantId = req.user.restaurantId;
         const categories = await prisma.category.findMany({
+            where:{
+                restaurantId: restaurantId
+            },
             select:{
                 name: true,
                 id: true,
@@ -102,4 +106,40 @@ export const GetAllCategories = async(req: Request,res: Response): Promise<any> 
         console.log(error);
         return res.status(499).json({message:"Something wrong during category retrive!"});
    }
+}
+
+export const GetAllCategoriesWithProducts = async(req: Request,res: Response):Promise<any> => {
+    try {
+
+        //@ts-ignore
+        const restaurantId = req.params.id;
+        const categories = await prisma.category.findMany({
+            where:{
+                restaurantId: restaurantId
+            },
+            select:{
+                name: true,
+                id: true,
+                thumbnail: true,
+                products:{
+                    include:{
+                        productVariants: true
+                    }
+                }
+            },
+        });
+        return res.status(200).json({
+            success: false,
+            message:"All category retrived successfully",
+            data: categories
+        });
+
+        
+    } catch (error) {
+         console.log("Get all categories with product error",error);
+         return res.status(499).json({
+            success: false,
+            message:"Something wrong during all data retrieve"
+         })
+    }
 }
