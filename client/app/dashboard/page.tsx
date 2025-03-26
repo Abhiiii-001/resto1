@@ -1,5 +1,6 @@
 "use client"
-import { useAppSelector } from '@/redux/redux'
+import { useAppDispatch, useAppSelector } from '@/redux/redux'
+import { addOrder } from '@/redux/states/orderSlice'
 import React, { useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
 
@@ -9,7 +10,10 @@ const socket = io('http://localhost:8000',{
 
 function Dashboard() {
 
+  const dispatch = useAppDispatch();
+
   const [ newOrderModal , setNewOrderModal ] = useState(null);
+   
 
   const {user , isAuthenticated } = useAppSelector((state) => state.auth)
   console.log("User data",user);
@@ -23,6 +27,7 @@ function Dashboard() {
         //listen for new order
         socket.on('newOrder',(orderData) => {
           console.log("New Order Recieved",orderData);
+          dispatch(addOrder(orderData));
           setNewOrderModal(orderData);
         });
 

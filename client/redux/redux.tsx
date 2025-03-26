@@ -9,6 +9,7 @@ import {
 } from "react-redux";
 import globalReducer from "@/redux/states/globalSlice";
 import authReducer from "@/redux/states/authSlice"
+import orderReducer from "@/redux/states/orderSlice"
 import { authApi } from "@/redux/api/auth";
 import { restaurantApi } from "./api/restaurant";
 import { categoryApi } from "./api/category";
@@ -52,11 +53,12 @@ const storage =
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["global" , "auth"],
+  whitelist: ["global" , "auth","order"],
 };
 const rootReducer = combineReducers({
   global: globalReducer,
   auth: authReducer,
+  order: orderReducer,
   [authApi.reducerPath]: authApi.reducer,
   [restaurantApi.reducerPath]: restaurantApi.reducer,
   [categoryApi.reducerPath]: categoryApi.reducer,

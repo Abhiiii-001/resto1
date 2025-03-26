@@ -12,7 +12,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       {/* Sidebar */}
       <div
         className={`${
-          isSidebarCollapsed ? "w-10 md:w-18" : "w-72"
+          isSidebarCollapsed ? "w-10 md:w-16" : "w-72 md:w-64"
         } h-screen sticky top-0 flex-shrink-0 overflow-y-auto`}
       >
         <Sidebar />
@@ -21,7 +21,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       {/* Main Content */}
       <main
         className={`flex-1 bg-[#E7E9E2] ${
-          isSidebarCollapsed ? "pl-10 md:pl-20" : "pl-4 "
+          isSidebarCollapsed ? "pl-10 md:pl-16" : "pl-4 "
         }`}
       >
         {children}

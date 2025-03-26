@@ -9,6 +9,7 @@ export const GetAllUsers = async(req: Request,res: Response) => {
         const users = await prisma.user.findMany({
             where:{
                 restaurantId: restaurantId
+                
             }
         })
 

@@ -120,8 +120,9 @@ export const GetAllProducts = async(req: Request,res: Response):Promise<any> => 
         //     }
         // });
        
-        //@ts-ignore
-       const restaurantId = req.user.restaurantId;
+                //@ts-ignore
+        const restaurantId = req.params.restaurantId;
+    
         const allProducts = await prisma.product.findMany({
             where:{
                 category:{

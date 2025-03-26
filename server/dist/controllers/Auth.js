@@ -64,7 +64,7 @@ const UserSignup = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         });
         if (!user)
             return res.status(500).json({ message: "Something wrong while user creation!" });
-        const verificationLink = `${process.env.CLIET_URL}/verify?token=${verificationToken}`;
+        const verificationLink = `${process.env.CLIENT_URL}/verify/${verificationToken}`;
         const mailResponse = yield (0, mailSender_1.default)(restaurant.email, "Verify User", `<p>Click <a href="${verificationLink}">here</a> to verify employee email.</p>`);
         res.status(200).json({
             message: "User created! , Waiting for verification by Restaurant",
@@ -132,7 +132,7 @@ const RestaurantSignup = (req, res) => __awaiter(void 0, void 0, void 0, functio
         console.log(restaurant);
         if (!restaurant)
             return res.status(500).json({ message: "Something wrong while user creation!" });
-        const verificationLink = `${process.env.CLIET_URL}/verify?token=${verificationToken}`;
+        const verificationLink = `${process.env.CLIET_URL}/verify/${verificationToken}`;
         const mailResponse = yield (0, mailSender_1.default)(email, "Verify User", `<p>Click <a href="${verificationLink}">here</a> to verify your email.</p>`);
         res.status(200).json({
             message: "User created! , Waiting for verification",

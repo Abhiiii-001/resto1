@@ -13,7 +13,7 @@ router.delete("/variant/:id",Auth,IsModifier,DeleteProductVaraint);
 router.post('/',Auth,IsModifier,CreateProduct);
 router.put('/:productId',Auth,IsModifier,UpdateProduct);
 router.delete('/:productId',Auth,IsModifier,DeleteProduct);
-router.get("/",GetAllProducts);
+router.get("/:restaurantId",GetAllProducts);
 router.get("/category/:restaurantId",Auth,GetAllProductsByCategory)
 router.get("/:search",Auth,GetProductByQuery);
 

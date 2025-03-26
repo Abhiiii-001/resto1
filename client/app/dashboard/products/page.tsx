@@ -104,6 +104,7 @@ function Products() {
   const router = useRouter();
 
   const { isSidebarCollapsed } = useAppSelector((state) => state.global);
+  const { user } = useAppSelector((state) => state.auth);
   const [ isOpen , setIsOpen ] = useState<boolean>(false);
   const [ selectedCategory , setSelectedCategroy] = useState<string>("all");
   const [ createProductModal , setCreateProductModal ] = useState<boolean>(false);
@@ -113,7 +114,7 @@ function Products() {
   const category: Category[] | undefined = data?.categories;
   
   //Product Data Query
-  const {data:getProductQueryData , isSuccess:isSuccess1 ,error, isLoading:isLoading2} = useGetProductsQuery();
+  const {data:getProductQueryData , isSuccess:isSuccess1 ,error, isLoading:isLoading2} = useGetProductsQuery(user.role === 'USER' ? user.restaurantId : user.id);
   const [ products , setProducts ] =  useState<ProductInterface[]>(getProductQueryData?.products);
 
   //Add category mutation

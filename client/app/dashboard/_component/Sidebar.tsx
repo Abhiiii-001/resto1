@@ -9,6 +9,7 @@ import {
   LucideIcon,
   Menu,
   QrCode,
+  Radio,
   SlidersHorizontal,
   User,
 } from "lucide-react";
@@ -113,16 +114,22 @@ const Sidebar = () => {
             label="Products"
             isCollapsed={isSidebarCollapsed}
           />
+         <SidebarLink
+            href="/dashboard/live-orders"
+            icon={Radio}
+            label="Live Orders"
+            isCollapsed={isSidebarCollapsed}
+          />
         <SidebarLink
           href="/dashboard/orders"
           icon={Archive}
-          label="Orders"
+          label="Order History"
           isCollapsed={isSidebarCollapsed}
         />
         <SidebarLink
           href="/dashboard/employee"
           icon={User}
-          label="Employee"
+          label="Team"
           isCollapsed={isSidebarCollapsed}
         />
         <SidebarLink

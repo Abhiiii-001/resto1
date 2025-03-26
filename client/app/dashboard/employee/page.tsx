@@ -1,7 +1,7 @@
 "use client"; // Important for client-side rendering
 
 import React, { useEffect, useState } from "react";
-import { Trash2 } from "lucide-react";
+import { CheckCircleIcon, OctagonAlert, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "react-toastify"; // ✅ Import toast
 
@@ -31,7 +31,7 @@ interface Employee {
   image: string;
 }
 
-const dummyEmployees: Employee[] = [
+const employees: Employee[] = [
   {
     id: "1",
     email: "amankrsingh58@gmail.com",
@@ -62,14 +62,14 @@ const dummyEmployees: Employee[] = [
 
 function EmployeesPage() {
 
-  const { data: employees, isLoading, isError } = useGetAllEmployeesQuery(); 
+  // const { data: employees, isLoading, isError } = useGetAllEmployeesQuery(); 
   const [addEmployee] = useAddEmployeeMutation(); 
   const [updateEmployee] = useUpdateEmployeeMutation(); 
   const [deleteEmployee] = useDeleteEmployeeMutation(); 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  if (isLoading) return <p>Loading employees...</p>;
-  if (isError) return <p>Error loading employees.</p>;
+  // if (isLoading) return <p>Loading employees...</p>;
+  // if (isError) return <p>Error loading employees.</p>;
 
 
 
@@ -110,12 +110,15 @@ function EmployeesPage() {
     }
   };
 
+  //temprorary
+  const [temp,setTemp] = useState(false)
+
 
   console.log("New Employee:", employees);
 
   return (
     <div className="p-6 text-white min-h-screen">
-      <div className="flex flex-col md:flex-row md:justify-between items-center mb-4 w-full">
+      <div className="flex flex-col md:flex-row md:justify-between items-center mb-4 w-full pr-4">
         <h1 className="text-3xl text-black font-bold">Teams</h1>
         {/* <button className="bg-blue-400 px-4 py-3 text-gray-100 rounded-xl text-sm font-semibold hover:bg-blue-300 transition-all duration-200 mt-2 md:mt-0">
           + Add Employee
@@ -150,15 +153,16 @@ function EmployeesPage() {
         </Link>
       </div>
 
-      {/* Employee Column Detail */}
-      <div className="hidden md:grid md:grid-cols-7 bg-white text-black p-3 rounded-md mb-4 font-semibold text-center">
-        <span>Image</span>
-        <span>Name</span>
-        <span></span>
-        <span>Role</span>
-        <span>Verified</span>
-        <span>Can Modify</span>
-        <span>Actions</span>
+    <div className="w-[900px] lg:w-full pr-4 overflow-x-auto">
+        {/* Employee Column Detail */}
+        <div className="hidden md:grid md:grid-cols-11 gap-4 bg-white shadow-sm rounded-xl border font-sans text-gray-700 p-3 px-5 mb-4 font-semibold mt-6">
+        <div className="col-span-1">Image</div>
+        <div className="col-span-3">Personal Details</div>
+        {/* <div className="col-span-1"></div> */}
+        <div className="col-span-2">Role</div>
+        <div className="col-span-2">Verification</div>
+        <div className="col-span-2">Product Manager</div>
+        <div className="col-span-1">Actions</div>
       </div>
 
       {/* Employee Details List */}
@@ -166,63 +170,64 @@ function EmployeesPage() {
         {employees.map((emp: Employee) => (
           <div
             key={emp.id}
-            className="grid grid-cols-1 md:grid-cols-7 items-center bg-white p-4 rounded-md gap-2 border border-black"
+            className="grid w-full grid-cols-11 items-center bg-white shadow-md p-4 rounded-xl gap-4 border h-[140px]"
           >
-            <div className="flex justify-center">
+            <div className="flex justify-center col-span-1">
               <img
                 src={emp.image}
                 alt={emp.name}
                 className="w-16 h-16 rounded-md"
               />
             </div>
-            <div className="xs:pl-[1px] lg:pl-[38px] md:text-left sm:text-left">
+            <div className="col-span-3">
               <h2 className="text-lg text-black font-semibold">{emp.name}</h2>
-              <p className="text-black">{emp.number}</p>
-              <p className="text-black">{emp.email}</p>
+              <p className="text-gray-600 text-sm mt-1 font-semibold opacity-60 cursor-pointer hover:text-blue-800">{emp.number}</p>
+              <p className="text-gray-600 text-sm font-semibold opacity-60 cursor-pointer hover:text-blue-800">{emp.email}</p>
             </div>
-            <p className="text-black lg:text-center md:text-center"></p>
-            <p className="text-black lg:text-center md:text-left">{emp.role}</p>
+           
+           <div className="col-span-2 px-6 py-1 border rounded-xl w-fit ">
+           <p className="text-gray-600 text-sm font-semibold uppercase">{emp.role}</p>
+           </div>
 
             {/* Verified Button */}
-            <div className="flex justify-center">
+            <div className="col-span-2">
               {/* isVerified  true */}
               {emp.isVerified === true? (
-                <button className="px-4 py-2 bg-green-500 rounded-[10px] text-white">
-                  Verified
-                </button>
+                <div className=" text-sm flex font-semibold items-center text-blue-400 gap-1">
+                  <CheckCircleIcon size={18}/>
+                  <p className="">Verified</p>
+                </div>
               ) : (
                 <button
-                  className={`relative inline-flex lg:items-center xs:items-left justify-center w-16 h-8 rounded-full transition-all duration-300 ${emp.isVerified ? "bg-green-500" : "bg-red-500"
-                    }`}
                   onClick={() => toggleVerified(emp.id, emp.isVerified)}
                 >
-                  <span
-                    className={`absolute left-1 top-1 w-6 h-6 bg-white rounded-full transition-all duration-300 transform ${emp.isVerified ? "translate-x-8" : "translate-x-0"
-                      }`}
-                  ></span>
+                  <div className=" text-sm flex font-semibold items-center text-red-400 gap-1">
+                  <OctagonAlert size={18}/>
+                  <p className="">Pending</p>
+                </div> 
                 </button>
               )}
             </div>
 
 
                        {/* Can Modify  */}
-            <div className="flex justify-center">
+            <div className="col-span-2">
               <button
-                className={`relative inline-flex items-center justify-center w-16 h-8 rounded-full transition-all duration-300 ${emp.canModify ? "bg-green-500" : "bg-red-500"
+                className={`relative inline-flex items-center justify-center w-16 h-8 rounded-full transition-all duration-300 bg-gray-300
                   }`}
-                onClick={() => toggleCanModify(emp.id, emp.canModify)}
+                onClick={() => setTemp(!temp)}
               >
                 <span
-                  className={`absolute left-1 top-1 w-6 h-6 bg-white rounded-full transition-all duration-300 transform ${emp.canModify ? "translate-x-8" : "translate-x-0"
+                  className={`absolute left-1 top-1 w-6 h-6 bg-white rounded-full transition-all duration-300 transform ${temp ? "translate-x-8" : "translate-x-0"
                     }`}
                 ></span>
               </button>
             </div>
 
             {/* Delete Button */}
-            <div className="flex justify-center">
+            <div className="col-span-1">
               <button
-                className="bg-red-600 text-white px-3 py-2 rounded-[8px] flex items-center gap-1 hover:bg-red-500 transition-all duration-200 hover:scale-105 active:scale-95"
+                className="border text-red-400 px-3 py-2 rounded-[12px] flex items-center gap-1 hover:text-red-500 transition-all duration-200 hover:scale-105 active:scale-95"
                 onClick={() => handleDeleteEmployee(emp.id)}
               >
                 <Trash2 size={18} />
@@ -231,6 +236,10 @@ function EmployeesPage() {
           </div>
         ))}
       </div>
+
+    </div>
+      
+
     </div>
   );
 }
