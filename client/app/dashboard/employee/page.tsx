@@ -14,6 +14,9 @@ import {
   useUpdateEmployeeMutation,
   useDeleteEmployeeMutation,
 } from "@/redux/api/employee";
+import { useAppSelector } from "@/redux/redux";
+import Loader from "@/components/common/Loader";
+import EmployeeCard from "./_components/EmployeeCard";
 
 
 
@@ -31,90 +34,97 @@ interface Employee {
   image: string;
 }
 
-const employees: Employee[] = [
-  {
-    id: "1",
-    email: "amankrsingh58@gmail.com",
-    password: "pass",
-    name: "Abhi",
-    number: "1234567890",
-    canModify: false,
-    role: "User",
-    restaurantId: "restro",
-    verificationToken: "token123",
-    isVerified: false,
-    image: "img.com",
-  },
-  {
-    id: "2",
-    email: "amankrsingh58@gmail.com",
-    password: "pas",
-    name: "Adi",
-    number: "0987654321",
-    canModify: true,
-    role: "chef",
-    restaurantId: "restro1",
-    verificationToken: "token456",
-    isVerified: true,
-    image: "adi",
-  },
-];
+// const employees: Employee[] = [
+//   {
+//     id: "1",
+//     email: "amankrsingh58@gmail.com",
+//     password: "pass",
+//     name: "Abhi",
+//     number: "1234567890",
+//     canModify: false,
+//     role: "User",
+//     restaurantId: "restro",
+//     verificationToken: "token123",
+//     isVerified: false,
+//     image: "img.com",
+//   },
+//   {
+//     id: "2",
+//     email: "amankrsingh58@gmail.com",
+//     password: "pas",
+//     name: "Adi",
+//     number: "0987654321",
+//     canModify: true,
+//     role: "chef",
+//     restaurantId: "restro1",
+//     verificationToken: "token456",
+//     isVerified: true,
+//     image: "adi",
+//   },
+// ];
+
+// interface confirmationDialogInterfacce {
+//   title: string;
+//   desc: string;
+//   clickHandler: () => void;
+//   isModalOpen: boolean;
+//   setIsModalOpen: any;
+// }
 
 function EmployeesPage() {
 
-  // const { data: employees, isLoading, isError } = useGetAllEmployeesQuery(); 
-  const [addEmployee] = useAddEmployeeMutation(); 
-  const [updateEmployee] = useUpdateEmployeeMutation(); 
-  const [deleteEmployee] = useDeleteEmployeeMutation(); 
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // if (isLoading) return <p>Loading employees...</p>;
-  // if (isError) return <p>Error loading employees.</p>;
+  const [employees,setEmployees] = useState<Employee[] | []>([]);
 
 
+  const {restaurantId} = useAppSelector((state) => state.auth)
 
-  const toggleVerified = async (id: string, isVerified: boolean) => {
-    try {
-      await updateEmployee({ id, data: { isVerified: !isVerified } }).unwrap();
-    } catch (error) {
-      console.error("Error updating verification status:", error);
+  const { data: employeesApiData, isLoading, isError } = useGetAllEmployeesQuery(restaurantId); 
+  const [addEmployee] = useAddEmployeeMutation(); 
+
+
+  useEffect(() => {
+    if(employeesApiData?.success == false){
+      toast.error(employeesApiData?.message);
     }
-  };
-
-  const toggleCanModify = async (id: string, canModify: boolean) => {
-    try {
-      await updateEmployee({ id, data: { canModify: !canModify } }).unwrap();
-    } catch (error) {
-      console.error("Error updating canModify status:", error);
+    else if(employeesApiData?.success){
+      setEmployees(employeesApiData.users)
     }
-  };
+    // console.log("Employee Api data",employeesApiData);
+    // console.log("Employee",employees);
+  },[employeesApiData])
 
 
 
-  //  Delete employee
-  const handleDeleteEmployee = async (id: string) => {
-    await deleteEmployee(id);
-  };
+
 
   //add new employr
   const handleAddEmployee = async (employeeData: Employee) => {
+    const toastId = toast.loading("Loading...");
     try {
-      const response = await addEmployee(employeeData).unwrap(); 
+      const response = await addEmployee({restaurantId,data:employeeData}).unwrap(); 
       console.log("Employee added successfully:", response);
-
-      toast.success("Employee added successfully!"); 
-      setIsModalOpen(false);
+      if(!response.success){
+        throw new Error(response.message);
+      }
+      else{
+        toast.success("Employee added successfully!"); 
+      }
     } catch (error) {
       console.error("Error adding employee:", error);
-      toast.error("Failed to add employee. Please try again."); 
+      toast.error(error.message); 
     }
+    setIsModalOpen(false);
+    toast.dismiss(toastId);
   };
 
   //temprorary
   const [temp,setTemp] = useState(false)
 
+  if(isLoading){
+    return <Loader/>;
+  }
 
-  console.log("New Employee:", employees);
 
   return (
     <div className="p-6 text-white min-h-screen">
@@ -167,74 +177,15 @@ function EmployeesPage() {
 
       {/* Employee Details List */}
       <div className="space-y-4">
-        {employees.map((emp: Employee) => (
-          <div
-            key={emp.id}
-            className="grid w-full grid-cols-11 items-center bg-white shadow-md p-4 rounded-xl gap-4 border h-[140px]"
-          >
-            <div className="flex justify-center col-span-1">
-              <img
-                src={emp.image}
-                alt={emp.name}
-                className="w-16 h-16 rounded-md"
-              />
-            </div>
-            <div className="col-span-3">
-              <h2 className="text-lg text-black font-semibold">{emp.name}</h2>
-              <p className="text-gray-600 text-sm mt-1 font-semibold opacity-60 cursor-pointer hover:text-blue-800">{emp.number}</p>
-              <p className="text-gray-600 text-sm font-semibold opacity-60 cursor-pointer hover:text-blue-800">{emp.email}</p>
-            </div>
-           
-           <div className="col-span-2 px-6 py-1 border rounded-xl w-fit ">
-           <p className="text-gray-600 text-sm font-semibold uppercase">{emp.role}</p>
-           </div>
-
-            {/* Verified Button */}
-            <div className="col-span-2">
-              {/* isVerified  true */}
-              {emp.isVerified === true? (
-                <div className=" text-sm flex font-semibold items-center text-blue-400 gap-1">
-                  <CheckCircleIcon size={18}/>
-                  <p className="">Verified</p>
-                </div>
-              ) : (
-                <button
-                  onClick={() => toggleVerified(emp.id, emp.isVerified)}
-                >
-                  <div className=" text-sm flex font-semibold items-center text-red-400 gap-1">
-                  <OctagonAlert size={18}/>
-                  <p className="">Pending</p>
-                </div> 
-                </button>
-              )}
-            </div>
-
-
-                       {/* Can Modify  */}
-            <div className="col-span-2">
-              <button
-                className={`relative inline-flex items-center justify-center w-16 h-8 rounded-full transition-all duration-300 bg-gray-300
-                  }`}
-                onClick={() => setTemp(!temp)}
-              >
-                <span
-                  className={`absolute left-1 top-1 w-6 h-6 bg-white rounded-full transition-all duration-300 transform ${temp ? "translate-x-8" : "translate-x-0"
-                    }`}
-                ></span>
-              </button>
-            </div>
-
-            {/* Delete Button */}
-            <div className="col-span-1">
-              <button
-                className="border text-red-400 px-3 py-2 rounded-[12px] flex items-center gap-1 hover:text-red-500 transition-all duration-200 hover:scale-105 active:scale-95"
-                onClick={() => handleDeleteEmployee(emp.id)}
-              >
-                <Trash2 size={18} />
-              </button>
-            </div>
+        {
+          employees && employees.length > 0 ? 
+          employees.map((emp: Employee) => (
+            <EmployeeCard emp = {emp} key={emp.id} />
+          )) :
+          <div className="w-full h-[50vh] flex items-center justify-center text-3xl font-semibold text-black">
+            No member is added yet!
           </div>
-        ))}
+        }
       </div>
 
     </div>

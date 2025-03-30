@@ -1,4 +1,7 @@
 "use client";
+import Loader from "@/components/common/Loader";
+import { useGetAllOrdersQuery } from "@/redux/api/order";
+import { useAppSelector } from "@/redux/redux";
 import { formatDate } from "@/utils/DateFormatter";
 import {
   AlertTriangle,
@@ -13,57 +16,58 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 
-const initialOrders = [
-  {
-    orderCode: "00001",
-    name: "A",
-    isPack: false,
-    paymentOption: "Cash",
-    status: "Completed",
-    createdAt: "2025-03-03",
-  },
-  {
-    orderCode: "00002",
-    name: "B",
-    isPack: true,
-    paymentOption: "Online",
-    status: "Pending",
-    createdAt: "2025-03-03",
-  },
-  {
-    orderCode: "00003",
-    name: "C",
-    isPack: false,
-    paymentOption: "Online",
-    status: "Cancelled",
-    createdAt: "2025-03-03",
-  },
-  {
-    orderCode: "00004",
-    name: "D",
-    isPack: false,
-    paymentOption: "Online",
-    status: "Completed",
-    createdAt: "2025-03-03",
-  },
-  {
-    orderCode: "00005",
-    name: "E",
-    isPack: true,
-    paymentOption: "Cash",
-    status: "Pending",
-    createdAt: "2025-03-03",
-  },
-  {
-    orderCode: "00006",
-    name: "F",
-    isPack: true,
-    paymentOption: "Online",
-    status: "Completed",
-    createdAt: "2025-03-03",
-  },
-];
+// const initialOrders = [
+//   {
+//     orderCode: "00001",
+//     name: "A",
+//     isPack: false,
+//     paymentOption: "Cash",
+//     status: "Completed",
+//     createdAt: "2025-03-03",
+//   },
+//   {
+//     orderCode: "00002",
+//     name: "B",
+//     isPack: true,
+//     paymentOption: "Online",
+//     status: "Pending",
+//     createdAt: "2025-03-03",
+//   },
+//   {
+//     orderCode: "00003",
+//     name: "C",
+//     isPack: false,
+//     paymentOption: "Online",
+//     status: "Cancelled",
+//     createdAt: "2025-03-03",
+//   },
+//   {
+//     orderCode: "00004",
+//     name: "D",
+//     isPack: false,
+//     paymentOption: "Online",
+//     status: "Completed",
+//     createdAt: "2025-03-03",
+//   },
+//   {
+//     orderCode: "00005",
+//     name: "E",
+//     isPack: true,
+//     paymentOption: "Cash",
+//     status: "Pending",
+//     createdAt: "2025-03-03",
+//   },
+//   {
+//     orderCode: "00006",
+//     name: "F",
+//     isPack: true,
+//     paymentOption: "Online",
+//     status: "Completed",
+//     createdAt: "2025-03-03",
+//   },
+// ];
 
 const filtersData = [
   {
@@ -128,19 +132,34 @@ const SearchForm = ({ query, setQuery }) => {
 };
 
 const OrderList = () => {
-  const [orderRes, setOrderRes] = useState(initialOrders);
-  const [orders, setOrders] = useState(initialOrders);
+
+  const { restaurantId } = useAppSelector((state) => state.auth)
+
+  const [orderRes, setOrderRes] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [filters, setFilters] = useState<any>({
     createdAt: "",
     isPack: [],
     paymentOption: [],
     status: [],
   });
+
   const [filterModal, setFilterModal] = useState(""); // use for open filter modal a/c to the name of modal
   const [query, setQuery] = useState(""); // use for filter items using search
   const [selectedOrders , setSelectedOrders] = useState<string[]>([]);
 
   const dateInputRef = useRef<HTMLInputElement>(null);
+
+  const {data:OrderApiResponse,isLoading,isError} = useGetAllOrdersQuery(restaurantId);
+  useEffect(() => {
+    if(OrderApiResponse?.success){
+       setOrderRes(OrderApiResponse?.data);
+       setOrders(OrderApiResponse?.data);
+    }
+    else{
+      toast.error(OrderApiResponse?.message);
+    }
+  },[OrderApiResponse])
 
   useEffect(() => {
     const filteredOrders = orderRes.filter((order) => {
@@ -150,11 +169,11 @@ const OrderList = () => {
         (filters.paymentOption.length == 0 ||
           filters.paymentOption.includes(order.paymentOption)) &&
         (filters.status.length == 0 || filters.status.includes(order.status)) &&
-        (!query || order.name.toLowerCase().includes(query.toLowerCase()))
+        (!query ||query == "" || order.orderCode.toLowerCase().includes(query.toLowerCase()))
       );
     });
     setOrders(filteredOrders);
-  }, [filters, query]);
+  }, [filters, query,orderRes]);
 
 
   //select order handler
@@ -197,8 +216,28 @@ const OrderList = () => {
   const resetFilters = () =>
     setFilters({ createdAt: "", isPack: [], paymentOption: [], status: [] });
 
+
+  //download handler
+  const handleDownload = (url:string) => {
+    fetch(url)
+    .then(response => response.blob())
+    .then(blob => {
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "invoice.pdf"; // Sets the correct file name
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    })
+    .catch(error => console.error("Download failed", error));
+  };
+
+  if(isLoading){
+    return <Loader/>
+  }
+
   return (
-    <div className="w-full mt-6 px-8">
+    <div className="w-full mt-6 px-8 pb-10">
 
       {/* Heading */}
       <div className="flex flex-col justify-between items-start">
@@ -355,16 +394,16 @@ const OrderList = () => {
               key={index}
               className="grid grid-cols-11 py-4  text-[0.90rem] text-gray-600 border border-gray-300 bg-white "
             >
-              <div className="col-span-2 h-full flex flex-row gap-16 pl-8 items-center justify-start">
+              <div className="col-span-2 h-full flex flex-row gap-6 pl-8 items-center justify-start">
                 <input
                 type="checkbox" 
                 checked={selectedOrders.includes(order.orderCode)}
                 onChange={() => selectOrderHandler(order.orderCode)}
                 className="w-4 rounded-xl cursor-pointer" />
-                <p>{order.orderCode}</p>
+                <p className="text-sm">{order.orderCode}</p>
               </div>
               <div className="col-span-1 flex items-center justify-start">
-                {order.name ?? "Anoymous"}
+                {order.name == "" ? "Anoymous" : order.name}
               </div>
               <div className="col-span-1 flex items-center justify-center">
                 {formatDate(order.createdAt)}
@@ -395,10 +434,15 @@ const OrderList = () => {
               </div>
               <div className="col-span-2 flex items-center justify-center">
                 <div className="flex flex-row border w-fit rounded-xl">
-                  <button className="border-r p-1 px-3 text-blue-400 hover:text-blue-500">
+                  <button
+                  className="border-r p-1 px-3 text-blue-400 hover:text-blue-500"
+                  onClick={() => window.open(`${order?.invoice}?fl_attachment=false`,"_blank")}
+                  >
                     <EyeIcon />
                   </button>
-                  <button className="p-1 px-3 text-red-400 hover:text-red-500">
+                  <button
+                  onClick={() => handleDownload(order?.invoice)}
+                  className="p-1 px-3 text-red-400 hover:text-red-500">
                     <DownloadIcon />
                   </button>
                 </div>

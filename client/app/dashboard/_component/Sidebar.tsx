@@ -2,6 +2,7 @@
 
 import { useAppDispatch, useAppSelector } from "@/redux/redux";
 import { setIsSidebarCollapsed } from "@/redux/states/globalSlice";
+import { addOrder } from "@/redux/states/orderSlice";
 import {
   Archive,
   Clipboard,
@@ -16,7 +17,11 @@ import {
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
+
+import { io } from 'socket.io-client'
+
+
 
 interface SidebarLinkProps {
   href: string;
@@ -69,6 +74,35 @@ const Sidebar = () => {
   const toggleSidebar = () => {
     dispatch(setIsSidebarCollapsed(!isSidebarCollapsed));
   };
+  
+  const [ newOrderModal , setNewOrderModal ] = useState(null);
+     
+  
+    const {user , isAuthenticated } = useAppSelector((state) => state.auth)
+    console.log("User data",user,isAuthenticated);
+
+    //web socket configuration
+  
+    const socket = io('http://localhost:8000',{
+      path:"/socket-server-path"
+    })
+    useEffect(() => {
+       if(isAuthenticated){
+          //join room
+          socket.emit("joinRoom",user.role == "User" ? user?.restaurantId : user.id);
+           
+          //listen for new order
+          socket.on('newOrder',(orderData) => {
+            console.log("New Order Recieved",orderData);
+            dispatch(addOrder(orderData));
+            setNewOrderModal(orderData);
+          });
+  
+          return () => {
+            socket.off("newOrder");
+          }
+       }
+    },[])
 
   const sidebarClassNames = `fixed flex flex-col  ${
     isSidebarCollapsed ? "w-10 md:w-16" : "w-72 md:w-64"

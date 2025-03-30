@@ -1,12 +1,14 @@
+import { useSubscribeMutation } from "@/redux/api/order";
 import { useEffect } from "react";
 
 
-export function requestNotificationPermission(orderId: string) {
+export function requestNotificationPermission(orderId: string,setSubscription: any) {
   if (!("serviceWorker" in navigator)) return;
   navigator.serviceWorker.register("/service-worker.js").then((registration) => {
     Notification.requestPermission().then((permission) => {
       if (permission === "granted") {
-        subscribeUserToPush(registration,orderId);
+        const subscribe = subscribeUserToPush(registration,orderId);
+        setSubscription(subscribe);
       }
     });
   });
@@ -19,14 +21,7 @@ async function subscribeUserToPush(registration:any,orderId:string) {
   });
 
 console.log("Subscription",subscription);
-  // Send subscription to the server
-//   await fetch("/subscribe", {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify({ orderId: "some-unique-order-id", subscription }),
-//   });
+return subscription;
 }
 
 function urlBase64ToUint8Array(base64String:any) {

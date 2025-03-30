@@ -6,11 +6,12 @@ import { Server } from "socket.io"
 import { emitNewOrder } from "../socket";
 import { generateInvoice } from "../utils/generateInvoice";
 import uploadToCloudinary, { uploadPDFToCloudinary } from "../utils/cloudinaryUploader";
+import { sendPushNotification } from "../utils/notificationSender";
 
 const prisma = new PrismaClient();
 
 function generateOrderCode() {
-    return "ORD-" + crypto.randomBytes(8).toString("hex").toUpperCase();
+    return "ORD-" + crypto.randomBytes(4).toString("hex").toUpperCase();
   }
 
 let subscriptionData  = [];
@@ -52,7 +53,7 @@ export const CreateOrder = async(req: Request,res: Response): Promise<any> => {
                 paymentOption,
                 restaurantId,
                 orderCode,
-                invoice:invoiceRes?.secure_url || "",
+                invoice:invoiceRes?.secure_url || null,
                 isVerified: restaurantDetails ? restaurantDetails.autoAcceptOrder : false,
                 createdAt: new Date( Date.now() ).toISOString()
             }
@@ -61,15 +62,8 @@ export const CreateOrder = async(req: Request,res: Response): Promise<any> => {
         console.log("order",order)
 
         for(const subOrderData of orders){
-            // console.log(subOrderData)
 
-            const productVariant = await prisma.productVariant.findUnique({
-                where:{
-                    id: subOrderData.productVariantId
-                }
-            })
-
-            totalAmount += productVariant?.price || subOrderData.unitPrice;
+            totalAmount += subOrderData.unitPrice;
 
             const t = await prisma.subOrder.create({
                 data:{
@@ -77,7 +71,7 @@ export const CreateOrder = async(req: Request,res: Response): Promise<any> => {
                     variant: subOrderData.variant,
                     productVariantId:subOrderData.productVariantId,
                     quantity: subOrderData.quantity,
-                    unitPrice: productVariant?.price || subOrderData.unitPrice,
+                    unitPrice:  subOrderData.unitPrice,
                     orderId: order.id
                 }
             })
@@ -127,6 +121,7 @@ export const CreateOrder = async(req: Request,res: Response): Promise<any> => {
    }
 }
 
+// Verify order may be use later as a future scope
 export const VerifyOrder = async(req: Request,res: Response): Promise<any> => {
     try {
         const { orderId } = req.body();
@@ -167,6 +162,74 @@ export const VerifyOrder = async(req: Request,res: Response): Promise<any> => {
     }
 }
 
+export const UpdateStatus = async(req: Request,res: Response): Promise<any> => {
+    try {
+       
+        const {status} = req.body;
+        const { id } = req.params;
+   
+        if(!status || !id){
+           return res.status(401).json({
+               success: false,
+               message: "Data missing"
+           })
+        }
+
+        console.log("Id at update status",id);
+        
+        const order = await prisma.order.update({
+           where:{
+               id: id
+           },
+           data:{status}
+        });
+        console.log("Order",order)
+        
+        if(!order){
+           return res.status(402).json({
+               success: false,
+               message: 'Something wrong , Try again!'
+           })
+        }
+   
+        let message;
+        if(order.status == "Ready"){
+            message = {
+               title: "Your order is ready!",
+               body: "Please pickup ur order at counter!!"
+           }
+        }
+        if(order.status == "Cancelled"){
+            message = {
+               title: "Your order is cancelled!",
+               body: "Sorry for this incovinence!!"
+           }
+        }
+        if(order.status == "Completed"){
+            message = {
+               title: "Congratulation , you got ur food!",
+               body: "Want to review us??"
+           }
+        }
+   
+        // if(message){
+        //    await sendPushNotification(order.subscription,message);
+        // }
+
+        return res.status(200).json({
+            success: true,
+            message: "Status changed successfully"
+        })
+
+    } catch (error) {
+        console.log("Something wrong while update status!",error)
+        return res.status(499).json({
+            success: false,
+            message: "Something wrong while update status!"
+        })
+    }
+}
+
 export const GetAllOrders = async(req: Request,res: Response): Promise<any> => {
     try {
         
@@ -175,6 +238,9 @@ export const GetAllOrders = async(req: Request,res: Response): Promise<any> => {
         const orders = await prisma.order.findMany({
             where:{
                 restaurantId: restaurantId
+            },
+            include:{
+                orders: true
             }
         })
 
@@ -197,9 +263,14 @@ export const Subscribe = async(req: Request,res: Response): Promise<any> => {
     try {
         const { orderId , subscription } = req.body;
     subscriptionData[orderId] = subscription;
+    const response = await prisma.order.update({
+        where:{id: orderId},
+        data: {subscription}
+    })
     return res.status(200).json({
         success: true,
         message: "Subscription saved",
+        data: response
     });
     } catch (error) {
         console.log("Error inside subscribe order",error);
@@ -210,8 +281,8 @@ export const Subscribe = async(req: Request,res: Response): Promise<any> => {
     }
 }
 
-export const NotifyCustomer = async(orderId: string, status: string) => {
+export const NotifyCustomer = async(orderId: string, status: string,subscription: string) => {
 
-
+  
 
 }

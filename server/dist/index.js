@@ -17,6 +17,7 @@ const web_push_1 = __importDefault(require("web-push"));
 const Auth_1 = __importDefault(require("./routes/Auth"));
 const Category_1 = __importDefault(require("./routes/Category"));
 const Product_1 = __importDefault(require("./routes/Product"));
+const User_1 = __importDefault(require("./routes/User"));
 const cloudinary_1 = __importDefault(require("./config/cloudinary"));
 const Restaurant_1 = __importDefault(require("./routes/Restaurant"));
 const Order_1 = __importDefault(require("./routes/Order"));
@@ -45,10 +46,11 @@ const server = http_1.default.createServer(app);
 const io = new socket_io_1.Server(server, {
     path: "/socket-server-path",
     cors: {
-        origin: ["http://localhost:3001"],
+        origin: "*",
         methods: ["GET", "POST"],
         credentials: true
-    }
+    },
+    transports: ["websocket", "polling"],
 });
 (0, socket_1.registerSocketHandlers)(io);
 app.use((req, res, next) => {
@@ -64,6 +66,7 @@ app.use("/api/category", Category_1.default);
 app.use("/api/product", Product_1.default);
 app.use("/api/restaurant", Restaurant_1.default);
 app.use("/api/order", Order_1.default);
+app.use("/api/user", User_1.default);
 //    SERVER
 const PORT = process.env.PORT || 8000;
 server.listen(PORT, () => {

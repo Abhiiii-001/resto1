@@ -13,6 +13,7 @@ import webpush from "web-push"
 import UserRouter from './routes/Auth'
 import CategoryRouter from './routes/Category'
 import ProductRouter from './routes/Product'
+import EmployeeRouter from './routes/User'
 import cloudinaryConnect from "./config/cloudinary";
 import RestaurantRouter from "./routes/Restaurant"
 import OrderRouter from "./routes/Order"
@@ -46,10 +47,11 @@ const server = http.createServer(app);
 const io = new Server(server,{
     path:"/socket-server-path",
     cors:{
-        origin:["http://localhost:3001"],
+        origin:"*",
         methods:["GET","POST"],
         credentials: true
-    }
+    },
+    transports: ["websocket", "polling"],
 });
 
 registerSocketHandlers(io);
@@ -72,6 +74,7 @@ app.use("/api/category",CategoryRouter);
 app.use("/api/product",ProductRouter);
 app.use("/api/restaurant",RestaurantRouter);
 app.use("/api/order",OrderRouter);
+app.use("/api/user",EmployeeRouter);
 
 //    SERVER
 const PORT = process.env.PORT || 8000

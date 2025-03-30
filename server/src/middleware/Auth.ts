@@ -32,7 +32,7 @@ export const Auth = async(req: Request,res: Response,next: NextFunction): Promis
 }
 
 
-export const IsRestaurant = async(req: Request,res: Response,next: NextFunction) => {
+export const IsRestaurant = async(req: Request,res: Response,next: NextFunction):Promise<any> => {
     try {
         const user = await prisma.restaurant.findUnique({
             // @ts-ignore

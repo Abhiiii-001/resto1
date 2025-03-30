@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const employeeApi = createApi({
-    baseQuery: fetchBaseQuery({baseUrl:"http://localhost:5000"}),
+    baseQuery: fetchBaseQuery({baseUrl:process.env.NEXT_PUBLIC_USER_BASE_URL,credentials:"include"}),
     reducerPath:"employeeApi",
     tagTypes : ["getallEmployees"],
 
@@ -9,26 +9,25 @@ export const employeeApi = createApi({
                 //fetch all call
     endpoints:(builder) => ({
         getAllEmployees:builder.query({
-            query: () => ({url: "/employees"}),
+            query: (restaurantId) => ({url: `/${restaurantId}`}),
             providesTags:["getallEmployees"]
 
         }),
                   
                     // post call
         addEmployee:builder.mutation<any,any>({
-            query: (data) => ({
-                url:"/employees",
+            query: ({data,restaurantId}) => ({
+                url:`/${restaurantId}`,
                 method:"POST",
                 body:data,
             }),
             invalidatesTags:["getallEmployees"]
-
         }),
                     // update call 
         updateEmployee:builder.mutation<any,any>({
             query:({id, data}) => ({
-                url:`/employees/${id}`,
-                method: "PATCH",
+                url:`/${id}`,
+                method: "PUT",
                 body:data,
             }),
             invalidatesTags:["getallEmployees"]
@@ -38,7 +37,7 @@ export const employeeApi = createApi({
                 //    delete cll
         deleteEmployee:builder.mutation<any,any>({
             query: (id) => ({
-                url:`/employees/${id}`,
+                url:`/${id}`,
                 method:"DELETE",
             }),
             invalidatesTags:["getallEmployees"]

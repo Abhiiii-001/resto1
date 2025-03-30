@@ -20,7 +20,7 @@ const uploadToCloudinary = (file, folder) => __awaiter(void 0, void 0, void 0, f
 });
 const uploadPDFToCloudinary = (fileBuffer_1, ...args_1) => __awaiter(void 0, [fileBuffer_1, ...args_1], void 0, function* (fileBuffer, folder = 'invoices') {
     return new Promise((resolve, reject) => {
-        const uploadStream = cloudinary_1.v2.uploader.upload_stream({ resource_type: 'raw', folder }, // 'raw' is used for non-image files like PDFs
+        const uploadStream = cloudinary_1.v2.uploader.upload_stream({ resource_type: 'auto', folder, format: "pdf" }, // 'raw' is used for non-image files like PDFs
         (error, result) => {
             if (error)
                 reject(error);

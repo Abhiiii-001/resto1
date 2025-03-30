@@ -35,10 +35,10 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ isOpen, onClose, on
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+      <div className="bg-white p-6 shadow-lg w-full max-w-md rounded-xl">
         {/* Header */}
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Add Employee</h2>
+          <h2 className="text-2xl font-semibold text-black">Add Employee</h2>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
             <X size={20} />
           </button>
@@ -47,7 +47,7 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ isOpen, onClose, on
         {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            <label className="block text-gray-700 font-medium">Name</label>
+            <label className="block text-gray-700 text-sm font-semibold py-1">Name<span className="pl-1 text-red-500">*</span></label>
             <input
               type="text"
               {...register("name", { required: "Name is required" })}
@@ -58,7 +58,7 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ isOpen, onClose, on
           </div>
 
           <div>
-            <label className="block text-gray-700 font-medium">Email</label>
+          <label className="block text-gray-700 text-sm font-semibold py-1">Email<span className="pl-1 text-red-500">*</span></label>
             <input
               type="email"
               {...register("email", { required: "Email is required" })}
@@ -69,7 +69,7 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ isOpen, onClose, on
           </div>
 
           <div>
-            <label className="block text-gray-700 font-medium">Number</label>
+          <label className="block text-gray-700 text-sm font-semibold py-1">Number<span className="pl-1 text-red-500">*</span></label>
             <input
               type="text"
               {...register("number", { required: "Number is required" })}
@@ -80,25 +80,25 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({ isOpen, onClose, on
           </div>
 
           <div>
-            <label className="block text-gray-700 font-medium">Role</label>
+          <label className="block text-gray-700 text-sm font-semibold py-1">Role<span className="pl-1 text-red-500">*</span></label>
             <select
               {...register("role", { required: "Role is required" })}
-              className="w-full border p-2 rounded text-gray-700"
+              className="w-full border p-2 rounded text-gray-700 text-opacity-60 text-sm bg-white"
             >
               <option value="">Select Role</option>
-              <option value="admin">Admin</option>
-              <option value="chef">Chef</option>
-              <option value="staff">Staff</option>
+              {/* <option value="admin">Admin</option> */}
+              <option value="User">User</option>
+              {/* <option value="staff">Staff</option> */}
             </select>
             {errors.role && <p className="text-red-500 text-sm">{errors.role.message}</p>}
           </div>
 
           {/* Buttons */}
           <div className="flex justify-end space-x-2 mt-4">
-            <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-500">
+            <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-400 text-white rounded-xl hover:bg-gray-500 transition-all duration-200">
               Cancel
             </button>
-            <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+            <button type="submit" className="px-4 py-2 bg-blue-400 text-white rounded-xl hover:bg-blue-500 transition-all duration-200">
               Add Employee
             </button>
           </div>

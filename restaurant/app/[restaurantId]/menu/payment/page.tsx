@@ -3,6 +3,7 @@ import {
   CreateOrderInterface,
   CreateSubOrderInterface,
   useCreateOrderMutation,
+  useSubscribeMutation,
 } from "@/redux/api/order";
 import { useAppDispatch, useAppSelector } from "@/redux/redux";
 import {
@@ -14,7 +15,7 @@ import { requestNotificationPermission } from "@/utils/webPushConfiguration";
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import React, { useEffect, useState, useTransition } from "react";
+import React, { use, useEffect, useState, useTransition } from "react";
 import { toast } from "react-toastify";
 import { motion } from "motion/react";
 import Success from "./_component/Success";
@@ -42,6 +43,16 @@ function Payment({}: Props) {
   const dispatch = useAppDispatch();
 
   const [invoiceModal, setInvoiceModal] = useState(null);
+
+  //subscription send to backend
+  const [subscription , setSubscription] = useState(null);
+  const [orderId , setOrderId] = useState(null);
+  const [subscribeApi] = useSubscribeMutation();
+  useEffect(() => {
+    if(subscription){
+      const res =  subscribeApi({orderId,subscription});
+    }
+  },[subscription])
 
   const [createOrderApi, { isLoading }] = useCreateOrderMutation();
 
@@ -76,12 +87,14 @@ function Payment({}: Props) {
 
         const response = await createOrderApi(orderData);
         console.log("Create order response", response);
+
         toast.dismiss(toastId);
         if (response.success == false) {
           throw new Error("Unable to create order!");
         } else {
           toast.success("Order Created!");
-          requestNotificationPermission(response?.data?.id);
+          setOrderId(response?.data?.id)
+          requestNotificationPermission(response?.data?.id,setSubscription);
           setInvoiceModal(response.data.data);
         }
       }

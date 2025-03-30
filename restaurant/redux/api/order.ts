@@ -32,8 +32,15 @@ export const orderApi = createApi({
                 method: "POST",
                 body: data
             })
+        }),
+        subscribe: build.mutation({
+            query: (data) => ({
+                url: '/subscribe',
+                method: "PUT",
+                body: data
+            })
         })
     })
 });
 
-export const { useCreateOrderMutation } = orderApi;
+export const { useCreateOrderMutation , useSubscribeMutation } = orderApi;
