@@ -7,6 +7,9 @@ import Navbar from "./_component/Navbar";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import { ThemeProvider } from "@/components/ui/theme-provider";
+
+
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -33,6 +36,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+
+<ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <StoreProvider>
             <div className="h-16 z-50 fixed w-screen">
               <Navbar/>
@@ -53,6 +58,8 @@ export default function RootLayout({
               />
             </div>
         </StoreProvider>
+
+        </ThemeProvider>
       </body>
     </html>
   );
