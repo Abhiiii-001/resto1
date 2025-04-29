@@ -139,6 +139,8 @@ export const GetAllProducts = async(req: Request,res: Response):Promise<any> => 
             }
         });
 
+        // console.log(restaurantId,allProducts)
+
         // const popularProducts = await prisma.product.findMany({
         //     take:10,
         //     orderBy:{

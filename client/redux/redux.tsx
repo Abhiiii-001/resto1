@@ -16,6 +16,7 @@ import { categoryApi } from "./api/category";
 import { productApi } from "./api/products";
 import { employeeApi } from "./api/employee";
 import { orderApi } from "./api/order";
+import { dashboardApi } from "./api/dashboard";
 import { setupListeners } from "@reduxjs/toolkit/query";
 
 import {
@@ -65,7 +66,8 @@ const rootReducer = combineReducers({
   [categoryApi.reducerPath]: categoryApi.reducer,
   [productApi.reducerPath]: productApi.reducer,
   [employeeApi.reducerPath]:employeeApi.reducer,
-  [orderApi.reducerPath]: orderApi.reducer
+  [orderApi.reducerPath]: orderApi.reducer,
+  [dashboardApi.reducerPath]: dashboardApi.reducer
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
@@ -84,6 +86,7 @@ export const makeStore = () => {
       .concat(productApi.middleware)
       .concat(employeeApi.middleware)
       .concat(orderApi.middleware)
+      .concat(dashboardApi.middleware)
   });
 };
 
@@ -105,7 +108,8 @@ export default function StoreProvider({
     storeRef.current = makeStore();
     setupListeners(storeRef.current.dispatch);
   }
-  const persistor = persistStore(storeRef.current);
+ const persistor = persistStore(storeRef.current);
+ persistorRef = persistor;
 
   return (
     <Provider store={storeRef.current}>
@@ -115,3 +119,10 @@ export default function StoreProvider({
     </Provider>
   );
 }
+
+let persistorRef: ReturnType<typeof persistStore> | null = null;
+
+export function getPersistor() {
+  return persistorRef;
+}
+

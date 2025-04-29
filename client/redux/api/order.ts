@@ -1,9 +1,19 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { addOrdersBulk } from "../states/orderSlice";
+import { RootState } from "../redux";
 
 
 export const orderApi = createApi({
-    baseQuery: fetchBaseQuery({baseUrl:process.env.NEXT_PUBLIC_ORDER_BASE_URL , credentials:"include"}),
+    baseQuery: fetchBaseQuery({baseUrl:process.env.NEXT_PUBLIC_ORDER_BASE_URL ,
+         credentials:"include",
+         prepareHeaders: (headers, { getState }) => {
+            const token = (getState() as RootState).auth.token;
+            if (token) {
+                   headers.set("Authorization", `Bearer ${token}`);
+            }
+           return headers;
+        },
+        }),
     reducerPath:"orderApi",
     tagTypes: ["getOrders"],
     endpoints: (builder) => ({

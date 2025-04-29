@@ -10,6 +10,8 @@ import { Server } from 'socket.io'
 import http from "http"
 import webpush from "web-push"
 
+import './utils/cron'
+
 import UserRouter from './routes/Auth'
 import CategoryRouter from './routes/Category'
 import ProductRouter from './routes/Product'
@@ -17,6 +19,8 @@ import EmployeeRouter from './routes/User'
 import cloudinaryConnect from "./config/cloudinary";
 import RestaurantRouter from "./routes/Restaurant"
 import OrderRouter from "./routes/Order"
+import DashboardRouter from './routes/Dashboard'
+
 import { registerSocketHandlers } from "./socket";
 
 
@@ -75,6 +79,8 @@ app.use("/api/product",ProductRouter);
 app.use("/api/restaurant",RestaurantRouter);
 app.use("/api/order",OrderRouter);
 app.use("/api/user",EmployeeRouter);
+app.use("/api/dashboard",DashboardRouter);
+
 
 //    SERVER
 const PORT = process.env.PORT || 8000

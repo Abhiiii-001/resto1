@@ -1,14 +1,7 @@
-<<<<<<< HEAD
-import Herosection from "./_component/Herosection";
-import HeRosection2 from "./_component/HeRosection2";
-import TeamSection from "./_component/TeamSection";
-import EventSlide from "./_component/EventSlide";
-import HomePage from "./_component/home";
-=======
 "use client"
 
 import { motion, useScroll, useTransform } from "framer-motion"
-import { Button } from "./_component/ui/button"
+import { Button } from "./dashboard/_component/button"
 import { 
   ChefHat, 
   QrCode, 
@@ -30,7 +23,8 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useRef } from "react"
->>>>>>> fbd07524a6ac447258c956e3fe90ef879d713307
+import Navbar from "./_component/Navbar"
+
 
 export default function Home() {
   const targetRef = useRef<HTMLDivElement>(null)
@@ -41,29 +35,6 @@ export default function Home() {
 
   const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1])
   const scale = useTransform(scrollYProgress, [0, 0.5], [0.8, 1])
-
-  const features = [
-    {
-      icon: <ChefHat className="h-6 w-6" />,
-      title: "Menu Management",
-      description: "Easily update and manage your menu items in real-time"
-    },
-    {
-      icon: <ShoppingBag className="h-6 w-6" />,
-      title: "Order Processing",
-      description: "Streamline order management and processing"
-    },
-    {
-      icon: <Clock className="h-6 w-6" />,
-      title: "Queue Management",
-      description: "Reduce wait times and improve customer satisfaction"
-    },
-    {
-      icon: <Users2 className="h-6 w-6" />,
-      title: "Team Management",
-      description: "Manage your staff and their responsibilities efficiently"
-    }
-  ]
 
   const testimonials = [
     {
@@ -83,50 +54,6 @@ export default function Home() {
       role: "Food Truck Owner",
       content: "Perfect for small businesses like mine. Easy to use and great customer support.",
       rating: 5
-    }
-  ]
-
-  const pricingPlans = [
-    {
-      name: "Starter",
-      price: "29",
-      description: "Perfect for small cafes and food trucks",
-      features: [
-        "Menu Management",
-        "Basic Order Processing",
-        "2 Staff Accounts",
-        "Basic Analytics",
-        "Email Support"
-      ]
-    },
-    {
-      name: "Professional",
-      price: "79",
-      description: "Ideal for growing restaurants",
-      features: [
-        "Everything in Starter",
-        "Advanced Order Management",
-        "10 Staff Accounts",
-        "Advanced Analytics",
-        "Priority Support",
-        "Inventory Management",
-        "Customer Feedback System"
-      ],
-      popular: true
-    },
-    {
-      name: "Enterprise",
-      price: "199",
-      description: "For large establishments and chains",
-      features: [
-        "Everything in Professional",
-        "Unlimited Staff Accounts",
-        "Custom Integration",
-        "Dedicated Support",
-        "Multi-location Management",
-        "API Access",
-        "Custom Reporting"
-      ]
     }
   ]
 
@@ -163,19 +90,13 @@ export default function Home() {
     transition: { duration: 0.5 }
   };
 
+ 
   return (
-<<<<<<< HEAD
-    // <div>
-    //   <Herosection />
-    //   <HeRosection2 />
-    //   <TeamSection />
-    //   <EventSlide/>
-    // </div>
-    <HomePage/>
-  );
-}
-=======
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
+
+           <div className="h-16 top-0 z-50 fixed w-screen">
+              <Navbar />
+            </div>
    
       
       {/* Hero Section */}
@@ -606,4 +527,4 @@ export default function Home() {
     </div>
   )
 }
->>>>>>> fbd07524a6ac447258c956e3fe90ef879d713307
+    

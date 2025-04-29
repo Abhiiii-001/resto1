@@ -20,6 +20,7 @@ import { toast } from "react-toastify";
 import { motion } from "motion/react";
 import Success from "./_component/Success";
 import { useGetRestaurantDetailsQuery } from "@/redux/api/restaurant";
+import NotificationComponent from "./_component/Notification";
 
 type Props = {};
 
@@ -45,14 +46,8 @@ function Payment({}: Props) {
   const [invoiceModal, setInvoiceModal] = useState(null);
 
   //subscription send to backend
-  const [subscription , setSubscription] = useState(null);
   const [orderId , setOrderId] = useState(null);
-  const [subscribeApi] = useSubscribeMutation();
-  useEffect(() => {
-    if(subscription){
-      const res =  subscribeApi({orderId,subscription});
-    }
-  },[subscription])
+  
 
   const [createOrderApi, { isLoading }] = useCreateOrderMutation();
 
@@ -93,8 +88,7 @@ function Payment({}: Props) {
           throw new Error("Unable to create order!");
         } else {
           toast.success("Order Created!");
-          setOrderId(response?.data?.id)
-          requestNotificationPermission(response?.data?.id,setSubscription);
+          setOrderId(response?.data?.data?.id)
           setInvoiceModal(response.data.data);
         }
       }
@@ -209,6 +203,7 @@ function Payment({}: Props) {
           </motion.button>
         </div>
       </div>
+      {orderId && <NotificationComponent orderId={orderId}/>}
       {invoiceModal && <Success data={invoiceModal} />}
     </div>
   );

@@ -1,12 +1,22 @@
 import { RestaturantSignupInterface } from "@/app/Interfaces/Auth";
 import { createApi , fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { RootState } from "../redux";
 
 export interface LoginInterface {
     email: string;
     password: string;
 }
 export const authApi = createApi({
-    baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8000/api/auth" , credentials: "include"},),
+    baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8000/api/auth" ,
+         credentials: "include",
+         prepareHeaders: (headers, { getState }) => {
+            const token = (getState() as RootState).auth.token;
+            if (token) {
+                   headers.set("Authorization", `Bearer ${token}`);
+            }
+           return headers;
+       },
+        },),
     reducerPath:"authApi",
     tagTypes:["UserSignup" , "RestaurnatSignup" , "Login" , "Logout"],
     endpoints:(build) => ({
@@ -49,6 +59,27 @@ export const authApi = createApi({
                     token: token
                 }
             })
+        }),
+        changePassword: build.mutation<any,any>({
+            query: ({id,...data}) => ({
+                url: `/change-password/${id}`,
+                method: "PUT",
+                body: data
+            })
+        }),
+        resetPassword: build.mutation<any,string>({
+            query: (email) => ({
+                url: "/reset-password",
+                method: "PUT",
+                body: email
+            })
+        }),
+        resetPasswordMaker: build.mutation<any,any>({
+            query:({password,verificationToken}) => ({
+                url: `/reset-password/${verificationToken}`,
+                method: "PUT",
+                body: password
+            })
         })
     })
 })
@@ -58,5 +89,8 @@ export const {
     useRestaurantSignupMutation,
     useLoginMutation,
     useLogoutMutation,
-    useVerifyTokenMutation
+    useVerifyTokenMutation,
+    useChangePasswordMutation,
+    useResetPasswordMutation,
+    useResetPasswordMakerMutation
 } = authApi

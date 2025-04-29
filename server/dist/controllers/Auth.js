@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VerifyToken = exports.Logout = exports.Login = exports.RestaurantSignup = exports.UserSignup = void 0;
+exports.ResetPasswordMaker = exports.ResetPassword = exports.ChangePassword = exports.VerifyToken = exports.Logout = exports.Login = exports.RestaurantSignup = exports.UserSignup = void 0;
 const client_1 = require("@prisma/client");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -65,11 +65,10 @@ const UserSignup = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (!user)
             return res.status(500).json({ message: "Something wrong while user creation!" });
         const verificationLink = `${process.env.CLIENT_URL}/verify/${verificationToken}`;
-        const mailResponse = yield (0, mailSender_1.default)(restaurant.email, "Verify User", `<p>Click <a href="${verificationLink}">here</a> to verify employee email.</p>`);
+        const mailResponse = (0, mailSender_1.default)(restaurant.email, "Verify User", `<p>Click <a href="${verificationLink}">here</a> to verify employee email.</p>`);
         res.status(200).json({
             message: "User created! , Waiting for verification by Restaurant",
             user: user,
-            mailResponse: mailResponse === null || mailResponse === void 0 ? void 0 : mailResponse.response
         });
     }
     catch (error) {
@@ -153,7 +152,10 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             return res.status(403).json({ message: "All field are required!" });
         }
         let user = yield prisma.restaurant.findUnique({
-            where: { email },
+            where: {
+                email,
+                isActive: true
+            },
         });
         let restaurantId = user === null || user === void 0 ? void 0 : user.id;
         if (!user) {
@@ -279,3 +281,173 @@ const VerifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.VerifyToken = VerifyToken;
+const ChangePassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { currentPassword, newPassword, role } = req.body;
+        const { id } = req.params;
+        if (!currentPassword || !newPassword || !role || !id) {
+            return res.status(401).json({
+                success: false,
+                message: 'Data missing!'
+            });
+        }
+        let user;
+        if (role === "Restaurant") {
+            user = yield prisma.restaurant.findUnique({
+                where: { id }
+            });
+        }
+        else if (role === "User") {
+            user = yield prisma.user.findUnique({
+                where: { id }
+            });
+        }
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found!"
+            });
+        }
+        const hashedCurrentPassword = yield bcrypt_1.default.hash(currentPassword, 10);
+        const match = bcrypt_1.default.compare(user === null || user === void 0 ? void 0 : user.password, hashedCurrentPassword);
+        if (!match) {
+            return res.status(404).json({
+                success: false,
+                message: "Incorrect Password!"
+            });
+        }
+        const hashedNewPassword = yield bcrypt_1.default.hash(newPassword, 10);
+        if (role === "Restaurant") {
+            yield prisma.restaurant.update({
+                where: { id },
+                data: {
+                    password: hashedNewPassword
+                }
+            });
+        }
+        else if (role === "User") {
+            yield prisma.user.update({
+                where: { id },
+                data: {
+                    password: hashedNewPassword
+                }
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            message: "Password changed!"
+        });
+    }
+    catch (error) {
+        return res.status(499).json({
+            success: false,
+            message: "Something went wrong!"
+        });
+    }
+});
+exports.ChangePassword = ChangePassword;
+const ResetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { email } = req.body;
+        if (!email) {
+            return res.status(401).json({
+                success: false,
+                message: 'Data missing!'
+            });
+        }
+        let user = yield prisma.user.findUnique({
+            where: { email }
+        });
+        if (!user) {
+            user = yield prisma.user.findUnique({
+                where: { email }
+            });
+        }
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found!"
+            });
+        }
+        const verificationToken = crypto.randomUUID().toString();
+        const verificationLink = `${process.env.CLIENT_URL}/reset-password/${verificationToken}`;
+        if (user.role === "Restaurant") {
+            yield prisma.restaurant.update({
+                where: { email },
+                data: { verificationToken }
+            });
+        }
+        else if (user.role === "User") {
+            yield prisma.restaurant.update({
+                where: { email },
+                data: { verificationToken }
+            });
+        }
+        const mailResponse = (0, mailSender_1.default)(email, "Reset Password", `<p>Click <a href="${verificationLink}">here</a> to verify employee email.</p>`);
+        return res.status(200).json({
+            success: true,
+            message: "Check email , for reset the password"
+        });
+    }
+    catch (error) {
+        return res.status(499).json({
+            success: false,
+            message: "Something went wrong!"
+        });
+    }
+});
+exports.ResetPassword = ResetPassword;
+const ResetPasswordMaker = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { password } = req.body;
+        const { verificationToken } = req.params;
+        if (!password || !verificationToken) {
+            return res.status(401).json({
+                success: false,
+                message: 'Data missing!'
+            });
+        }
+        let user = yield prisma.user.findUnique({
+            where: { verificationToken }
+        });
+        if (!user) {
+            user = yield prisma.user.findUnique({
+                where: { verificationToken }
+            });
+        }
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found!"
+            });
+        }
+        const hashedNewPassword = yield bcrypt_1.default.hash(password, 10);
+        if (user.role === "Restaurant") {
+            yield prisma.restaurant.update({
+                where: { verificationToken },
+                data: {
+                    password: hashedNewPassword
+                }
+            });
+        }
+        else if (user.role === "User") {
+            yield prisma.user.update({
+                where: { verificationToken },
+                data: {
+                    password: hashedNewPassword
+                }
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            message: "Password changed!"
+        });
+    }
+    catch (error) {
+        return res.status(499).json({
+            success: false,
+            message: "Something went wrong!"
+        });
+    }
+});
+exports.ResetPasswordMaker = ResetPasswordMaker;

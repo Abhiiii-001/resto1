@@ -33,7 +33,7 @@ export const UpdateUser = async(req: Request,res: Response):Promise<any> => {
 
         if(!user) return res.status(404).json({success: false,message: "User not found!"});
 
-        return res.status(200).json({success: true,message: "User updated!",user: user});
+        return res.status(200).json({success: true,message: "User updated!",data: user});
     } catch (error) {
         console.log(error);
         return res.status(499).json({succcess: false,message: "Something wrong during user updating!"})
@@ -112,6 +112,43 @@ export const CreateUser = async(req: Request,res: Response):Promise<any> => {
         return res.status(499).json({
             success: false,
             message: "Something wrong while user creation"
+        });
+    }
+}
+
+export const GetUserDetailsById = async(req: Request,res: Response): Promise<any> => {
+    try {
+        const { userId } = req.params;
+        if(!userId) {
+            return res.status(401).json({
+                success: false,
+                message: "Data missing!"
+            });
+        } 
+
+        const userDetails = await prisma.user.findFirst({
+            where:{
+                id: userId
+            }
+        });
+
+    if(!userDetails) {
+        return res.status(404).json({
+            success: false,
+            message: 'User not found'
+        });
+    }
+    
+    return res.status(200).json({
+        success: false,
+        message: 'User data fetched successfully',
+        data: userDetails
+    });
+
+    } catch (error:any) {
+        return res.status(499).json({
+            success: false,
+            message: error?.message
         });
     }
 }

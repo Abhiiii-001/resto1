@@ -1,30 +1,50 @@
-import { useSubscribeMutation } from "@/redux/api/order";
-import { useEffect } from "react";
+export async function requestNotificationPermission(setSubscription: any) {
+  if (!("Notification" in window) || !("serviceWorker" in navigator)) {
+    console.error("Push notifications are not supported in this browser.");
+    return;
+  }
+
+  try {
+    const registration = await navigator.serviceWorker.register("/service-worker.js");
+    console.log("Service Worker Registered:", registration);
 
 
-export function requestNotificationPermission(orderId: string,setSubscription: any) {
-  if (!("serviceWorker" in navigator)) return;
-  navigator.serviceWorker.register("/service-worker.js").then((registration) => {
-    Notification.requestPermission().then((permission) => {
-      if (permission === "granted") {
-        const subscribe = subscribeUserToPush(registration,orderId);
-        setSubscription(subscribe);
-      }
-    });
-  });
+    if (!registration.active) {
+      console.warn("Waiting for service worker activation...");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") {
+      console.warn("Notification permission denied.");
+      return;
+    }    
+
+    const subscription = await subscribeUserToPush(registration);
+    setSubscription(subscription);
+    console.log("Push Subscription:", subscription);
+  } catch (error) {
+    console.error("Push Subscription Failed:", error);
+  }
 }
 
-async function subscribeUserToPush(registration:any,orderId:string) {
+async function subscribeUserToPush(registration: ServiceWorkerRegistration) {
+  const vapidKey = process.env.NEXT_PUBLIC_VAPID_KEY;
+  if (!vapidKey) {
+    console.error("VAPID Key is missing in environment variables.");
+    return null;
+  }
+
+  const convertedKey = urlBase64ToUint8Array(vapidKey);
   const subscription = await registration.pushManager.subscribe({
     userVisibleOnly: true,
-    applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_KEY),
+    applicationServerKey: convertedKey,
   });
 
-console.log("Subscription",subscription);
-return subscription;
+  return subscription;
 }
 
-function urlBase64ToUint8Array(base64String:any) {
+function urlBase64ToUint8Array(base64String: string) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
   const rawData = window.atob(base64);

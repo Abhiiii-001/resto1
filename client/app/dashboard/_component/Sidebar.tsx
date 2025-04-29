@@ -111,31 +111,10 @@ const Sidebar = () => {
   return (
     <div className={sidebarClassNames}>
       {/* TOP LOGO */}
-      <div
-        className={`flex gap-3 items-center pt-8 ${
-          isSidebarCollapsed ? "px-5 justify-center" : "px-8 justify-between"
-        }`}
-      >
-        {/* Logo Add */}
-        <h1
-          className={`${
-            isSidebarCollapsed ? "hidden" : "block"
-          } font-extrabold text-2xl`}
-        >
-          RESTRO
-        </h1>
-
-        <button
-          className="px-3 py-3"
-          onClick={toggleSidebar}
-        >
-        <Menu className="w-6 h-6 font-extrabold" />
-          
-        </button>
-      </div>
+     
 
       {/* LINKS */}
-      <div className="flex-grow mt-8">
+      <div className="flex-grow mt-20">
         <SidebarLink
           href="/dashboard"
           icon={Layout}
@@ -182,7 +161,7 @@ const Sidebar = () => {
 
       {/* FOOTER */}
       <div className={`${isSidebarCollapsed ? "hidden" : "block"} mb-10`}>
-        <p className="text-center text-xs text-gray-500">&copy; 2024 Restro</p>
+        <p className="text-center text-xs text-gray-500">&copy; 2025 Restro</p>
       </div>
     </div>
   );

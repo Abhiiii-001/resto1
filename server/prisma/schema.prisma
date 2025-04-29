@@ -51,11 +51,14 @@ model Restaurant {
   isVerified        Boolean        @default(false)
   autoAcceptOrder   Boolean        @default(true)
   role              Role           @default(Restaurant)
+  totalEarning      Int         @default(0)
+  totalOrders       Int         @default(0)
+  totalQRScan       Int         @default(0)
+  isActive          Boolean     @default(true)
   users             User[]
   categories        Category[]
   orders            Order[]
   saleSummary       SaleSummary[]
-  orderSummary      OrderSummary[]
 }
 
 model User {
@@ -87,7 +90,6 @@ model Product {
   name            String
   description     String
   thumbnail       String
-  sold            Int              @default(0)
   rating          Decimal?
   productVariants ProductVariant[]
   categoryId      String
@@ -99,6 +101,7 @@ model ProductVariant {
   size         String
   price        Int
   salePrice    Int?
+  sold         Int              @default(0)
   isOutOfStock Boolean    @default(false)
   productId    String
   product      Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
@@ -138,18 +141,19 @@ model subOrder {
 model SaleSummary {
   id           String     @id @default(uuid())
   amount       Int
+  orders        Int
   duration     Duration
   cratedAt     String
   restaurantId String
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
 }
 
-model OrderSummary {
-  id           String     @id @default(uuid())
-  orders       Int
-  increasedBy  Decimal
-  duration     Duration
-  createdAt    String
-  restaurantId String
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
-}
+// model OrderSummary {
+//   id           String     @id @default(uuid())
+//   orders       Int
+//   increasedBy  Decimal
+//   duration     Duration
+//   createdAt    String
+//   restaurantId String
+//   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+// }

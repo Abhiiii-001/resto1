@@ -14,6 +14,7 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const socket_io_1 = require("socket.io");
 const http_1 = __importDefault(require("http"));
 const web_push_1 = __importDefault(require("web-push"));
+require("./utils/cron");
 const Auth_1 = __importDefault(require("./routes/Auth"));
 const Category_1 = __importDefault(require("./routes/Category"));
 const Product_1 = __importDefault(require("./routes/Product"));
@@ -21,6 +22,7 @@ const User_1 = __importDefault(require("./routes/User"));
 const cloudinary_1 = __importDefault(require("./config/cloudinary"));
 const Restaurant_1 = __importDefault(require("./routes/Restaurant"));
 const Order_1 = __importDefault(require("./routes/Order"));
+const Dashboard_1 = __importDefault(require("./routes/Dashboard"));
 const socket_1 = require("./socket");
 //    CONFIGURATION
 dotenv_1.default.config();
@@ -67,6 +69,7 @@ app.use("/api/product", Product_1.default);
 app.use("/api/restaurant", Restaurant_1.default);
 app.use("/api/order", Order_1.default);
 app.use("/api/user", User_1.default);
+app.use("/api/dashboard", Dashboard_1.default);
 //    SERVER
 const PORT = process.env.PORT || 8000;
 server.listen(PORT, () => {

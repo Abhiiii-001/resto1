@@ -1,27 +1,45 @@
-
 self.addEventListener("push", (event) => {
-  const data = event.data.json();
+  console.log("Push event received:", event);
+
+  if (!event.data) {
+    console.warn("Push event has no data!");
+    return;
+  }
+
+  let data;
+  try {
+    data = event.data.json();
+  } catch (error) {
+    console.error("Error parsing push data:", error);
+    return;
+  }
+
+  console.log("Notification Data:", data);
 
   event.waitUntil(
-    self.registration.showNotification(data.title, {
-      body: data.body,
-      icon: data.icon,
-      sound: data.sound,  // Custom sound
-      actions: data.actions,
-      requireInteraction: true,  // Sticky notification
+    self.registration.showNotification(data.title || "New Notification", {
+      body: data.body || "You have a new message.",
+      icon: data.icon || "/default-icon.png",
+      sound: data.sound || null, // Custom sound (browser-dependent)
+      actions: data.actions || [{ action: "ok", title: "OK" }],
+      requireInteraction: true, // Sticky notification
     })
   );
 });
 
 self.addEventListener("notificationclick", (event) => {
+  console.log("Notification Clicked:", event);
   event.notification.close();
 
-  if (event.action === "ok") {
-    // Handle OK button click (if needed)
-    console.log("OK button clicked");
-  } else {
-    // Handle the main notification click
-    clients.openWindow("/");
-  }
-});
+  event.waitUntil(
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
+      if (clientList.length > 0) {
+        // Focus the first available client tab
+        return clientList[0].focus();
+      }
 
+      // Open new window if no existing tab
+      return clients.openWindow("/");
+    })
+  );
+});

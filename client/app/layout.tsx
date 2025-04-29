@@ -3,9 +3,12 @@ import localFont from "next/font/local";
 import "./globals.css";
 import StoreProvider from "@/redux/redux";
 import Navbar from "./_component/Navbar";
+
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import { ThemeProvider } from "@/components/ui/theme-provider";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -33,13 +36,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <StoreProvider>
-            <div className="h-16 z-50 fixed w-screen">
-              <Navbar />
-            </div>
+        <ThemeProvider>
+        <StoreProvider>
 
-            <div className="h-full pt-16">
+            <div className="h-full">
               {children}
               <ToastContainer
                 position="top-right"
@@ -54,7 +54,8 @@ export default function RootLayout({
                 theme="light"
               />
             </div>
-          </StoreProvider>
+        </StoreProvider>
+
         </ThemeProvider>
       </body>
     </html>

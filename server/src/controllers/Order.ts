@@ -65,6 +65,17 @@ export const CreateOrder = async(req: Request,res: Response): Promise<any> => {
 
             totalAmount += subOrderData.unitPrice;
 
+            prisma.productVariant.update({
+                where:{
+                    id: subOrderData.productVariantId
+                },
+                data:{
+                    sold:{
+                        increment:subOrderData.quantity
+                    }
+                }
+            });
+
             const t = await prisma.subOrder.create({
                 data:{
                     name: subOrderData.name,
@@ -261,7 +272,10 @@ export const GetAllOrders = async(req: Request,res: Response): Promise<any> => {
 
 export const Subscribe = async(req: Request,res: Response): Promise<any> => {
     try {
-        const { orderId , subscription } = req.body;
+     const { orderId , subscription } = req.body;
+
+    console.log("Subscribe",orderId,subscription);
+
     subscriptionData[orderId] = subscription;
     const response = await prisma.order.update({
         where:{id: orderId},

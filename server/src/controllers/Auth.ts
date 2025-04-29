@@ -96,7 +96,7 @@ export const UserSignup = async(req: Request,res: Response): Promise<any> => {
 
       const verificationLink = `${process.env.CLIENT_URL}/verify/${verificationToken}`;
       
-      const mailResponse = await mailSender(
+      const mailResponse =  mailSender(
         restaurant.email,
         "Verify User",
         `<p>Click <a href="${verificationLink}">here</a> to verify employee email.</p>`
@@ -105,7 +105,6 @@ export const UserSignup = async(req: Request,res: Response): Promise<any> => {
       res.status(200).json({
         message:"User created! , Waiting for verification by Restaurant",
         user:user,
-        mailResponse:mailResponse?.response
     });
 
      } catch (error:any) {
@@ -211,7 +210,10 @@ export const Login = async(req: Request,res: Response): Promise<any> => {
       }
  
       let user = await prisma.restaurant.findUnique({
-         where:{email},
+         where:{
+            email,
+            isActive: true
+         },
       });
 
       let restaurantId = user?.id;
@@ -352,5 +354,202 @@ export const VerifyToken = async(req: Request,res: Response): Promise<any> => {
          success: false,
          message: "Something went wrong!"
        })
+   }
+}
+
+export const ChangePassword = async(req: Request,res: Response): Promise<any> => {
+   try {
+      const { currentPassword , newPassword , role } = req.body;
+      const { id } = req.params;
+
+      if(!currentPassword || !newPassword || !role || !id){
+         return res.status(401).json({
+            success: false,
+            message: 'Data missing!'
+         });
+      } 
+
+      let user;
+      if(role === "Restaurant"){
+         user = await prisma.restaurant.findUnique({
+            where:{id}
+         });
+      }
+      else if(role === "User"){
+         user = await prisma.user.findUnique({
+            where: {id}
+         });
+      }
+
+      if(!user){
+         return res.status(404).json({
+            success: false,
+            message: "User not found!"
+         });
+      }
+
+      const hashedCurrentPassword = await bcrypt.hash(currentPassword,10);
+      const match = bcrypt.compare(user?.password,hashedCurrentPassword);
+ 
+      if(!match){
+         return res.status(404).json({
+            success: false,
+            message: "Incorrect Password!"
+         });
+      }
+
+      const hashedNewPassword = await bcrypt.hash(newPassword,10);
+      if(role === "Restaurant"){
+        await prisma.restaurant.update({
+            where: {id},
+            data:{
+               password: hashedNewPassword
+            }
+         });
+      }
+      else if(role === "User"){
+         await prisma.user.update({
+            where: {id},
+            data:{
+               password: hashedNewPassword
+            }
+         });
+      }
+
+      return res.status(200).json({
+         success: true,
+         message: "Password changed!"
+      })
+
+   } catch (error: unknown) {
+      return res.status(499).json({
+         success: false,
+         message: "Something went wrong!"
+      })
+   }
+}
+
+export const ResetPassword = async(req: Request,res: Response): Promise<any> => {
+  try {
+   
+   const { email } = req.body;
+
+   if(!email){
+      return res.status(401).json({
+         success: false,
+         message: 'Data missing!'
+      });
+   } 
+
+   let user = await prisma.user.findUnique({
+      where: {email}
+   });
+
+   if(!user){
+      user = await prisma.user.findUnique({
+         where: {email}
+      });
+   }
+   
+   if(!user){
+      return res.status(404).json({
+         success: false,
+         message: "User not found!"
+      });
+   }
+
+   const verificationToken = crypto.randomUUID().toString();
+   const verificationLink = `${process.env.CLIENT_URL}/reset-password/${verificationToken}`;
+
+   if(user.role === "Restaurant"){
+      await prisma.restaurant.update({
+         where: {email},
+         data: {verificationToken}
+      })
+   }
+   else if(user.role === "User"){
+      await prisma.restaurant.update({
+         where: {email},
+         data: {verificationToken}
+      })
+   }
+   
+   const mailResponse = mailSender(
+      email,
+      "Reset Password",
+      `<p>Click <a href="${verificationLink}">here</a> to verify employee email.</p>`
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Check email , for reset the password"
+    });
+
+  } catch (error) {
+   return res.status(499).json({
+      success: false,
+      message: "Something went wrong!"
+   })
+  }
+}
+
+export const ResetPasswordMaker = async(req: Request,res: Response): Promise<any> => {
+   try {
+      
+      const { password } = req.body;
+      const { verificationToken } = req.params;
+
+      if(!password || !verificationToken){
+         return res.status(401).json({
+            success: false,
+            message: 'Data missing!'
+         });
+      } 
+
+      let user = await prisma.user.findUnique({
+         where: {verificationToken}
+      });
+   
+      if(!user){
+         user = await prisma.user.findUnique({
+            where: {verificationToken}
+         });
+      }
+      
+      if(!user){
+         return res.status(404).json({
+            success: false,
+            message: "User not found!"
+         });
+      }
+
+      const hashedNewPassword = await bcrypt.hash(password,10);
+      if(user.role === "Restaurant"){
+        await prisma.restaurant.update({
+            where: {verificationToken},
+            data:{
+               password: hashedNewPassword
+            }
+         });
+      }
+      else if(user.role === "User"){
+         await prisma.user.update({
+            where: {verificationToken},
+            data:{
+               password: hashedNewPassword
+            }
+         });
+      }
+
+      return res.status(200).json({
+         success: true,
+         message: "Password changed!"
+      })
+
+   } catch (error) {
+      return res.status(499).json({
+         success: false,
+         message: "Something went wrong!"
+      })
    }
 }

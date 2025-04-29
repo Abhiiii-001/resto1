@@ -60,8 +60,9 @@ const Navbar = () => {
                 animate={{ opacity: 1, x: 0 }}
                 className="flex items-center space-x-2"
               >
-                <ChefHat className="h-6 w-6 text-primary" />
-                <span className="font-bold text-2xl">FoodFlow</span>
+                <Link href={"/"} className="flex items-center space-x-2">
+                  <ChefHat className="h-6 w-6 text-primary" />
+                  <span className="font-bold text-2xl">Restro</span></Link>
               </motion.div>
               <div className="hidden md:flex items-center space-x-6">
                 <Link href="#features">
@@ -69,9 +70,6 @@ const Navbar = () => {
                 </Link>
                 <Link href="#dashboard">
                   <Button variant="ghost">Dashboard</Button>
-                </Link>
-                <Link href="#pricing">
-                  <Button variant="ghost">Pricing</Button>
                 </Link>
                 <Link href="/about">
                   <Button variant="ghost">About</Button>
@@ -82,7 +80,7 @@ const Navbar = () => {
               </div>
               <div className="flex items-center space-x-4">
                 <ThemeToggle />
-                <Link href="/login">
+                <Link href="/signin">
                   <Button variant="outline">Login</Button>
                 </Link>
                 <Link href="/signup">

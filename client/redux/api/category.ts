@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { RootState, useAppSelector } from "../redux";
+import { RootState } from "../redux";
 import { useSelector } from "react-redux";
 
 
@@ -28,7 +28,15 @@ export interface GetCategoryInterface {
 export const categoryApi = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: process.env.NEXT_PUBLIC_CATEGORY_BASE_URL,
-        credentials: "include"}),
+        credentials: "include",
+        prepareHeaders: (headers, { getState }) => {
+            const token = (getState() as RootState).auth.token;
+            if (token) {
+                headers.set("Authorization", `Bearer ${token}`);
+            }
+            return headers;
+        },      
+    }),
     reducerPath: "category",
     
     tagTypes:["GetAllCategories"],

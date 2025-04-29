@@ -36,7 +36,7 @@ export const IsRestaurant = async(req: Request,res: Response,next: NextFunction)
     try {
         const user = await prisma.restaurant.findUnique({
             // @ts-ignore
-            where:{email: req.user.email}      
+            where:{email: req.user.email,isActive: true}      
         });
         if(!user)
             return res.status(404).json({message: "Unautorized Access!"});

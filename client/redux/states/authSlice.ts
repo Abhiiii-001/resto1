@@ -34,9 +34,12 @@ const authSlice = createSlice({
       state.restaurantId="";
       state.isAuthenticated = false;
     },
+    setUser: (state,action) => {
+      state.user = action.payload
+    }
   },
 });
 
-export const { setCredentials, setLogout } = authSlice.actions;
+export const { setCredentials, setLogout ,setUser } = authSlice.actions;
 
 export default authSlice.reducer;
