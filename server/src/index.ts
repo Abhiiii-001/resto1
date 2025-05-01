@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import cors from "cors"
@@ -80,6 +80,13 @@ app.use("/api/restaurant",RestaurantRouter);
 app.use("/api/order",OrderRouter);
 app.use("/api/user",EmployeeRouter);
 app.use("/api/dashboard",DashboardRouter);
+
+app.get("/",(req: Request,res: Response) => {
+      res.status(200).json({
+        success:true,
+        message: "Server is running"
+     })
+})
 
 
 //    SERVER

@@ -70,6 +70,12 @@ app.use("/api/restaurant", Restaurant_1.default);
 app.use("/api/order", Order_1.default);
 app.use("/api/user", User_1.default);
 app.use("/api/dashboard", Dashboard_1.default);
+app.get("/", (req, res) => {
+    res.status(200).json({
+        success: true,
+        message: "Server is running"
+    });
+});
 //    SERVER
 const PORT = process.env.PORT || 8000;
 server.listen(PORT, () => {
