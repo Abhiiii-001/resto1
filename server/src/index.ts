@@ -81,6 +81,13 @@ app.use("/api/order",OrderRouter);
 app.use("/api/user",EmployeeRouter);
 app.use("/api/dashboard",DashboardRouter);
 
+app.get("/", (req, res) => {
+	return res.json({
+		success:true,
+		message:'Your server is up and running....'
+	});
+});
+
 
 //    SERVER
 const PORT = process.env.PORT || 8000
