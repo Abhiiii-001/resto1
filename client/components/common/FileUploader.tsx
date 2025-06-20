@@ -3,7 +3,7 @@ import { useDropzone } from 'react-dropzone';
 
 type Props = {}
 
-const FileUploader = ({thumbnail ,setValue ,previewUrl}: {thumbnail: File,setValue: any,previewUrl:any}) => {
+const FileUploader = ({thumbnail ,setValue ,previewUrl}: {thumbnail: File,setValue: any,previewUrl?:any}) => {
    const [ preview , setPreview ] = useState(previewUrl);
    console.log("Preview",previewUrl)
    console.log("thumbnail",thumbnail)

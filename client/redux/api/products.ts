@@ -62,7 +62,7 @@ export interface UpdateProductInterface {
 
 export const productApi = createApi({
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:8000/api/product',
+    baseUrl: process.env.NEXT_PUBLIC_PRODUCT_BASE_URL,
     credentials: "include",
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token;

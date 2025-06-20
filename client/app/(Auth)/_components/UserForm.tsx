@@ -8,9 +8,14 @@ import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
-type Props = {}
+type Props = {
+  prevFormData: {
+    email: string;
+    password: string;
+  }
+}
 
-function UserForm({}: Props) {
+function UserForm({prevFormData}: Props) {
 
     const router = useRouter();
 
@@ -33,6 +38,8 @@ function UserForm({}: Props) {
   const onSubmitHandler = async(data:UserSignupInterface) => {
       const toastId =  toast.loading("Loading...")
        try {
+        data.email = prevFormData.email;
+        data.password = prevFormData.password;
           const res = await signup(data).unwrap();
           console.log(res);
           toast.success("User signup successfully, Waiting for Admin verification!");
@@ -92,53 +99,6 @@ function UserForm({}: Props) {
           />
           {errors.number && (
             <p className="text-red-500 text-sm mt-1">{errors.number.message}</p>
-          )}
-        </div>
-       {/* EMail and password */}
-        <div className="mb-4 w-full">
-          <label
-            htmlFor="email"
-            className="block text-lg font-semibold text-gray-600"
-          >
-            Email
-            <span className="text-pink-800 pl-1">*</span>
-          </label>
-          <input
-            id="email"
-            type="email"
-            {...register("email", { required: "Email is required" })}
-            className={`mt-1 w-full px-4 py-2 border rounded-md shadow-xl focus:ring-2 focus:ring-blue-400 bg-[#E7E9E2]  text-black border-black  ${
-              errors.email ? "border-red-500" : "border-gray-300"
-            }`}
-            placeholder="Enter email address "
-          />
-          {errors.email && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.email.message}
-            </p>
-          )}
-        </div>
-
-        <div className="mb-4 w-full">
-          <label
-            htmlFor="password"
-            className="block text-lg font-semibold text-gray-600 "
-          >
-            Password <span className="text-pink-800 pl-1">*</span>
-          </label>
-          <input
-            id="password"
-            type="password"
-            {...register("password", { required: "Password is required" })}
-            className={`mt-1 w-full px-4 py-2 border rounded-md shadow-xl focus:ring-2  focus:ring-blue-400 bg-[#E7E9E2]  text-black border-black ${
-              errors.password ? "border-red-500" : "border-gray-300"
-            }`}
-            placeholder="Enter your password"
-          />
-          {errors.password && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.password.message}
-            </p>
           )}
         </div>
         <div>

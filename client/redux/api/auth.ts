@@ -7,7 +7,7 @@ export interface LoginInterface {
     password: string;
 }
 export const authApi = createApi({
-    baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8000/api/auth" ,
+    baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_AUTH_BASE_URL ,
          credentials: "include",
          prepareHeaders: (headers, { getState }) => {
             const token = (getState() as RootState).auth.token;
