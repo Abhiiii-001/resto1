@@ -51,13 +51,11 @@ export const authApi = createApi({
             }),
             invalidatesTags: ["Logout"]
         }),
-        verifyToken: build.mutation<string,string>({
-            query: (token) => ({
+        verifyToken: build.mutation<string,any>({
+            query: (data) => ({
                 url: "/verify-token",
                 method: "POST",
-                body: {
-                    token: token
-                }
+                body: data
             })
         }),
         changePassword: build.mutation<any,any>({
@@ -67,18 +65,18 @@ export const authApi = createApi({
                 body: data
             })
         }),
-        resetPassword: build.mutation<any,string>({
-            query: (email) => ({
+        resetPassword: build.mutation<any,any>({
+            query: (data) => ({
                 url: "/reset-password",
                 method: "PUT",
-                body: email
+                body: data
             })
         }),
         resetPasswordMaker: build.mutation<any,any>({
             query:({password,verificationToken}) => ({
                 url: `/reset-password/${verificationToken}`,
                 method: "PUT",
-                body: password
+                body: {password}
             })
         })
     })

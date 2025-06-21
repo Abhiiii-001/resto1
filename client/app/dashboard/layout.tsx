@@ -28,7 +28,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       <main
         className={`flex-1 bg-[#E7E9E2] ${
           isSidebarCollapsed ? "pl-10 md:pl-16" : "pl-4 md:pl-64 "
-        } pt-16`}
+        } pt-16 overflow-hidden`}
       >
         {children}
       </main>

@@ -39,7 +39,7 @@ const UserSignup = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             where: { email }
         });
         if (existingRestraurant || existingUser) {
-            return res.status(401).json({ message: "Email Already Taken!" });
+            return res.status(402).json({ success: false, message: "Email Already Taken!" });
         }
         const restaurant = yield prisma.restaurant.findUnique({
             where: {
@@ -47,7 +47,7 @@ const UserSignup = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             }
         });
         if (!restaurant) {
-            return res.status(401).json({ message: "Restaurant Id is not correct" });
+            return res.status(404).json({ success: false, message: "Restaurant Id is not correct" });
         }
         const hashedPassword = (yield bcrypt_1.default.hash(password, 10)).toString();
         const verificationToken = crypto.randomUUID().toString();
@@ -63,17 +63,18 @@ const UserSignup = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             }
         });
         if (!user)
-            return res.status(500).json({ message: "Something wrong while user creation!" });
+            return res.status(449).json({ success: false, message: "Something wrong while user creation!" });
         const verificationLink = `${process.env.CLIENT_URL}/verify/${verificationToken}`;
         const mailResponse = (0, mailSender_1.default)(restaurant.email, "Verify User", `<p>Click <a href="${verificationLink}">here</a> to verify employee email.</p>`);
-        res.status(200).json({
+        return res.status(200).json({
+            success: true,
             message: "User created! , Waiting for verification by Restaurant",
             user: user,
         });
     }
     catch (error) {
         console.log("Error", error.message);
-        return res.status(500).json({ message: "Signup Failed!" });
+        return res.status(500).json({ success: false, message: "Signup Failed!" });
     }
 });
 exports.UserSignup = UserSignup;
@@ -93,7 +94,7 @@ const RestaurantSignup = (req, res) => __awaiter(void 0, void 0, void 0, functio
             where: { email: email }
         });
         if (existingRestraurant || existingUser) {
-            return res.status(401).json({ message: "Email Already Taken!" });
+            return res.status(401).json({ success: false, message: "Email Already Taken!" });
         }
         //upload file
         const thumbnailUploadRes = yield (0, cloudinaryUploader_1.default)(file, 'my-files');
@@ -130,10 +131,11 @@ const RestaurantSignup = (req, res) => __awaiter(void 0, void 0, void 0, functio
         });
         console.log(restaurant);
         if (!restaurant)
-            return res.status(500).json({ message: "Something wrong while user creation!" });
+            return res.status(500).json({ success: false, message: "Something wrong while user creation!" });
         const verificationLink = `${process.env.CLIET_URL}/verify/${verificationToken}`;
         const mailResponse = yield (0, mailSender_1.default)(email, "Verify User", `<p>Click <a href="${verificationLink}">here</a> to verify your email.</p>`);
         res.status(200).json({
+            success: true,
             message: "User created! , Waiting for verification",
             user: restaurant,
             mailResponse: mailResponse === null || mailResponse === void 0 ? void 0 : mailResponse.response
@@ -141,7 +143,7 @@ const RestaurantSignup = (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
     catch (error) {
         console.log("Error", error.message);
-        return res.status(500).json({ message: "Signup Failed!" });
+        return res.status(500).json({ success: false, message: "Signup Failed!" });
     }
 });
 exports.RestaurantSignup = RestaurantSignup;
@@ -149,25 +151,29 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { email, password } = req.body;
         if (!email || !password) {
-            return res.status(403).json({ message: "All field are required!" });
+            return res.status(403).json({ success: false, message: "All field are required!" });
         }
         let user = yield prisma.restaurant.findUnique({
             where: {
                 email,
-                isActive: true
+                isActive: true,
+                // isVerified: true,
             },
         });
         let restaurantId = user === null || user === void 0 ? void 0 : user.id;
         if (!user) {
             //@ts-ignore
             user = yield prisma.user.findUnique({
-                where: { email }
+                where: {
+                    email,
+                    // isVerified: true
+                }
             });
             //@ts-ignore
             restaurantId = user === null || user === void 0 ? void 0 : user.restaurantId;
         }
         if (!user) {
-            return res.status(404).json({ message: "User not found!" });
+            return res.status(404).json({ success: false, message: "User not found!" });
         }
         if (!user.isVerified) {
             return res.status(401).json({
@@ -175,10 +181,10 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 message: "User not verified!"
             });
         }
-        const hashedPassword = yield bcrypt_1.default.hash(password, 10);
-        const match = bcrypt_1.default.compare(user === null || user === void 0 ? void 0 : user.password, hashedPassword);
+        const match = yield bcrypt_1.default.compare(password, user.password);
+        console.log(match);
         if (!match) {
-            return res.status(404).json({ message: "Incorrect Password!" });
+            return res.status(404).json({ success: false, message: "Incorrect Password!" });
         }
         const secret = process.env.JWT_SECRET || "secret";
         const token = jsonwebtoken_1.default.sign({ id: user.id, email: user === null || user === void 0 ? void 0 : user.email, role: user === null || user === void 0 ? void 0 : user.role, restaurantId: restaurantId }, secret, { expiresIn: 24 * 60 * 60 * 1000 });
@@ -191,6 +197,7 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return res.status(200)
             .set('Authorization', `Bearer ${token}`)
             .json({
+            success: true,
             message: "Login successful",
             user: user,
             token: token
@@ -198,18 +205,18 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     catch (error) {
         console.log("Error", error.message);
-        return res.status(500).json({ message: "Login Failed!" });
+        return res.status(500).json({ success: false, message: "Login Failed!" });
     }
 });
 exports.Login = Login;
 const Logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         res.clearCookie('token'); // Clear the cookie
-        res.status(200).json({ message: "Logged out successfully" });
+        res.status(200).json({ success: true, message: "Logged out successfully" });
     }
     catch (error) {
         console.log(error);
-        return res.status(405).json({ message: "Logout Failed!" });
+        return res.status(405).json({ success: false, message: "Logout Failed!" });
     }
 });
 exports.Logout = Logout;
@@ -222,6 +229,7 @@ const VerifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 message: "Token not found"
             });
         }
+        console.log(token);
         let user = yield prisma.restaurant.findUnique({
             where: {
                 verificationToken: token
@@ -231,6 +239,7 @@ const VerifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 role: true,
             }
         });
+        console.log(user);
         if (!user) {
             user = yield prisma.user.findUnique({
                 where: {
@@ -242,6 +251,7 @@ const VerifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 }
             });
         }
+        console.log(user);
         if (!user) {
             return res.status(401).json({
                 success: false,
@@ -254,7 +264,8 @@ const VerifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                     verificationToken: token
                 },
                 data: {
-                    isVerified: true
+                    isVerified: true,
+                    // verificationToken: ""
                 }
             });
         }
@@ -264,16 +275,19 @@ const VerifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                     verificationToken: token
                 },
                 data: {
-                    isVerified: true
+                    isVerified: true,
+                    // verificationToken:""
                 }
             });
         }
+        console.log(2);
         return res.status(200).json({
             success: true,
             message: "User verified successfully!"
         });
     }
     catch (error) {
+        console.log("Verify token error", error);
         return res.status(499).json({
             success: false,
             message: "Something went wrong!"
@@ -356,11 +370,15 @@ const ResetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             });
         }
         let user = yield prisma.user.findUnique({
-            where: { email }
+            where: { email,
+                isVerified: true
+            }
         });
         if (!user) {
-            user = yield prisma.user.findUnique({
-                where: { email }
+            user = yield prisma.restaurant.findUnique({
+                where: { email,
+                    isVerified: true
+                }
             });
         }
         if (!user) {
@@ -411,7 +429,7 @@ const ResetPasswordMaker = (req, res) => __awaiter(void 0, void 0, void 0, funct
             where: { verificationToken }
         });
         if (!user) {
-            user = yield prisma.user.findUnique({
+            user = yield prisma.restaurant.findUnique({
                 where: { verificationToken }
             });
         }
@@ -421,10 +439,12 @@ const ResetPasswordMaker = (req, res) => __awaiter(void 0, void 0, void 0, funct
                 message: "User not found!"
             });
         }
-        const hashedNewPassword = yield bcrypt_1.default.hash(password, 10);
+        const hashedNewPassword = (yield bcrypt_1.default.hash(password, 10)).toString();
+        console.log(hashedNewPassword);
+        console.log(password);
         if (user.role === "Restaurant") {
             yield prisma.restaurant.update({
-                where: { verificationToken },
+                where: { id: user.id },
                 data: {
                     password: hashedNewPassword
                 }
@@ -432,7 +452,7 @@ const ResetPasswordMaker = (req, res) => __awaiter(void 0, void 0, void 0, funct
         }
         else if (user.role === "User") {
             yield prisma.user.update({
-                where: { verificationToken },
+                where: { id: user.id },
                 data: {
                     password: hashedNewPassword
                 }

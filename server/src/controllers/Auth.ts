@@ -63,7 +63,7 @@ export const UserSignup = async(req: Request,res: Response): Promise<any> => {
       })
 
       if(existingRestraurant || existingUser){
-        return res.status(401).json({message:"Email Already Taken!"})
+        return res.status(402).json({success: false,message:"Email Already Taken!"})
       }
 
       const restaurant = await prisma.restaurant.findUnique({
@@ -73,14 +73,14 @@ export const UserSignup = async(req: Request,res: Response): Promise<any> => {
       });
 
       if(!restaurant){
-        return res.status(401).json({message:"Restaurant Id is not correct"});
+        return res.status(404).json({success: false,message:"Restaurant Id is not correct"});
       }
 
       const hashedPassword: string = (await bcrypt.hash(password,10)).toString();
       const verificationToken =  crypto.randomUUID().toString();
 
       const user = await prisma.user.create({
-        data:{
+        data:{ 
             email,
             password:hashedPassword,
             name,
@@ -92,7 +92,7 @@ export const UserSignup = async(req: Request,res: Response): Promise<any> => {
       });
 
       if(!user)
-        return res.status(500).json({message:"Something wrong while user creation!"});
+        return res.status(449).json({success: false,message:"Something wrong while user creation!"});
 
       const verificationLink = `${process.env.CLIENT_URL}/verify/${verificationToken}`;
       
@@ -102,14 +102,15 @@ export const UserSignup = async(req: Request,res: Response): Promise<any> => {
         `<p>Click <a href="${verificationLink}">here</a> to verify employee email.</p>`
       );
 
-      res.status(200).json({
+      return res.status(200).json({
+        success: true,
         message:"User created! , Waiting for verification by Restaurant",
         user:user,
     });
 
      } catch (error:any) {
       console.log("Error",error.message);
-      return res.status(500).json({message:"Signup Failed!"});
+      return res.status(500).json({success: false,message:"Signup Failed!"});
    }
 }
 
@@ -140,7 +141,7 @@ export const RestaurantSignup = async(req: Request,res: Response): Promise<any> 
       })
       
       if(existingRestraurant || existingUser){
-         return res.status(401).json({message:"Email Already Taken!"})
+         return res.status(401).json({success: false,message:"Email Already Taken!"})
       }
 
       //upload file
@@ -180,7 +181,7 @@ export const RestaurantSignup = async(req: Request,res: Response): Promise<any> 
     });
     console.log(restaurant)
     if(!restaurant)
-        return res.status(500).json({message:"Something wrong while user creation!"});
+        return res.status(500).json({success: false,message:"Something wrong while user creation!"});
 
       const verificationLink = `${process.env.CLIET_URL}/verify/${verificationToken}`;
       
@@ -191,13 +192,14 @@ export const RestaurantSignup = async(req: Request,res: Response): Promise<any> 
       );
 
       res.status(200).json({
+        success: true,
         message:"User created! , Waiting for verification",
         user:restaurant,
         mailResponse:mailResponse?.response
     });
    } catch (error:any) {
       console.log("Error",error.message);
-      return res.status(500).json({message:"Signup Failed!"});
+      return res.status(500).json({success: false,message:"Signup Failed!"});
    }
 }
 
@@ -206,13 +208,14 @@ export const Login = async(req: Request,res: Response): Promise<any> => {
       const { email , password }: LoginInterface = req.body;
 
       if(!email || !password){
-         return res.status(403).json({ message: "All field are required!"});
+         return res.status(403).json({success: false, message: "All field are required!"});
       }
  
       let user = await prisma.restaurant.findUnique({
          where:{
             email,
-            isActive: true
+            isActive: true,
+            // isVerified: true,
          },
       });
 
@@ -221,14 +224,17 @@ export const Login = async(req: Request,res: Response): Promise<any> => {
       if(!user){
          //@ts-ignore
           user = await prisma.user.findUnique({
-           where:{email}
+           where:{
+            email,
+            // isVerified: true
+           }
          });
          //@ts-ignore
          restaurantId = user?.restaurantId;
       }
  
       if(!user){
-         return res.status(404).json({message: "User not found!"})
+         return res.status(404).json({success: false,message: "User not found!"})
       }
 
       if(!user.isVerified){
@@ -238,11 +244,12 @@ export const Login = async(req: Request,res: Response): Promise<any> => {
          })
       }
  
-      const hashedPassword = await bcrypt.hash(password,10);
-      const match = bcrypt.compare(user?.password,hashedPassword);
+      const match = await bcrypt.compare(password,user.password);
+
+      console.log(match);
  
       if(!match){
-         return res.status(404).json({message: "Incorrect Password!"});
+         return res.status(404).json({success: false,message: "Incorrect Password!"});
       }
  
       const secret:string = process.env.JWT_SECRET || "secret";
@@ -263,23 +270,24 @@ export const Login = async(req: Request,res: Response): Promise<any> => {
       return res.status(200)
       .set('Authorization', `Bearer ${token}`)
       .json({
+         success: true,
           message: "Login successful",
           user:user,
           token:token
        });
      } catch (error:any) {
       console.log("Error",error.message);
-      return res.status(500).json({message:"Login Failed!"});
+      return res.status(500).json({success: false,message:"Login Failed!"});
    }
 }
 
 export const Logout = async(req: Request,res: Response): Promise<any> => {
    try {
       res.clearCookie('token'); // Clear the cookie
-      res.status(200).json({ message: "Logged out successfully" });
+      res.status(200).json({success: true, message: "Logged out successfully" });
    } catch (error) {
         console.log(error);
-        return res.status(405).json({message: "Logout Failed!"});
+        return res.status(405).json({success: false,message: "Logout Failed!"});
    }
 }
 
@@ -294,7 +302,7 @@ export const VerifyToken = async(req: Request,res: Response): Promise<any> => {
             message: "Token not found"
          });
       }
-
+      console.log(token);
       let user = await prisma.restaurant.findUnique({
          where:{
             verificationToken: token
@@ -304,7 +312,7 @@ export const VerifyToken = async(req: Request,res: Response): Promise<any> => {
             role: true,
          }
       });
-
+      console.log(user);
       if(!user){
          user = await prisma.user.findUnique({
             where:{
@@ -316,7 +324,7 @@ export const VerifyToken = async(req: Request,res: Response): Promise<any> => {
             }
          });
       }
-
+      console.log(user);
       if(!user) {
          return res.status(401).json({
             success: false,
@@ -330,7 +338,8 @@ export const VerifyToken = async(req: Request,res: Response): Promise<any> => {
                verificationToken:token
             },
             data:{
-               isVerified: true
+               isVerified: true,
+               // verificationToken: ""
             }
           })
       }
@@ -340,16 +349,19 @@ export const VerifyToken = async(req: Request,res: Response): Promise<any> => {
                verificationToken:token
             },
             data:{
-               isVerified: true
+               isVerified: true,
+               // verificationToken:""
             }
           })
       }
+      console.log(2);
 
       return res.status(200).json({
          success: true,
          message: "User verified successfully!"
       })
    } catch (error) {
+       console.log("Verify token error",error);
        return res.status(499).json({
          success: false,
          message: "Something went wrong!"
@@ -441,13 +453,17 @@ export const ResetPassword = async(req: Request,res: Response): Promise<any> => 
       });
    } 
 
-   let user = await prisma.user.findUnique({
-      where: {email}
+   let user:any = await prisma.user.findUnique({
+      where: {email,
+         isVerified: true
+      }
    });
 
    if(!user){
-      user = await prisma.user.findUnique({
-         where: {email}
+      user = await prisma.restaurant.findUnique({
+         where: {email,
+            isVerified: true
+         }
       });
    }
    
@@ -506,12 +522,12 @@ export const ResetPasswordMaker = async(req: Request,res: Response): Promise<any
          });
       } 
 
-      let user = await prisma.user.findUnique({
+      let user:any = await prisma.user.findUnique({
          where: {verificationToken}
       });
    
       if(!user){
-         user = await prisma.user.findUnique({
+         user = await prisma.restaurant.findUnique({
             where: {verificationToken}
          });
       }
@@ -523,10 +539,12 @@ export const ResetPasswordMaker = async(req: Request,res: Response): Promise<any
          });
       }
 
-      const hashedNewPassword = await bcrypt.hash(password,10);
+      const hashedNewPassword = (await bcrypt.hash(password,10)).toString();
+      console.log(hashedNewPassword)
+      console.log(password)
       if(user.role === "Restaurant"){
         await prisma.restaurant.update({
-            where: {verificationToken},
+            where: {id: user.id},
             data:{
                password: hashedNewPassword
             }
@@ -534,7 +552,7 @@ export const ResetPasswordMaker = async(req: Request,res: Response): Promise<any
       }
       else if(user.role === "User"){
          await prisma.user.update({
-            where: {verificationToken},
+            where: {id: user.id},
             data:{
                password: hashedNewPassword
             }

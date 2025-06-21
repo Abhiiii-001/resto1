@@ -23,23 +23,25 @@ const FileUploader = ({thumbnail ,setValue ,previewUrl}: {thumbnail: File,setVal
   return (
     <div
         {...getRootProps()}
-        className={`border-2 border-dashed w-full rounded-md p-6 text-center bg-[#E7E9E2] bg-opacity-50 ${
+        className={`border-2 border-dashed w-full rounded-md p-6 text-center max-h-20 flex items-center justify-center  bg-opacity-50 ${
           isDragActive ? "border-blue-400" : "border-gray-500"
         }`}
       >
         <input {...getInputProps()}/>
         {preview ? (
-          <div className='w-full'>
+          <div className='w-full flex items-center'>
             <img
               src={preview}
               alt="Thumbnail Preview"
               className="w-16 h-16 object-cover mx-auto mb-2 rounded-md"
             />
-            <p className="text-xs text-gray-500">{thumbnail?.name}</p>
+           <div>
+             <p className="text-xs text-gray-500">{thumbnail?.name}</p>
             <button className='text-sm underline' onClick={() => {
               setValue("thumbnail",null);
               setPreview(null);
             }}>Cancel</button>
+           </div>
           </div>
         ) : (
           <p className="text-gray-500">
