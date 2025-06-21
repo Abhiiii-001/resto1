@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "../_component/ui/button";
 import { usePathname } from "next/navigation";
 import { ChefHat, Menu } from "lucide-react";
 import { useState } from "react";
@@ -10,7 +10,7 @@ import { useLogoutMutation } from "@/redux/api/auth";
 import { toast } from "react-toastify";
 import { setLogout } from '@/redux/states/authSlice';
 import { motion, useScroll, useTransform } from "framer-motion"
-import { ThemeToggle } from "@/components/ui/theme-toggle";
+// import { ThemeToggle } from "../_component/ui/theme-provider";
 
 
 const navLinks = [
@@ -79,7 +79,7 @@ const Navbar = () => {
                 </Link>
               </div>
               <div className="flex items-center space-x-4">
-                <ThemeToggle />
+                {/* <ThemeToggle /> */}
                 <Link href="/signin">
                   <Button variant="outline">Login</Button>
                 </Link>

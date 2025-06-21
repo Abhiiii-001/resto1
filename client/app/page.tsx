@@ -489,7 +489,7 @@ export default function Home() {
             <div>
               <div className="flex items-center space-x-2 mb-4">
                 <ChefHat className="h-6 w-6 text-primary" />
-                <span className="font-bold text-xl">FoodFlow</span>
+                <span className="font-bold text-xl">Restro</span>
               </div>
               <p className="text-muted-foreground">
                 Streamline your food business operations with our comprehensive management system.
@@ -520,7 +520,7 @@ export default function Home() {
             </div>
           </div>
           <div className="border-t mt-12 pt-8 text-center text-muted-foreground">
-            <p>&copy; {new Date().getFullYear()} FoodFlow. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} Restro. All rights reserved.</p>
           </div>
         </div>
       </footer>

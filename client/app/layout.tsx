@@ -2,12 +2,9 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import StoreProvider from "@/redux/redux";
-import Navbar from "./_component/Navbar";
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-import { ThemeProvider } from "@/components/ui/theme-provider";
 
 
 const geistSans = localFont({
@@ -36,7 +33,6 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider>
         <StoreProvider>
 
             <div className="h-full">
@@ -55,8 +51,6 @@ export default function RootLayout({
               />
             </div>
         </StoreProvider>
-
-        </ThemeProvider>
       </body>
     </html>
   );
