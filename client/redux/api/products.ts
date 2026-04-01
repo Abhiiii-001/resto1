@@ -1,140 +1,94 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { RootState } from "../redux";
-
-// Interfaces
-
-export interface ProductVariantInterface {
-  id: string;
-  size: string;
-  price: number;
-  salePrice: number;
-  isOutOfStock: boolean;
-  productId: string;
-}
-export interface GetProductVariantInterface {
-  message?: string;
-  response: ProductVariantInterface[];
-}
-export interface CreateProductVariantInterface {
-  size: string;
-  price: number;
-  salePrice?: number;
-  productId: string;
-}
-export interface UpdateProductVariantInterface {
-  size?: string;
-  price?: number;
-  salePrice?: number;
-}
-export interface ProductInterface {
-  id: string;
-  name: string;
-  description: string;
-  thumbnail: string;
-  sold: number;
-  rating?: number;
-  categoryId: string;
-  productVariants: ProductVariantInterface[];
-  category:{
-    name: string
-  }
-}
-
-export interface GetProductInterface {
-  message?: string;
-  products: ProductInterface[];
-}
-
-export interface AddProductInterface {
-  name: string;
-  description: string;
-  thumbnail: File;
-  categoryId: string;
-}
-
-export interface UpdateProductInterface {
-  name?: string;
-  description?: string;
-  thumbnail?: File;
-  rating?: number;
-}
-
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { RootState } from '../redux';
+import { ApiResponse } from '@/types/common';
+import {
+  CreateProductInterface,
+  CreateProductVariantInterface,
+  ProductInterface,
+  ProductVariantInterface,
+  UpdateProductInterface,
+  UpdateProductVariantInterface,
+} from '@/types/products';
+import { API_URLS } from '@/constants/Urls';
 
 export const productApi = createApi({
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_PRODUCT_BASE_URL,
-    credentials: "include",
+    baseUrl: API_URLS.product,
+    credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token;
       if (token) {
-             headers.set("Authorization", `Bearer ${token}`);
+        headers.set('Authorization', `Bearer ${token}`);
       }
-     return headers;
- },
+      return headers;
+    },
   }),
-  reducerPath: "product",
-  tagTypes: ["Products", "ProductVariants"],
+  reducerPath: 'product',
+  tagTypes: ['Products', 'ProductVariants'],
   endpoints: (build) => ({
-    getProducts: build.query<any, void>({
+    getProducts: build.query<ApiResponse<ProductInterface[]>, string>({
       query: (id) => `/${id}`,
-      providesTags: ["Products","ProductVariants"],
+      providesTags: ['Products', 'ProductVariants'],
     }),
 
-    createProduct: build.mutation<string, File>({
+    createProduct: build.mutation<string, CreateProductInterface>({
       query: (data) => ({
-        url: "/",
-        method: "POST",
+        url: '/',
+        method: 'POST',
         body: data,
       }),
-      invalidatesTags: ["Products"],
+      invalidatesTags: ['Products'],
     }),
 
-    updateProduct: build.mutation<string, {id: string, data: File}>({
-      query: ({id,data}) => ({
+    updateProduct: build.mutation<string, UpdateProductInterface>({
+      query: ({ id, ...data }) => ({
         url: `/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: data,
       }),
-      invalidatesTags: ["Products"],
+      invalidatesTags: ['Products'],
     }),
 
     deleteProduct: build.mutation<void, string>({
       query: (id) => ({
         url: `/${id}`,
-        method: "DELETE",
+        method: 'DELETE',
       }),
-      invalidatesTags: ["Products"],
+      invalidatesTags: ['Products'],
     }),
-    getAllProductVariant: build.query<GetProductVariantInterface, void>({
-      query: () => "/variant",
-      providesTags: ["ProductVariants","Products"],
+    getAllProductVariant: build.query<
+      ApiResponse<ProductVariantInterface[]>,
+      void
+    >({
+      query: () => '/variant',
+      providesTags: ['ProductVariants', 'Products'],
     }),
     createProductVariant: build.mutation<string, CreateProductVariantInterface>(
       {
         query: (data) => ({
-          url: "/variant",
-          method: "POST",
+          url: '/variant',
+          method: 'POST',
           body: data,
         }),
-        invalidatesTags: ["Products"],
-      }
+        invalidatesTags: ['Products'],
+      },
     ),
-    updateProductVariant: build.mutation<string,any>(
+    updateProductVariant: build.mutation<string, UpdateProductVariantInterface>(
       {
         query: (data) => ({
           url: `/variant/${data.id}`,
-          method: "PUT",
+          method: 'PUT',
           body: data,
         }),
-        invalidatesTags: ["ProductVariants","Products"],
-      }
+        invalidatesTags: ['ProductVariants', 'Products'],
+      },
     ),
     deleteProductVariant: build.mutation<void, string>({
       query: (id) => ({
         url: `/variant/${id}`,
-        method: "DELETE",
+        method: 'DELETE',
       }),
-      invalidatesTags: ["Products"],
+      invalidatesTags: ['Products'],
     }),
   }),
 });

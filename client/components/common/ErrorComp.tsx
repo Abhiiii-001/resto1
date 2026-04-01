@@ -1,11 +1,9 @@
-import React from 'react'
+import React from 'react';
 
-type Props = {}
+type Props = {};
 
 function ErrorComp({}: Props) {
-  return (
-    <div>Error</div>
-  )
+  return <div>Error</div>;
 }
 
-export default ErrorComp
+export default ErrorComp;

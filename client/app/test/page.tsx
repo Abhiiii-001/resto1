@@ -1,12 +1,10 @@
-import Loader from '@/components/common/Loader'
-import React from 'react'
+import Loader from '@/components/common/Loader';
+import React from 'react';
 
-type Props = {}
+type Props = {};
 
 const page = (props: Props) => {
-  return (
-    <Loader/>
-  )
-}
+  return <Loader />;
+};
 
 export default page;
