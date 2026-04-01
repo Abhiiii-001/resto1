@@ -28,7 +28,7 @@ const useSocket = (restaurantId: string, url: string) => {
     socketRef.current = io(url, {
       reconnection: true,
       reconnectionAttempts: 5,
-      transports:["webbsocket","polling"]
+      transports: ['webbsocket', 'polling'],
     });
 
     socketRef.current.on('connect', () => {
@@ -58,7 +58,9 @@ const useSocket = (restaurantId: string, url: string) => {
     };
   }, [restaurantId, url, dispatch]);
 
-  const isConnected = useSelector((state: RootState) => state.order?.socketConnected);
+  const isConnected = useSelector(
+    (state: RootState) => state.order?.socketConnected,
+  );
   return { isConnected };
 };
 

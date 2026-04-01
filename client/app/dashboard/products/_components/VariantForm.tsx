@@ -2,10 +2,10 @@ import {
   useCreateProductVariantMutation,
   useDeleteProductVariantMutation,
   useUpdateProductVariantMutation,
-} from "@/redux/api/products";
-import { Check, Edit, PlusIcon, Trash2, X } from "lucide-react";
-import React, { ChangeEvent, useState } from "react";
-import { toast } from "react-toastify";
+} from '@/redux/api/products';
+import { Check, Edit, PlusIcon, Trash2, X } from 'lucide-react';
+import React, { ChangeEvent, useState } from 'react';
+import { toast } from 'react-toastify';
 
 type Props = {};
 
@@ -13,12 +13,12 @@ const VariantForm = ({
   variants,
   setVariants,
   isEdit,
-  productId = "",
+  productId = '',
 }: any) => {
   const [variantAddOption, setVariantAddOption] = useState(!isEdit);
-  const [editableVariant, setEditableVariant] = useState("");
+  const [editableVariant, setEditableVariant] = useState('');
   const [createVariantData, setCreateVaraintData] = useState({
-    size: "",
+    size: '',
     price: 0,
   });
 
@@ -36,7 +36,7 @@ const VariantForm = ({
   ] = useDeleteProductVariantMutation();
 
   const updateVariantHandler = async (variant: any) => {
-    const toastId = toast.loading("Updating...");
+    const toastId = toast.loading('Updating...');
     try {
       const res = await updateProductVariant({
         id: variant.id,
@@ -44,50 +44,50 @@ const VariantForm = ({
         price: parseInt(variant.price),
         isOutOfStock: variant.isOutOfStock,
       }).unwrap();
-      if (updateVariantError) throw new Error("Something wrong!");
+      if (updateVariantError) throw new Error('Something wrong!');
 
-      toast.success("Updation Successfully!");
+      toast.success('Updation Successfully!');
     } catch (error) {
-      console.log("Error while updating variant", error);
-      toast.error("Updation Failed");
+      console.log('Error while updating variant', error);
+      toast.error('Updation Failed');
     }
-    setEditableVariant("");
+    setEditableVariant('');
     toast.dismiss(toastId);
   };
 
   // Create variant handler
 
   const createVariantHandler = async () => {
-    console.log("Variant Handler");
+    console.log('Variant Handler');
     const alreadyPresent = variants.filter(
-      (variant: any) => variant.size === createVariantData.size
+      (variant: any) => variant.size === createVariantData.size,
     );
     console.log(alreadyPresent);
 
     if (alreadyPresent.length != 0) {
-      toast.error("Already Present size");
+      toast.error('Already Present size');
     } else if (isEdit) {
-      const toastId = toast.loading("Creating...");
+      const toastId = toast.loading('Creating...');
       try {
         const res = await createProductVariant({
           ...createVariantData,
           productId: productId,
         }).unwrap();
-        console.log("Create varinat response", res);
+        console.log('Create varinat response', res);
         if (createVariantError) {
-          toast.error("Something went wrong!");
+          toast.error('Something went wrong!');
           return;
         }
-        toast.success("Variant added!");
+        toast.success('Variant added!');
       } catch (error) {
         console.log(error);
-        toast.error("Variant add failed!");
+        toast.error('Variant add failed!');
       }
       toast.dismiss(toastId);
     } else {
       variants.push({ id: variants.length, ...createVariantData });
     }
-    setCreateVaraintData({ size: "", price: 0 });
+    setCreateVaraintData({ size: '', price: 0 });
     setVariantAddOption(false);
   };
 
@@ -98,30 +98,30 @@ const VariantForm = ({
     }
 
     if (variants.length == 1) {
-      toast.warning("Atleast one variant required!");
+      toast.warning('Atleast one variant required!');
       return;
     }
 
-    const toastId = toast.loading("Deleting...");
+    const toastId = toast.loading('Deleting...');
     try {
       const res = await deleteProductVariant(v.id).unwrap();
-      if (deleteVariantError) throw new Error("Something wrong!");
-      toast.success("Deletion Successfully!");
+      if (deleteVariantError) throw new Error('Something wrong!');
+      toast.success('Deletion Successfully!');
     } catch (error) {
-      console.log("Error while deleting variant", error);
-      toast.error("Deletion Failed");
+      console.log('Error while deleting variant', error);
+      toast.error('Deletion Failed');
     }
     toast.dismiss(toastId);
   };
 
   return (
     <div className="w-full">
-      <div className="w-full flex items-center justify-between">
-        <h2 className="text-2xl font-semibold py-2">Variants</h2>
+      <div className="flex w-full items-center justify-between">
+        <h2 className="py-2 text-2xl font-semibold">Variants</h2>
 
         <div
           onClick={() => setVariantAddOption(!variantAddOption)}
-          className="scale-110 cursor-pointer px-2 py-1 bg-blue-300 rounded-xl"
+          className="scale-110 cursor-pointer rounded-xl bg-blue-300 px-2 py-1"
         >
           {variantAddOption ? <X /> : <PlusIcon />}
         </div>
@@ -133,8 +133,8 @@ const VariantForm = ({
           {/* Varinats list */}
           <div className="my-4">
             {variants.length === 0 && variantAddOption == false ? (
-              <div className="py-8 px-6 w-full text-center font-semibold ">
-                {" "}
+              <div className="w-full px-6 py-8 text-center font-semibold">
+                {' '}
                 No Variant Added
               </div>
             ) : (
@@ -142,18 +142,17 @@ const VariantForm = ({
                 return (
                   <div>
                     {editableVariant === v.id ? (
-
                       // variant field during editing
 
                       <div className="w-full space-y-1">
-                        <div className="w-full flex gap-4 items-center">
+                        <div className="flex w-full items-center gap-4">
                           {/* Size input and label */}
                           <div className="w-full">
                             <label
                               htmlFor="size"
-                              className="block text-[1rem] font-semibold text-gray-600 "
+                              className="block text-[1rem] font-semibold text-gray-600"
                             >
-                              Size <sup className="text-pink-800 pl-1">*</sup>
+                              Size <sup className="pl-1 text-pink-800">*</sup>
                             </label>
                             <input
                               id="size"
@@ -162,7 +161,7 @@ const VariantForm = ({
                               placeholder="Ex: S"
                               defaultValue={v.size}
                               onChange={(e) => (v.size = e.target.value)}
-                              className="input-style !py-1 w-full"
+                              className="input-style w-full !py-1"
                             />
                           </div>
 
@@ -170,9 +169,9 @@ const VariantForm = ({
                           <div className="w-full">
                             <label
                               htmlFor="price"
-                              className="block text-[1rem] font-semibold text-gray-600 "
+                              className="block text-[1rem] font-semibold text-gray-600"
                             >
-                              Prize <sup className="text-pink-800 pl-1">*</sup>
+                              Prize <sup className="pl-1 text-pink-800">*</sup>
                             </label>
                             <input
                               id="price"
@@ -183,15 +182,15 @@ const VariantForm = ({
                               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                                 (v.price = e.target.value)
                               }
-                              className="input-style !py-1 w-full"
+                              className="input-style w-full !py-1"
                             />
                           </div>
 
                           {/* Variant edit button */}
-                          <div className="flex gap-2 items-center justify-center">
+                          <div className="flex items-center justify-center gap-2">
                             <div
-                              onClick={() => setEditableVariant("")}
-                              className="text-red-400 hover:text-red-600 mt-4 cursor-pointer"
+                              onClick={() => setEditableVariant('')}
+                              className="mt-4 cursor-pointer text-red-400 hover:text-red-600"
                             >
                               <X />
                             </div>
@@ -202,7 +201,7 @@ const VariantForm = ({
                                 deleteVariantLoading
                               }
                               onClick={() => updateVariantHandler(v)}
-                              className="flex items-center justify-center h-full pt-4 scale-110 text-blue-500 hover:text-blue-700 cursor-pointer"
+                              className="flex h-full scale-110 cursor-pointer items-center justify-center pt-4 text-blue-500 hover:text-blue-700"
                             >
                               <Check />
                             </button>
@@ -211,16 +210,16 @@ const VariantForm = ({
                       </div>
                     ) : (
                       <div
-                        className=" flex w-full items-center justify-between py-2"
+                        className="flex w-full items-center justify-between py-2"
                         key={index}
                       >
                         <div className="flex items-center gap-2">
                           <p className="text-sm font-semibold text-gray-600">
                             Size:
                           </p>
-                          <div className="py-1 px-2 min-w-20 text-center text-wrap bg-blue-300 rounded-xl">
+                          <div className="min-w-20 text-wrap rounded-xl bg-blue-300 px-2 py-1 text-center">
                             {v?.size.length > 6
-                              ? v.size.slice(0, 5) + "..."
+                              ? v.size.slice(0, 5) + '...'
                               : v.size}
                           </div>
                         </div>
@@ -228,13 +227,13 @@ const VariantForm = ({
                           <p className="text-sm font-semibold text-gray-600">
                             Price:
                           </p>
-                          <div className="py-1 px-2 min-w-20 text-center bg-blue-300 rounded-xl">
+                          <div className="min-w-20 rounded-xl bg-blue-300 px-2 py-1 text-center">
                             {v?.price}
                           </div>
                         </div>
-                        <div className="flex items-center gap-3 py-1 px-4 rounded-xl border border-gray-300 bg-gray-200">
+                        <div className="flex items-center gap-3 rounded-xl border border-gray-300 bg-gray-200 px-4 py-1">
                           <button
-                            className="text-red-500 hover:text-red-700 cursor-pointer"
+                            className="cursor-pointer text-red-500 hover:text-red-700"
                             onClick={() => deleteVariantHandler(v)}
                             disabled={
                               updateVariantLoading ||
@@ -247,7 +246,7 @@ const VariantForm = ({
                           {isEdit && (
                             <>
                               <button
-                                className="text-blue-500 cursor-pointer hover:text-blue-700"
+                                className="cursor-pointer text-blue-500 hover:text-blue-700"
                                 onClick={() => {
                                   setEditableVariant(v.id);
                                 }}
@@ -263,8 +262,12 @@ const VariantForm = ({
                                   id={v.id}
                                   className="peer sr-only"
                                   checked={v.isOutOfStock}
-                                  onChange={() =>{ 
-                                    updateProductVariant({...v,isOutOfStock:!v.isOutOfStock})}}
+                                  onChange={() => {
+                                    updateProductVariant({
+                                      ...v,
+                                      isOutOfStock: !v.isOutOfStock,
+                                    });
+                                  }}
                                   disabled={
                                     updateVariantLoading ||
                                     createVariantLoading ||
@@ -289,14 +292,14 @@ const VariantForm = ({
 
           {variantAddOption && (
             <div className="w-full space-y-1">
-              <div className="w-full flex gap-4 items-center">
+              <div className="flex w-full items-center gap-4">
                 {/* Size input and label */}
                 <div className="w-full">
                   <label
                     htmlFor="size"
-                    className="block text-[1rem] font-semibold text-gray-600 "
+                    className="block text-[1rem] font-semibold text-gray-600"
                   >
-                    Size <sup className="text-pink-800 pl-1">*</sup>
+                    Size <sup className="pl-1 text-pink-800">*</sup>
                   </label>
                   <input
                     id="size"
@@ -318,9 +321,9 @@ const VariantForm = ({
                 <div className="w-full">
                   <label
                     htmlFor="price"
-                    className="block text-[1rem] font-semibold text-gray-600 "
+                    className="block text-[1rem] font-semibold text-gray-600"
                   >
-                    Prize <sup className="text-pink-800 pl-1">*</sup>
+                    Prize <sup className="pl-1 text-pink-800">*</sup>
                   </label>
                   <input
                     id="price"
@@ -346,7 +349,7 @@ const VariantForm = ({
                     deleteVariantLoading
                   }
                   onClick={createVariantHandler}
-                  className="flex items-center justify-center h-full pt-4 scale-125 text-blue-500 cursor-pointer"
+                  className="flex h-full scale-125 cursor-pointer items-center justify-center pt-4 text-blue-500"
                 >
                   <Check />
                 </button>

@@ -68,7 +68,7 @@ export const calculateSummary = async (duration: Duration) => {
         amount: totalAmount,
         duration,
         orders: orders.length,
-        cratedAt: labelDate.toISOString(), // set to start of the period
+        createdAt: labelDate.toISOString(), // set to start of the period
         restaurantId: restaurant.id,
       },
     });

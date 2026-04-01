@@ -40,7 +40,7 @@ export const GetDashboardData = async(req: Request,res: Response): Promise<any> 
                 duration: "Day"
             },
             orderBy: {
-                cratedAt: "desc"
+                createdAt: "desc"
             },
             take: 7
         });
@@ -52,7 +52,7 @@ export const GetDashboardData = async(req: Request,res: Response): Promise<any> 
                 duration: "Month"
             },
             orderBy: {
-                cratedAt: "desc"
+                createdAt: "desc"
             },
             take: 12
         });

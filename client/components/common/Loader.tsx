@@ -1,14 +1,22 @@
-import React from 'react'
+import React, { useEffect } from 'react';
 
-type Props = {}
+type Props = {};
 
 const Loader = (props: Props) => {
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
   return (
-    <div className='w-full h-full flex items-center justify-center bg-transparent relative backdrop-blur-sm '>
-        <div className='loader'></div>
-        <div className='absolute rotate-[-20deg] font-serif text-[#F5A463] font-semibold animate-pulse'>Restro</div>
+    <div className="no-scroll absolute inset-0 flex h-screen w-screen items-center justify-center bg-transparent backdrop-blur-sm">
+      <div className="loader"></div>
+      <div className="absolute rotate-[-20deg] animate-pulse font-serif font-semibold text-[#F5A463]">
+        Restro
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Loader
+export default Loader;
