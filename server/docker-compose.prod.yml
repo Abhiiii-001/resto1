@@ -1,0 +1,33 @@
+# ──────────────────────────────────────────────────────────────────
+# PRODUCTION
+# Usage: docker compose -f docker-compose.prod.yml up --build
+#
+# No postgres container — DATABASE_URL points to your cloud DB (Neon etc.)
+# All env vars must be injected from your hosting platform (Render/Railway/etc.)
+# ──────────────────────────────────────────────────────────────────
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: restro_server
+    restart: always
+    ports:
+      - '8000:8000'
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL}
+      PORT: 8000
+      CLIENT_URL: ${CLIENT_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_USER: ${MAIL_USER}
+      MAIL_PASS: ${MAIL_PASS}
+      CLOUD_NAME: ${CLOUD_NAME}
+      CLOUD_API_KEY: ${CLOUD_API_KEY}
+      CLOUD_API_SECRET: ${CLOUD_API_SECRET}
+      CLOUDINARY_URL: ${CLOUDINARY_URL}
+      PUBLIC_VAPID_KEY: ${PUBLIC_VAPID_KEY}
+      PRIVATE_VAPID_KEY: ${PRIVATE_VAPID_KEY}
+      FILE_NAME: ${FILE_NAME}

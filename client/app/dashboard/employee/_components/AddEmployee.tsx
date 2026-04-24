@@ -1,20 +1,16 @@
 'use client';
 
-import { X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
+import Dialog from '@/components/common/Dialog';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { AddUpdateUserPayload, User } from '@/types/employee';
 
-interface EmployeeData {
-  name: string;
-  email: string;
-  number: string;
-  role: string;
-}
 
 interface AddEmployeeModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddEmployee: (data: EmployeeData) => void;
+  onAddEmployee: (data: AddUpdateUserPayload) => void;
 }
 
 const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({
@@ -27,114 +23,111 @@ const AddEmployeeModal: React.FC<AddEmployeeModalProps> = ({
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<EmployeeData>();
+  } = useForm<AddUpdateUserPayload>();
 
-  const onSubmit = (data: EmployeeData) => {
+  const onSubmit = (data: AddUpdateUserPayload) => {
     onAddEmployee(data);
     reset();
-    onClose();
   };
 
-  if (!isOpen) return null;
+  const ModalContent = (
+    <div className="w-full">
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-foreground">Add Employee</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Invite a new team member to your restaurant dashboard.
+        </p>
+      </div>
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-lg">
-        {/* Header */}
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-2xl font-semibold text-black">Add Employee</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
-          >
-            <X size={20} />
-          </button>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex w-full flex-col gap-6">
+        <div className="w-full space-y-2">
+          <label className="text-sm font-semibold text-foreground">
+            Name <span className="text-destructive">*</span>
+          </label>
+          <Input
+            type="text"
+            placeholder="Enter employee name"
+            {...register('name', { required: 'Name is required' })}
+            className={errors.name ? 'border-destructive focus-visible:ring-destructive' : ''}
+          />
+          {errors.name && (
+            <p className="text-sm text-destructive">{errors.name.message as string}</p>
+          )}
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <label className="block py-1 text-sm font-semibold text-gray-700">
-              Name<span className="pl-1 text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              {...register('name', { required: 'Name is required' })}
-              className="w-full rounded border p-2 text-black"
-              placeholder="Enter employee name"
-            />
-            {errors.name && (
-              <p className="text-sm text-red-500">{errors.name.message}</p>
-            )}
-          </div>
+        <div className="w-full space-y-2">
+          <label className="text-sm font-semibold text-foreground">
+            Email <span className="text-destructive">*</span>
+          </label>
+          <Input
+            type="email"
+            placeholder="Enter employee email"
+            {...register('email', { required: 'Email is required' })}
+            className={errors.email ? 'border-destructive focus-visible:ring-destructive' : ''}
+          />
+          {errors.email && (
+            <p className="text-sm text-destructive">{errors.email.message as string}</p>
+          )}
+        </div>
 
-          <div>
-            <label className="block py-1 text-sm font-semibold text-gray-700">
-              Email<span className="pl-1 text-red-500">*</span>
-            </label>
-            <input
-              type="email"
-              {...register('email', { required: 'Email is required' })}
-              className="w-full rounded border p-2 text-black"
-              placeholder="Enter employee email"
-            />
-            {errors.email && (
-              <p className="text-sm text-red-500">{errors.email.message}</p>
-            )}
-          </div>
+        <div className="w-full space-y-2">
+          <label className="text-sm font-semibold text-foreground">
+            Number <span className="text-destructive">*</span>
+          </label>
+          <Input
+            type="text"
+            placeholder="Enter contact number"
+            {...register('number', { required: 'Number is required' })}
+            className={errors.number ? 'border-destructive focus-visible:ring-destructive' : ''}
+          />
+          {errors.number && (
+            <p className="text-sm text-destructive">{errors.number.message as string}</p>
+          )}
+        </div>
 
-          <div>
-            <label className="block py-1 text-sm font-semibold text-gray-700">
-              Number<span className="pl-1 text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              {...register('number', { required: 'Number is required' })}
-              className="w-full rounded border p-2 text-black"
-              placeholder="Enter contact number"
-            />
-            {errors.number && (
-              <p className="text-sm text-red-500">{errors.number.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block py-1 text-sm font-semibold text-gray-700">
-              Role<span className="pl-1 text-red-500">*</span>
-            </label>
+        <div className="w-full space-y-2">
+          <label className="text-sm font-semibold text-foreground">
+            Role <span className="text-destructive">*</span>
+          </label>
+          <div className="relative">
             <select
               {...register('role', { required: 'Role is required' })}
-              className="w-full rounded border bg-white p-2 text-sm text-gray-700 text-opacity-60"
+              className={`flex h-10 w-full appearance-none rounded-md border bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                errors.role ? 'border-destructive focus-visible:ring-destructive' : 'border-input'
+              }`}
             >
-              <option value="">Select Role</option>
-              {/* <option value="admin">Admin</option> */}
+              <option value="" disabled selected hidden>Select Role</option>
               <option value="User">User</option>
-              {/* <option value="staff">Staff</option> */}
             </select>
-            {errors.role && (
-              <p className="text-sm text-red-500">{errors.role.message}</p>
-            )}
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground">
+              <svg className="h-4 w-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
           </div>
+          {errors.role && (
+            <p className="text-sm text-destructive">{errors.role.message as string}</p>
+          )}
+        </div>
 
-          {/* Buttons */}
-          <div className="mt-4 flex justify-end space-x-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-xl bg-gray-400 px-4 py-2 text-white transition-all duration-200 hover:bg-gray-500"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="rounded-xl bg-blue-400 px-4 py-2 text-white transition-all duration-200 hover:bg-blue-500"
-            >
-              Add Employee
-            </button>
-          </div>
-        </form>
-      </div>
+        <div className="mt-4 flex w-full justify-end gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onClose}
+          >
+            Cancel
+          </Button>
+          <Button type="submit">
+            Add Employee
+          </Button>
+        </div>
+      </form>
     </div>
+  );
+
+  return (
+    <Dialog isOpen={isOpen} setIsOpen={onClose} component={ModalContent} />
   );
 };
 

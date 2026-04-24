@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+  import { Order } from '@/types/order';
 
 const initialState = {
   count: 0,
-  orders: [],
+  orders: [] as Order[],
   socketConnected: false,
 };
 const orderSlice = createSlice({
@@ -16,7 +17,7 @@ const orderSlice = createSlice({
     },
     addOrdersBulk: (state, action) => {
       const orders = action.payload;
-      console.log(orders);
+      //console.log(orders);
       state.orders = orders;
       state.count = orders?.length;
     },

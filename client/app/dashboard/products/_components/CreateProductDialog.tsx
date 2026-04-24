@@ -2,15 +2,17 @@
 import FileUploader from '@/components/common/FileUploader';
 import { Category, useGetAllCategoriesQuery } from '@/redux/api/category';
 import {
-  ProductVariantInterface,
   useCreateProductMutation,
   useUpdateProductMutation,
 } from '@/redux/api/products';
-import { Check, Edit, Loader, PlusIcon, Trash2, X } from 'lucide-react';
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import VariantForm from './VariantForm';
+import Dialog from '@/components/common/Dialog';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { CreateProductInterface, ProductVariantInterface } from '@/types/products';
 
 interface variantInterface {
   id?: string;
@@ -18,8 +20,21 @@ interface variantInterface {
   price: number;
 }
 
-const CreateProductDialog = ({ isEdit, product, setModal }: any) => {
-  const [variants, setVariants] = useState<variantInterface[]>([]);
+interface CreateProductDialogProps {
+  isEdit: boolean;
+  product: any;
+  setModal: (isOpen: boolean) => void;
+}
+
+interface CreateProductFormData {
+    name: string;
+    description: string;
+    thumbnail: File;
+    categoryId: string;
+  }
+
+const CreateProductDialog = ({ isEdit, product, setModal }: CreateProductDialogProps) => {
+  const [variants, setVariants] = useState<ProductVariantInterface[]>([]);
 
   const { data: categories, isLoading, isSuccess } = useGetAllCategoriesQuery();
   const [createProduct, { isLoading: createProductLoading }] =
@@ -33,17 +48,15 @@ const CreateProductDialog = ({ isEdit, product, setModal }: any) => {
     setValue,
     watch,
     reset,
-  } = useForm();
+  } = useForm<CreateProductFormData>();
 
   if (isEdit) {
     setValue('name', product?.name);
     setValue('description', product?.description);
-    // setValue("thumbanil",product?.thumbnail)
-    // setVariants(product?.productVariants)
 
     useEffect(() => {
       if (
-        product?.productVariants.length > 0 &&
+        product?.productVariants?.length > 0 &&
         Array.isArray(product.productVariants)
       ) {
         setVariants([]);
@@ -60,18 +73,16 @@ const CreateProductDialog = ({ isEdit, product, setModal }: any) => {
           },
         );
       }
-      console.log(variants);
     }, [product]);
   }
 
   const thumbnail = watch('thumbnail');
 
-  const createProductHandler = async (data: any) => {
-    if (variants.length == 0) {
-      toast.warning('Atleast one variant is required!');
+  const createProductHandler = async (data: CreateProductFormData) => {
+    if (variants.length === 0) {
+      toast.warning('At least one variant is required!');
       return;
     }
-    console.log(data);
     const toastId = toast.loading('Loading...');
     const formData = new FormData();
     formData.append('name', data.name);
@@ -82,178 +93,169 @@ const CreateProductDialog = ({ isEdit, product, setModal }: any) => {
         formData.append('categoryId', data.categoryId);
         formData.append('variants', JSON.stringify(variants));
 
-        console.log('Create product form data', formData);
-
-        const response = await createProduct(formData);
-        console.log('Create Product Response', response);
-        if (!response.error) toast.success('Product Created!');
-        else toast.error('Product creation Failed!');
+        const response = await createProduct(formData as unknown as CreateProductInterface);
+        if (!response.error) {
+          toast.success('Product Created!');
+          setModal(false);
+        } else {
+          toast.error('Product creation Failed!');
+        }
       } catch (error) {
         toast.error('Product creation Failed!');
-        console.log('Error while creation of product', error);
       }
       reset();
       setVariants([]);
     } else {
       try {
         formData.append('id', product.id);
-        console.log('Update product form data', formData);
-
         const res = await updateProduct({ id: product.id, ...data });
-        console.log('Update Product response:', res);
-        if (!res.error) toast.success('Product Updated!');
-        else toast.error('Product updation Failed!');
+        if (!res.error) {
+          toast.success('Product Updated!');
+          setModal(false);
+        } else {
+          toast.error('Product updation Failed!');
+        }
       } catch (error) {
         toast.error('Product updation Failed!');
-        console.log('Error while updation of product', error);
       }
     }
     toast.dismiss(toastId);
   };
 
-  return (
-    <div className="fixed inset-0 flex items-center justify-center overflow-scroll bg-black bg-opacity-50">
-      <div className="min-w-[480px] max-w-[900px] rounded-xl bg-white py-8 lg:min-w-[600px]">
-        <form
-          className="mx-auto flex w-10/12 flex-col items-start gap-6"
-          onSubmit={handleSubmit(createProductHandler)}
-        >
-          {/* Heading and closing button */}
-          <div className="flex w-full items-center justify-between">
-            <h2 className="text-2xl font-semibold">Product Details</h2>
-            <button className="text-2xl" onClick={() => setModal(false)}>
-              <X />
-            </button>
-          </div>
+  const ModalContent = (
+    <div className="w-full">
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-foreground">
+          {isEdit ? 'Edit Product' : 'Create Product'}
+        </h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {isEdit ? 'Update your product details below.' : 'Fill in the details to add a new product.'}
+        </p>
+      </div>
 
-          {/* Name input and label */}
-          <div className="w-full">
+      <form
+        className="flex w-full flex-col items-start gap-6"
+        onSubmit={handleSubmit(createProductHandler)}
+      >
+        <div className="w-full space-y-2">
+          <label
+            htmlFor="name"
+            className="text-sm font-semibold text-foreground"
+          >
+            Name <span className="text-destructive">*</span>
+          </label>
+          <Input
+            id="name"
+            type="text"
+            placeholder="Enter product name"
+            {...register('name', { required: 'Name is required' })}
+            className={errors.name ? 'border-destructive focus-visible:ring-destructive' : ''}
+          />
+          {errors.name && <p className="text-sm text-destructive">{errors.name.message as string}</p>}
+        </div>
+
+        <div className="w-full space-y-2">
+          <label
+            htmlFor="description"
+            className="text-sm font-semibold text-foreground"
+          >
+            Description <span className="text-destructive">*</span>
+          </label>
+          <Input
+            id="description"
+            type="text"
+            placeholder="Enter description"
+            {...register('description', {
+              required: 'Description is required',
+            })}
+            className={errors.description ? 'border-destructive focus-visible:ring-destructive' : ''}
+          />
+          {errors.description && <p className="text-sm text-destructive">{errors.description.message as string}</p>}
+        </div>
+
+        <div className="w-full space-y-2">
+          <label
+            htmlFor="thumbnail"
+            className="text-sm font-semibold text-foreground"
+          >
+            Thumbnail <span className="text-destructive">*</span>
+          </label>
+          <FileUploader
+            thumbnail={thumbnail}
+            setValue={setValue}
+            previewUrl={isEdit ? product?.thumbnail : null}
+          />
+          {errors.thumbnail && <p className="text-sm text-destructive">{errors.thumbnail.message as string}</p>}
+        </div>
+
+        {!isEdit && (
+          <div className="w-full space-y-2">
             <label
-              htmlFor="name"
-              className="block text-[1rem] font-semibold text-gray-600"
+              htmlFor="categoryId"
+              className="text-sm font-semibold text-foreground"
             >
-              Name <sup className="pl-1 text-pink-800">*</sup>
+              Category <span className="text-destructive">*</span>
             </label>
-            <input
-              id="name"
-              type="text"
-              placeholder="Enter product name"
-              {...register('name', { required: 'Name is required' })}
-              className={`input-style w-full ${
-                errors.name ? 'border-red-500' : 'border-gray-300'
-              }`}
-            />
-            <div className="mt-1 w-full text-end text-sm font-semibold text-red-500">
-              {errors.name ? 'Please fill name*' : ''}
-            </div>
-          </div>
-
-          {/* Description input and label */}
-          <div className="w-full">
-            <label
-              htmlFor="description"
-              className="block text-[1rem] font-semibold text-gray-600"
-            >
-              Description <sup className="pl-1 text-pink-800">*</sup>
-            </label>
-            <input
-              id="description"
-              type="text"
-              placeholder="Enter description"
-              {...register('description', {
-                required: 'Description is required',
-              })}
-              className={`input-style w-full ${
-                errors.description
-                  ? 'border border-red-500'
-                  : 'border border-gray-300'
-              }`}
-            />
-            <div className="mt-1 w-full text-end text-sm font-semibold text-red-500">
-              {errors.description ? 'Please fill desciption*' : ''}
-            </div>
-          </div>
-
-          {/* Thumbnail */}
-          <div className="w-full">
-            <label
-              htmlFor="name"
-              className="block text-[1rem] font-semibold text-gray-600"
-            >
-              Thumbnail <sup className="pl-1 text-pink-800">*</sup>
-            </label>
-            <FileUploader
-              thumbnail={thumbnail}
-              setValue={setValue}
-              previewUrl={isEdit ? product?.thumbnail : null}
-            />
-            <div className="mt-1 w-full text-end text-sm font-semibold text-red-500">
-              {errors.thumbnail ? 'Please fill desciption*' : ''}
-            </div>
-          </div>
-
-          {/* Category */}
-          {!isEdit && (
-            <div className="w-full">
-              <label
-                htmlFor="categoryId"
-                className="block text-[1rem] font-semibold text-gray-600"
-              >
-                Category <sup className="pl-1 text-pink-800">*</sup>
-              </label>
+            <div className="relative">
               <select
                 {...register('categoryId', {
                   required: 'Category is required',
                 })}
-                className={`input-style w-full text-sm text-gray-600 ${
-                  errors.categoryId ? 'border-red-500' : 'border-gray-300'
+                className={`flex h-10 w-full appearance-none rounded-md border bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                  errors.categoryId ? 'border-destructive focus-visible:ring-destructive' : 'border-input'
                 }`}
               >
-                <option
-                  value={''}
-                  disabled
-                  hidden
-                  selected
-                  className="text-sm text-gray-400"
-                >
+                <option value="" disabled hidden>
                   Select Category
                 </option>
                 {isSuccess &&
                   categories &&
-                  categories.categories?.map((category: Category) => {
-                    return (
-                      <option key={category.id} value={category?.id}>
-                        {category?.name}
-                      </option>
-                    );
-                  })}
+                  categories.map((category: Category) => (
+                    <option key={category.id} value={category?.id}>
+                      {category?.name}
+                    </option>
+                  ))}
               </select>
-              <div className="mt-1 w-full text-end text-sm font-semibold text-red-500">
-                {errors.categoryId ? 'Please select category*' : ''}
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground">
+                <svg className="h-4 w-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
               </div>
             </div>
-          )}
+            {errors.categoryId && <p className="text-sm text-destructive">{errors.categoryId.message as string}</p>}
+          </div>
+        )}
 
-          {/* variants part */}
-          {!isEdit && (
+        {!isEdit && (
+          <div className="w-full">
             <VariantForm
               variants={variants}
               setVariants={setVariants}
               isEdit={isEdit}
               productId={isEdit ? product.id : ''}
             />
-          )}
+          </div>
+        )}
 
-          <button
+        <div className="mt-4 flex w-full justify-end gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setModal(false)}
+          >
+            Cancel
+          </Button>
+          <Button
             type="submit"
             disabled={createProductLoading || updateProductLoading}
-            className="w-full bg-blue-300 py-3 text-center text-sm font-semibold text-gray-600 transition-all duration-200 hover:bg-blue-200 lg:text-[16px]"
           >
-            Submit
-          </button>
-        </form>
-      </div>
+            {isEdit ? 'Update Product' : 'Create Product'}
+          </Button>
+        </div>
+      </form>
     </div>
+  );
+
+  return (
+    <Dialog isOpen={true} setIsOpen={setModal} component={ModalContent} />
   );
 };
 

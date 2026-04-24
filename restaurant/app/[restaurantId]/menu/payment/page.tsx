@@ -36,7 +36,7 @@ function Payment({}: Props) {
       setRestaurantDetails(restaurantData?.data);
     }
   }, [restaurantData]);
-  console.log("Restaurant Details", restaurantDetails);
+  //console.log("Restaurant Details", restaurantDetails);
 
   const [isPending, startTransition] = useTransition();
 
@@ -78,10 +78,10 @@ function Payment({}: Props) {
 
         dispatch(resetCart());
 
-        // console.log(orderData);
+        // //console.log(orderData);
 
         const response = await createOrderApi(orderData);
-        console.log("Create order response", response);
+        //console.log("Create order response", response);
 
         toast.dismiss(toastId);
         if (response.success == false) {
@@ -94,7 +94,7 @@ function Payment({}: Props) {
       }
     } catch (error: any) {
       // toast.dismiss(toastId);
-      console.log(error);
+      //console.log(error);
       toast.error(error.message);
     }
   };

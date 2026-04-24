@@ -9,7 +9,7 @@ export const AddCategory = async(req: Request,res: Response): Promise<any> => {
         //Get all requried data
         const { name } : {name: string}= req.body;
         const thumbnail = req.files?.thumbnail;
-        console.log(name,thumbnail);
+        //console.log(name,thumbnail);
         //@ts-ignore
         const restaurantId = req.user.restaurantId;
 
@@ -36,7 +36,7 @@ export const AddCategory = async(req: Request,res: Response): Promise<any> => {
 
 
     } catch (error) {
-         console.log(error);
+         //console.log(error);
          return res.status(499).json({message:"Something wrong during category creation!"});
     }
 }
@@ -55,7 +55,7 @@ export const RemoveCategory = async(req: Request,res: Response): Promise<any> =>
         return res.status(200).json({message: "Category deleted!"})
 
     } catch (error) {
-        console.log(error);
+        //console.log(error);
         return res.status(499).json({message:"Something wrong during category deletion!"});
    }
 
@@ -80,7 +80,7 @@ export const UpdateCategory = async(req: Request,res: Response): Promise<any> =>
 
         return res.status(200).json({message: "Category updated!",result: result});
     } catch (error) {
-        console.log(error);
+        //console.log(error);
         return res.status(499).json({message:"Something wrong during category updation!"});
    }
 
@@ -103,7 +103,7 @@ export const GetAllCategories = async(req: Request,res: Response): Promise<any> 
         return res.status(200).json({categories});
 
     } catch (error) {
-        console.log(error);
+        //console.log(error);
         return res.status(499).json({message:"Something wrong during category retrive!"});
    }
 }
@@ -136,7 +136,7 @@ export const GetAllCategoriesWithProducts = async(req: Request,res: Response):Pr
 
         
     } catch (error) {
-         console.log("Get all categories with product error",error);
+         //console.log("Get all categories with product error",error);
          return res.status(499).json({
             success: false,
             message:"Something wrong during all data retrieve"

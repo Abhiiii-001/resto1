@@ -12,21 +12,21 @@ export const Auth = async(req: Request,res: Response,next: NextFunction): Promis
         const token = req.cookies.token ||
                       req.body.token    ||
                       req.headers.authorization?.split(" ")[1];
-        // console.log("cookie",req.cookies);
-        // console.log("body",req.body);
-        // console.log("headers",req.headers);
+        // //console.log("cookie",req.cookies);
+        // //console.log("body",req.body);
+        // //console.log("headers",req.headers);
         if(!token)
             return res.status(401).json({message: "Missing data"});
 
         const secret: string = process.env.JWT_SECRET || "secret";
         const decoded =  jwt.verify(token,secret);
 
-        console.log(decoded);    //id email role restaurantId
+        //console.log(decoded);    //id email role restaurantId
         //@ts-ignore
         req.user = decoded;   
         next();
     } catch (error) {
-        console.log(error);
+        //console.log(error);
         return res.status(405).json({message:"Authentication Failed!"});
     }
 }
@@ -43,7 +43,7 @@ export const IsRestaurant = async(req: Request,res: Response,next: NextFunction)
 
         next();
     } catch (error) {
-        console.log(error);
+        //console.log(error);
         return res.status(405).json({message:"Autorization Failed!"});
     }
 }
@@ -60,7 +60,7 @@ export const IsUser = async(req: Request,res: Response,next: NextFunction) => {
 
         next();
     } catch (error) {
-        console.log(error);
+        //console.log(error);
         return res.status(405).json({message:"Autorization Failed!"});
     }
 }
@@ -77,7 +77,7 @@ export const IsAdmin = async(req: Request,res: Response,next: NextFunction) => {
 
         next();
     } catch (error) {
-        console.log(error);
+        //console.log(error);
         return res.status(405).json({message:"Autorization Failed!"});
     }
 }
@@ -101,7 +101,7 @@ export const IsModifier = async(req: Request,res: Response,next: NextFunction):P
         next();
 
     } catch (error) {
-        console.log(error);
+        //console.log(error);
         return res.status(405).json({message:"Autorization Failed!"});
     }
 }

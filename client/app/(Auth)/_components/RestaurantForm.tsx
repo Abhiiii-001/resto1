@@ -1,11 +1,8 @@
-import { RestaturantSignupInterface } from '@/app/Interfaces/Auth';
 import FileUploader from '@/components/common/FileUploader';
-import Loader from '@/components/common/Loader';
-import { useRestaurantSignupMutation } from '@/redux/api/auth';
-import { Mail, MapPin, Phone, SquareMenu, User } from 'lucide-react';
+import { RestaurantSignupPayload, useRestaurantSignupMutation } from '@/redux/api/auth';
+import { MapPin, Phone, SquareMenu, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import React, { useCallback } from 'react';
-import { useDropzone } from 'react-dropzone';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
@@ -13,6 +10,7 @@ type Props = {
   prevFormData: {
     number: string;
     password: string;
+    email: string;
   };
 };
 
@@ -41,20 +39,6 @@ function RestaurantForm({ prevFormData }: Props) {
   // Watch thumbnail field to display a preview
   const thumbnail = watch('thumbnail');
 
-  // const onDrop = useCallback(
-  //   (acceptedFiles: File[]) => {
-  //     // Update the thumbnail value in the form
-  //     setValue("thumbnail", acceptedFiles[0]);
-  //   },
-  //   [setValue]
-  // );
-
-  // const { getRootProps, getInputProps, isDragActive } = useDropzone({
-  //   onDrop,
-  //   multiple: false,
-  //   accept: { "image/*": [] }, // Accept only image files
-  // });
-
   const onSubmitHandler = async (data: RestaurantFormInterface) => {
     const toastId = toast.loading('Loading...');
     try {
@@ -67,12 +51,12 @@ function RestaurantForm({ prevFormData }: Props) {
       form.append('password', prevFormData.password);
       form.append('address', data.address);
 
-      const response = await signup(form).unwrap();
+      const response = await signup(form as unknown as RestaurantSignupPayload).unwrap();
       if (!response || !response?.success) {
         throw new Error(response?.message || 'Something went wrong!');
       }
 
-      console.log(response);
+      //console.log(response);
       toast.success('Signup Success!');
       router.push('/signin');
       toast.info('Login Now!');
@@ -81,7 +65,7 @@ function RestaurantForm({ prevFormData }: Props) {
       if (err instanceof Error) {
         toast.error(err.message);
       } else {
-        toast.error(err?.data?.message || 'Signup Failed!');
+        toast.error('Signup Failed!');
       }
     }
     reset();
@@ -89,54 +73,51 @@ function RestaurantForm({ prevFormData }: Props) {
   };
 
   return (
-    <form className="w-full space-y-2" onSubmit={handleSubmit(onSubmitHandler)}>
-      {/* Name & Number */}
-
-      <div className="space-y-2">
+    <form className="w-full space-y-4" onSubmit={handleSubmit(onSubmitHandler)}>
+      {/* Name */}
+      <div className="space-y-1.5">
         <label
           htmlFor="name"
-          className="block text-sm font-medium text-gray-700"
+          className="text-sm font-medium text-foreground"
         >
-          Name
-          <sup className="pl-1 text-red-500">*</sup>
+          Restaurant Name
+          <sup className="ml-0.5 text-destructive">*</sup>
         </label>
         <div className="relative">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <User className="h-5 w-5 text-sky-400" />
+            <User className="h-4 w-4 text-muted-foreground" />
           </div>
           <input
             {...register('name', {
               required: 'Name is required',
             })}
-            type="name"
+            type="text"
             id="name"
-            className={`w-full rounded-lg border py-3 pl-10 pr-4 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-gray-500 ${
+            className={`w-full rounded-lg border py-2.5 pl-10 pr-4 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 ${
               errors.name
-                ? 'border-red-300 bg-red-50'
-                : 'border-gray-200 bg-white hover:border-gray-300'
+                ? 'border-destructive bg-destructive/5'
+                : 'border-border bg-white hover:border-muted-foreground/30 focus:border-primary'
             }`}
-            placeholder="Enter your name"
+            placeholder="Enter restaurant name"
           />
         </div>
         {errors.name && (
-          <div className="flex items-center space-x-2 rounded-md bg-red-50 p-2 text-sm text-red-600">
-            <span>⚠️</span>
-            <span>{errors.name.message}</span>
-          </div>
+          <p className="text-xs text-destructive">{errors.name.message}</p>
         )}
       </div>
 
-      <div className="space-y-2">
+      {/* Number */}
+      <div className="space-y-1.5">
         <label
           htmlFor="number"
-          className="block text-sm font-medium text-gray-700"
+          className="text-sm font-medium text-foreground"
         >
-          Number
-          <sup className="pl-1 text-red-500">*</sup>
+          Contact Number
+          <sup className="ml-0.5 text-destructive">*</sup>
         </label>
         <div className="relative">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <Phone className="h-5 w-5 text-sky-400" />
+            <Phone className="h-4 w-4 text-muted-foreground" />
           </div>
           <input
             {...register('number', {
@@ -144,109 +125,108 @@ function RestaurantForm({ prevFormData }: Props) {
             })}
             type="number"
             id="number"
-            className={`w-full rounded-lg border py-3 pl-10 pr-4 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-gray-500 ${
+            className={`w-full rounded-lg border py-2.5 pl-10 pr-4 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 ${
               errors.number
-                ? 'border-red-300 bg-red-50'
-                : 'border-gray-200 bg-white hover:border-gray-300'
+                ? 'border-destructive bg-destructive/5'
+                : 'border-border bg-white hover:border-muted-foreground/30 focus:border-primary'
             }`}
-            placeholder="Enter your number"
+            placeholder="Enter contact number"
           />
         </div>
         {errors.number && (
-          <div className="flex items-center space-x-2 rounded-md bg-red-50 p-2 text-sm text-red-600">
-            <span>⚠️</span>
-            <span>{errors.number.message}</span>
-          </div>
+          <p className="text-xs text-destructive">{errors.number.message}</p>
         )}
       </div>
 
       {/* Slogan */}
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <label
           htmlFor="slogan"
-          className="block text-sm font-medium text-gray-700"
+          className="text-sm font-medium text-foreground"
         >
           Slogan
-          <sup className="pl-1 text-red-500">*</sup>
+          <sup className="ml-0.5 text-destructive">*</sup>
         </label>
         <div className="relative">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <SquareMenu className="h-5 w-5 text-sky-400" />
+            <SquareMenu className="h-4 w-4 text-muted-foreground" />
           </div>
           <input
             {...register('slogan', {
               required: 'Slogan is required',
             })}
-            type="slogan"
+            type="text"
             id="slogan"
-            className={`w-full rounded-lg border py-3 pl-10 pr-4 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-gray-500 ${
+            className={`w-full rounded-lg border py-2.5 pl-10 pr-4 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 ${
               errors.slogan
-                ? 'border-red-300 bg-red-50'
-                : 'border-gray-200 bg-white hover:border-gray-300'
+                ? 'border-destructive bg-destructive/5'
+                : 'border-border bg-white hover:border-muted-foreground/30 focus:border-primary'
             }`}
-            placeholder="Enter your slogan"
+            placeholder="Enter restaurant slogan"
           />
         </div>
         {errors.slogan && (
-          <div className="flex items-center space-x-2 rounded-md bg-red-50 p-2 text-sm text-red-600">
-            <span>⚠️</span>
-            <span>{errors.slogan.message}</span>
-          </div>
+          <p className="text-xs text-destructive">{errors.slogan.message}</p>
         )}
       </div>
 
       {/* Address */}
-
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <label
-          htmlFor="email"
-          className="block text-sm font-medium text-gray-700"
+          htmlFor="address"
+          className="text-sm font-medium text-foreground"
         >
           Address
-          <sup className="pl-1 text-red-500">*</sup>
+          <sup className="ml-0.5 text-destructive">*</sup>
         </label>
         <div className="relative">
-          <div className="pointer-events-none absolute left-0 top-4 flex items-center pl-3">
-            <MapPin className="h-5 w-5 text-sky-400" />
+          <div className="pointer-events-none absolute left-0 top-3 flex items-center pl-3">
+            <MapPin className="h-4 w-4 text-muted-foreground" />
           </div>
           <textarea
             {...register('address', {
               required: 'Address is required',
             })}
             id="address"
-            className={`w-full rounded-lg border py-3 pl-10 pr-4 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-gray-500 ${
+            rows={3}
+            className={`w-full rounded-lg border py-2.5 pl-10 pr-4 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 ${
               errors.address
-                ? 'border-red-300 bg-red-50'
-                : 'border-gray-200 bg-white hover:border-gray-300'
+                ? 'border-destructive bg-destructive/5'
+                : 'border-border bg-white hover:border-muted-foreground/30 focus:border-primary'
             }`}
-            placeholder="Enter your address"
+            placeholder="Enter restaurant address"
           />
         </div>
         {errors.address && (
-          <div className="flex items-center space-x-2 rounded-md bg-red-50 p-2 text-sm text-red-600">
-            <span>⚠️</span>
-            <span>{errors.address.message}</span>
-          </div>
+          <p className="text-xs text-destructive">{errors.address.message}</p>
         )}
       </div>
 
       {/* Thumbnail */}
-      <label
-        htmlFor="email"
-        className="block text-sm font-medium text-gray-700"
-      >
-        Thumbnail
-        <sup className="pl-1 text-red-500">*</sup>
-      </label>
-      <FileUploader thumbnail={thumbnail} setValue={setValue} />
+      <div className="space-y-1.5">
+        <label
+          className="text-sm font-medium text-foreground"
+        >
+          Thumbnail
+          <sup className="ml-0.5 text-destructive">*</sup>
+        </label>
+        <FileUploader thumbnail={thumbnail} setValue={setValue} />
+      </div>
 
       {/* Submit Button */}
       <button
-        disabled={restaurantSignupLoader}
         type="submit"
-        className="mt-2 w-full rounded-lg bg-blue-400 px-4 py-3 text-center text-lg font-semibold text-gray-50 transition-all duration-200 hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300"
+        disabled={restaurantSignupLoader}
+        className="mt-2 w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        Submit
+        {restaurantSignupLoader ? (
+          <div className="flex items-center justify-center gap-2">
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+            <span>Submitting...</span>
+          </div>
+        ) : (
+          'Submit'
+        )}
       </button>
     </form>
   );

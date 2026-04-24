@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
@@ -10,14 +10,13 @@ import {
   Mail,
   Clock,
   Send,
-  MessageCircle,
-  Headphones,
-  Users,
-  Building,
-  ArrowLeft,
+  Plus,
+  Minus,
 } from 'lucide-react';
-import Link from 'next/link';
+import contactData from '@/data/contact.json';
+import Image from 'next/image';
 import Footer from '../_component/Footer';
+import { Button } from '../_component/ui/Button';
 
 interface ContactFormData {
   name: string;
@@ -28,496 +27,257 @@ interface ContactFormData {
   type: string;
 }
 
-export default function ContactPage() {
-  const [isLoading, setIsLoading] = useState(false);
+// --- Components ---
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<ContactFormData>();
+const SectionTitle = ({ title, subtitle, center = true }: { title: string; subtitle?: string; center?: boolean }) => (
+  <div className={`mb-16 ${center ? 'text-center' : 'text-left'}`}>
+    <motion.h2 
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="text-3xl md:text-5xl font-bold tracking-tight text-foreground mb-4"
+    >
+      {title}
+    </motion.h2>
+    {subtitle && (
+      <motion.p 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.1 }}
+        className="text-lg text-muted-foreground max-w-2xl mx-auto"
+      >
+        {subtitle}
+      </motion.p>
+    )}
+  </div>
+);
 
-  const onSubmit = async (data: ContactFormData) => {
-    setIsLoading(true);
+const FAQItem = ({ question, answer }: { question: string; answer: string }) => {
+  const [isOpen, setIsOpen] = React.useState(false);
+  return (
+    <div className="border-b border-border py-4">
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between text-left py-2 hover:text-primary transition-colors"
+      >
+        <span className="text-lg font-semibold">{question}</span>
+        {isOpen ? <Minus className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+      </button>
+      <motion.div
+        initial={false}
+        animate={{ height: isOpen ? 'auto' : 0, opacity: isOpen ? 1 : 0 }}
+        className="overflow-hidden"
+      >
+        <p className="py-4 text-muted-foreground leading-relaxed">{answer}</p>
+      </motion.div>
+    </div>
+  );
+};
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      console.log('Contact form submission:', data);
-      toast.success("Message sent successfully! We'll get back to you soon.", {
-        position: 'top-right',
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
-      reset();
-    }, 1000);
-  };
+// --- Sections ---
 
-  const contactInfo = [
-    {
-      icon: <MapPin className="h-5 w-5" />,
-      title: 'Visit Us',
-      details: ['123 Food Street, Tech Park', 'Bangalore, Karnataka 560001'],
-    },
-    {
-      icon: <Phone className="h-5 w-5" />,
-      title: 'Call Us',
-      details: ['+91 98765 43210', '+91 87654 32109'],
-    },
-    {
-      icon: <Mail className="h-5 w-5" />,
-      title: 'Email Us',
-      details: ['hello@foodapp.com', 'support@foodapp.com'],
-    },
-    {
-      icon: <Clock className="h-5 w-5" />,
-      title: 'Working Hours',
-      details: [
-        'Mon - Fri: 9:00 AM - 8:00 PM',
-        'Sat - Sun: 10:00 AM - 6:00 PM',
-      ],
-    },
-  ];
+const Hero = () => (
+  <section className="relative pt-32 pb-20 overflow-hidden bg-white">
+    <div className="absolute top-0 right-0 -translate-y-1/4 translate-x-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl opacity-50" />
+    <div className="container mx-auto px-6 relative z-10">
+      <div className="max-w-4xl mx-auto text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-bold mb-6">
+            <span>Contact Us</span>
+          </div>
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-foreground mb-8 leading-[1.1]">
+            We're here to <span className="text-primary">help</span>.
+          </h1>
+          <p className="text-xl text-muted-foreground mb-12 leading-relaxed">
+            Whether you have a question about features, trials, pricing, or anything else, our team is ready to answer all your questions.
+          </p>
+        </motion.div>
+      </div>
+    </div>
+  </section>
+);
 
-  const supportTypes = [
-    {
-      icon: <MessageCircle className="h-6 w-6" />,
-      title: 'General Inquiry',
-      description:
-        'Questions about our services, features, or how to get started',
-    },
-    {
-      icon: <Headphones className="h-6 w-6" />,
-      title: 'Customer Support',
-      description: 'Need help with your order, account, or technical issues',
-    },
-    {
-      icon: <Building className="h-6 w-6" />,
-      title: 'Restaurant Partnership',
-      description:
-        'Interested in partnering with us or listing your restaurant',
-    },
-    {
-      icon: <Users className="h-6 w-6" />,
-      title: 'Careers',
-      description:
-        "Want to join our team? We're always looking for talented people",
-    },
-  ];
-
-  const faqs = [
-    {
-      question: 'How fast is your delivery?',
-      answer:
-        'We deliver most orders within 30 minutes. Delivery time may vary based on location and restaurant preparation time.',
-    },
-    {
-      question: 'Is there a minimum order amount?',
-      answer:
-        'Minimum order amount varies by restaurant, typically ranging from ₹99 to ₹199. This is clearly displayed on each restaurant page.',
-    },
-    {
-      question: 'How does the QR menu feature work?',
-      answer:
-        "Simply scan the QR code at any partner restaurant using your phone camera. You'll be directed to their digital menu where you can place orders directly.",
-    },
-    {
-      question: 'Can I track my order?',
-      answer:
-        "Yes! You can track your order in real-time through our app or website. You'll receive updates at every step of the process.",
-    },
-    {
-      question: 'What payment methods do you accept?',
-      answer:
-        'We accept all major payment methods including UPI, credit/debit cards, net banking, and digital wallets like Paytm, PhonePe, and Google Pay.',
-    },
+const ContactInfo = () => {
+  const info = [
+    { icon: MapPin, title: 'Visit Us', desc: contactData.address },
+    { icon: Phone, title: 'Call Us', desc: `${contactData.phone} (${contactData.hours})` },
+    { icon: Mail, title: 'Email Us', desc: contactData.email },
+    { icon: Clock, title: 'Working Hours', desc: '24/7 Monitoring, Support: 9am-8pm IST' },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-100 pt-16">
-      {/* Hero Section */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="mx-auto max-w-4xl"
-          >
-            <div className="rounded-2xl bg-white p-8 text-center shadow-lg md:p-12">
-              <h1 className="mb-4 text-4xl font-bold text-gray-800 md:text-5xl">
-                Get In Touch
-              </h1>
-              <p className="mx-auto mb-8 max-w-2xl text-lg leading-relaxed text-gray-600">
-                Have questions, feedback, or want to partner with us? We'd love
-                to hear from you! Our team is here to help 24/7.
-              </p>
-              <div className="grid grid-cols-1 gap-6 text-center md:grid-cols-3">
-                <div className="p-4">
-                  <div className="mb-1 text-2xl font-bold text-blue-600">
-                    24/7
-                  </div>
-                  <div className="text-sm text-gray-600">Support Available</div>
-                </div>
-                <div className="p-4">
-                  <div className="mb-1 text-2xl font-bold text-blue-600">
-                    {'< 2hrs'}
-                  </div>
-                  <div className="text-sm text-gray-600">Response Time</div>
-                </div>
-                <div className="p-4">
-                  <div className="mb-1 text-2xl font-bold text-blue-600">
-                    5-Star
-                  </div>
-                  <div className="text-sm text-gray-600">Service Rating</div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Contact Info Cards */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {contactInfo.map((info, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="rounded-2xl bg-white p-6 text-center shadow-lg transition-shadow duration-300 hover:shadow-xl"
-              >
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100">
-                  {info.icon}
-                </div>
-                <h3 className="mb-3 text-lg font-semibold text-gray-800">
-                  {info.title}
-                </h3>
-                {info.details.map((detail, idx) => (
-                  <p key={idx} className="mb-1 text-sm text-gray-600">
-                    {detail}
-                  </p>
-                ))}
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Support Types */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="mb-12 text-center"
-          >
-            <h2 className="mb-4 text-3xl font-bold text-gray-800 md:text-4xl">
-              How Can We Help?
-            </h2>
-            <p className="text-lg text-gray-600">
-              Choose the type of support you need
-            </p>
-          </motion.div>
-
-          <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {supportTypes.map((type, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="cursor-pointer rounded-2xl bg-white p-6 text-center shadow-lg transition-shadow duration-300 hover:shadow-xl"
-              >
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100">
-                  {type.icon}
-                </div>
-                <h3 className="mb-3 text-lg font-semibold text-gray-800">
-                  {type.title}
-                </h3>
-                <p className="text-sm leading-relaxed text-gray-600">
-                  {type.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Form */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-4xl">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="rounded-2xl bg-white p-8 shadow-lg md:p-12"
+    <section className="py-24 bg-gray-50/50">
+      <div className="container mx-auto px-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {info.map((item, i) => (
+            <motion.div 
+              key={i}
+              whileHover={{ y: -5 }}
+              className="p-8 rounded-3xl bg-white border border-border shadow-sm hover:shadow-xl transition-all text-center"
             >
-              <div className="mb-8 text-center">
-                <h2 className="mb-4 text-3xl font-bold text-gray-800">
-                  Send Us a Message
-                </h2>
-                <p className="text-gray-600">
-                  Fill out the form below and we'll get back to you as soon as
-                  possible. We typically respond within 2-4 hours during
-                  business hours.
-                </p>
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-6 mx-auto">
+                <item.icon className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-lg font-bold mb-2">{item.title}</h3>
+              <p className="text-sm text-muted-foreground">{item.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const ContactFormSection = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<ContactFormData>();
+
+  const onSubmit = async (data: ContactFormData) => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      toast.success("Message sent! We'll be in touch soon.");
+      reset();
+    }, 1500);
+  };
+
+  return (
+    <section className="py-24 bg-white">
+      <div className="container mx-auto px-6">
+        <div className="grid lg:grid-cols-2 gap-16 items-start">
+          {/* Form */}
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="bg-gray-50/50 p-8 md:p-12 rounded-[2rem] border border-border"
+          >
+            <h2 className="text-3xl font-bold mb-8">Send us a message</h2>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-bold ml-1">Full Name</label>
+                  <input 
+                    {...register('name', { required: true })}
+                    className="w-full h-12 px-4 rounded-xl border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                    placeholder="John Doe"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-bold ml-1">Email Address</label>
+                  <input 
+                    {...register('email', { required: true })}
+                    className="w-full h-12 px-4 rounded-xl border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                    placeholder="john@example.com"
+                  />
+                </div>
               </div>
 
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <div className="grid gap-6 md:grid-cols-2">
-                  <div>
-                    <label
-                      htmlFor="name"
-                      className="mb-2 block text-sm font-medium text-gray-700"
-                    >
-                      Full Name *
-                    </label>
-                    <input
-                      {...register('name', { required: 'Name is required' })}
-                      type="text"
-                      id="name"
-                      className={`w-full rounded-xl border px-4 py-3 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
-                        errors.name
-                          ? 'border-red-300 bg-red-50'
-                          : 'border-gray-300 hover:border-blue-300'
-                      }`}
-                      placeholder="Enter your full name"
-                    />
-                    {errors.name && (
-                      <p className="mt-1 text-sm text-red-600">
-                        {errors.name.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="email"
-                      className="mb-2 block text-sm font-medium text-gray-700"
-                    >
-                      Email Address *
-                    </label>
-                    <input
-                      {...register('email', {
-                        required: 'Email is required',
-                        pattern: {
-                          value: /\S+@\S+\.\S+/,
-                          message: 'Please enter a valid email address',
-                        },
-                      })}
-                      type="email"
-                      id="email"
-                      className={`w-full rounded-xl border px-4 py-3 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
-                        errors.email
-                          ? 'border-red-300 bg-red-50'
-                          : 'border-gray-300 hover:border-blue-300'
-                      }`}
-                      placeholder="Enter your email"
-                    />
-                    {errors.email && (
-                      <p className="mt-1 text-sm text-red-600">
-                        {errors.email.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="grid gap-6 md:grid-cols-2">
-                  <div>
-                    <label
-                      htmlFor="phone"
-                      className="mb-2 block text-sm font-medium text-gray-700"
-                    >
-                      Phone Number
-                    </label>
-                    <input
-                      {...register('phone')}
-                      type="tel"
-                      id="phone"
-                      className="w-full rounded-xl border border-gray-300 px-4 py-3 transition-all duration-200 hover:border-blue-300 focus:border-transparent focus:ring-2 focus:ring-blue-500"
-                      placeholder="Enter your phone number"
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="type"
-                      className="mb-2 block text-sm font-medium text-gray-700"
-                    >
-                      Inquiry Type *
-                    </label>
-                    <select
-                      {...register('type', {
-                        required: 'Please select an inquiry type',
-                      })}
-                      id="type"
-                      className={`w-full rounded-xl border px-4 py-3 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
-                        errors.type
-                          ? 'border-red-300 bg-red-50'
-                          : 'border-gray-300 hover:border-blue-300'
-                      }`}
-                    >
-                      <option value="">Select inquiry type</option>
-                      <option value="general">General Inquiry</option>
-                      <option value="support">Customer Support</option>
-                      <option value="partnership">
-                        Restaurant Partnership
-                      </option>
-                      <option value="careers">Careers</option>
-                      <option value="feedback">Feedback</option>
-                    </select>
-                    {errors.type && (
-                      <p className="mt-1 text-sm text-red-600">
-                        {errors.type.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="subject"
-                    className="mb-2 block text-sm font-medium text-gray-700"
-                  >
-                    Subject *
-                  </label>
-                  <input
-                    {...register('subject', {
-                      required: 'Subject is required',
-                    })}
-                    type="text"
-                    id="subject"
-                    className={`w-full rounded-xl border px-4 py-3 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
-                      errors.subject
-                        ? 'border-red-300 bg-red-50'
-                        : 'border-gray-300 hover:border-blue-300'
-                    }`}
-                    placeholder="Enter subject"
-                  />
-                  {errors.subject && (
-                    <p className="mt-1 text-sm text-red-600">
-                      {errors.subject.message}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="message"
-                    className="mb-2 block text-sm font-medium text-gray-700"
-                  >
-                    Message *
-                  </label>
-                  <textarea
-                    {...register('message', {
-                      required: 'Message is required',
-                    })}
-                    id="message"
-                    rows={6}
-                    className={`w-full resize-none rounded-xl border px-4 py-3 transition-all duration-200 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
-                      errors.message
-                        ? 'border-red-300 bg-red-50'
-                        : 'border-gray-300 hover:border-blue-300'
-                    }`}
-                    placeholder="Tell us how we can help you..."
-                  />
-                  {errors.message && (
-                    <p className="mt-1 text-sm text-red-600">
-                      {errors.message.message}
-                    </p>
-                  )}
-                </div>
-
-                <motion.button
-                  type="submit"
-                  disabled={isLoading}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full rounded-xl bg-blue-600 px-6 py-4 font-medium text-white shadow-lg transition-colors duration-300 hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+              <div className="space-y-2">
+                <label className="text-sm font-bold ml-1">Inquiry Type</label>
+                <select 
+                  {...register('type', { required: true })}
+                  className="w-full h-12 px-4 rounded-xl border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white"
                 >
-                  {isLoading ? (
-                    <div className="flex items-center justify-center">
-                      <div className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                      Sending Message...
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-center">
-                      <Send className="mr-2 h-5 w-5" />
-                      Send Message
-                    </div>
-                  )}
-                </motion.button>
-              </form>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+                  <option value="partnership">Restaurant Partnership</option>
+                  <option value="general">General Inquiry</option>
+                  <option value="support">Technical Support</option>
+                  <option value="billing">Pricing & Plans</option>
+                </select>
+              </div>
 
-      {/* FAQ Section */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="mb-12 text-center"
-          >
-            <h2 className="mb-4 text-3xl font-bold text-gray-800 md:text-4xl">
-              Frequently Asked Questions
-            </h2>
-            <p className="text-lg text-gray-600">
-              Quick answers to common questions
-            </p>
+              <div className="space-y-2">
+                <label className="text-sm font-bold ml-1">Message</label>
+                <textarea 
+                  {...register('message', { required: true })}
+                  rows={5}
+                  className="w-full p-4 rounded-xl border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all resize-none"
+                  placeholder="Tell us about your cafe or food outlet..."
+                />
+              </div>
+
+              <Button size="lg" className="w-full h-14 text-lg font-bold bg-primary hover:bg-primary/90">
+                {isLoading ? 'Sending...' : 'Send Message'}
+                {!isLoading && <Send className="ml-2 w-5 h-5" />}
+              </Button>
+            </form>
           </motion.div>
 
-          <div className="mx-auto max-w-4xl space-y-4">
-            {faqs.map((faq, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="rounded-2xl bg-white p-6 shadow-lg transition-shadow duration-300 hover:shadow-xl"
-              >
-                <h3 className="mb-3 text-lg font-semibold text-gray-800">
-                  {faq.question}
-                </h3>
-                <p className="leading-relaxed text-gray-600">{faq.answer}</p>
-              </motion.div>
-            ))}
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="mt-12 text-center"
+          {/* Image/Visual */}
+          <motion.div 
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="space-y-8"
           >
-            <div className="mx-auto max-w-2xl rounded-2xl bg-white p-8 shadow-lg">
-              <p className="mb-4 text-lg text-gray-600">
-                Still have questions?
+            <div className="relative rounded-[2rem] overflow-hidden shadow-2xl border border-border">
+              <Image 
+                src="/assets/contact.png" 
+                alt="Customer Support" 
+                width={800} 
+                height={600} 
+                className="w-full h-auto"
+              />
+            </div>
+            <div className="p-8 rounded-[2rem] bg-primary text-white relative overflow-hidden">
+              <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-48 h-48 bg-white/10 rounded-full blur-2xl" />
+              <h3 className="text-2xl font-bold mb-4">Immediate Assistance?</h3>
+              <p className="text-white/80 mb-6">
+                Need help setting up your QR codes? Our team can guide you through the process in under 10 minutes.
               </p>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="rounded-xl bg-blue-600 px-8 py-3 font-medium text-white shadow-lg transition-colors duration-300 hover:bg-blue-700"
-              >
-                Contact Support
-              </motion.button>
+              <Button className="bg-white text-primary hover:bg-white/90 font-bold">
+                View Setup Guide
+              </Button>
             </div>
           </motion.div>
         </div>
-      </section>
+      </div>
+    </section>
+  );
+};
 
+const FAQ = () => (
+  <section className="py-24 bg-gray-50/50">
+    <div className="container mx-auto px-6 max-w-4xl">
+      <SectionTitle title="Common Questions" subtitle="Quick answers for local outlet owners." />
+      <div className="bg-white p-8 md:p-12 rounded-[2rem] border border-border shadow-sm">
+        <FAQItem 
+          question="Is it really zero-friction for customers?" 
+          answer="Yes. We've removed every barrier. Customers scan the QR, see your menu, and order. No app download, no account creation, and no login required." 
+        />
+        <FAQItem 
+          question="How do I get my QR codes?" 
+          answer="Our dashboard generates unique, high-quality QR codes for your outlet instantly. You can download and print them on anything from stickers to table mats." 
+        />
+        <FAQItem 
+          question="Can I manage it from my phone?" 
+          answer="Absolutely. The owner dashboard is fully responsive. You can track orders and update your menu while on the move." 
+        />
+        <FAQItem 
+          question="What happens if an item is out of stock?" 
+          answer="You can mark any item as 'Sold Out' with a single tap. It will be removed from your digital menu immediately, preventing disappointed customers." 
+        />
+        <FAQItem 
+          question="Are paid plans coming?" 
+          answer="Yes! While our core features will always have a free tier for small outlets, we are developing Pro features like advanced analytics and staff accounts." 
+        />
+      </div>
+    </div>
+  </section>
+);
+
+export default function ContactPage() {
+  return (
+    <div className="min-h-screen bg-white">
+      <Hero />
+      <ContactInfo />
+      <ContactFormSection />
+      <FAQ />
       <Footer />
     </div>
   );

@@ -10,6 +10,7 @@ import {
   Filler,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import { FileQuestion } from 'lucide-react';
 
 ChartJS.register(
   CategoryScale,
@@ -30,36 +31,22 @@ type Props = {
 function SaleSummary({ dayData, dayLabel, monthData, monthLabel }: Props) {
   const [selectedChart, setSelectedChart] = useState('Day');
 
-  const dayChartData: ChartData<'line'> = {
-    labels: dayLabel,
-    datasets: [
-      {
-        label: 'Sales',
-        data: dayData,
-        borderColor: '#3b82f6',
-        pointBackgroundColor: 'rgba(53, 162, 235, 0.8)',
-        pointStyle: 'circle',
-        pointRadius: 8,
-        pointHoverRadius: 10,
-        backgroundColor: 'rgba(53, 162, 235, 0.5) ',
-        tension: 0.3,
-        fill: true,
-      },
-    ],
-  };
+  const currentLabels = selectedChart === 'Day' ? dayLabel : monthLabel;
+  const currentData = selectedChart === 'Day' ? dayData : monthData;
+  const hasData = currentLabels && currentLabels.length > 0 && currentData.some(v => v > 0);
 
-  const monthChartData: ChartData<'line'> = {
-    labels: monthLabel,
+  const chartData: ChartData<'line'> = {
+    labels: currentLabels,
     datasets: [
       {
         label: 'Sales',
-        data: monthData,
-        borderColor: '#3b82f6',
-        pointBackgroundColor: 'rgba(53, 162, 235, 0.8)',
+        data: currentData,
+        borderColor: 'hsl(24.6 95% 53.1%)',
+        pointBackgroundColor: 'hsl(24.6 95% 53.1%)',
         pointStyle: 'circle',
-        pointRadius: 8,
-        pointHoverRadius: 10,
-        backgroundColor: 'rgba(53, 162, 235, 0.5) ',
+        pointRadius: 6,
+        pointHoverRadius: 8,
+        backgroundColor: 'hsla(24.6, 95%, 53.1%, 0.15)',
         tension: 0.3,
         fill: true,
       },
@@ -67,19 +54,27 @@ function SaleSummary({ dayData, dayLabel, monthData, monthLabel }: Props) {
   };
 
   return (
-    <div className="col-span-3 row-span-2 rounded-xl bg-white xl:col-span-2 xl:row-span-4">
+    <div className="col-span-3 row-span-2 rounded-xl border border-border bg-white shadow-sm xl:col-span-2 xl:row-span-4">
       {/* heading */}
-      <div className="my-2 flex w-full flex-row items-center justify-between px-4 py-3">
-        <div className="text-xl font-semibold">Sales Details</div>
-        <div className="flex items-center">
+      <div className="flex w-full flex-row items-center justify-between border-b border-border px-5 py-4">
+        <div className="text-base font-semibold text-foreground">Sales Details</div>
+        <div className="flex overflow-hidden rounded-lg border border-border">
           <div
-            className={`cursor-pointer rounded-l-xl border-2 border-gray-400 px-6 py-1 text-sm ${selectedChart === 'Day' ? 'bg-gray-400 font-semibold text-white' : ''}`}
+            className={`cursor-pointer px-4 py-1.5 text-sm font-medium transition-colors ${
+              selectedChart === 'Day'
+                ? 'bg-primary text-white'
+                : 'bg-white text-muted-foreground hover:bg-gray-50'
+            }`}
             onClick={() => setSelectedChart('Day')}
           >
             Day
           </div>
           <div
-            className={`cursor-pointer rounded-r-xl border-2 border-l-0 border-gray-400 px-4 py-1 text-sm ${selectedChart === 'Week' ? 'bg-gray-400 font-semibold text-white' : ''}`}
+            className={`cursor-pointer border-l border-border px-4 py-1.5 text-sm font-medium transition-colors ${
+              selectedChart === 'Week'
+                ? 'bg-primary text-white'
+                : 'bg-white text-muted-foreground hover:bg-gray-50'
+            }`}
             onClick={() => setSelectedChart('Week')}
           >
             Month
@@ -87,58 +82,65 @@ function SaleSummary({ dayData, dayLabel, monthData, monthLabel }: Props) {
         </div>
       </div>
 
-      {/* chart */}
-
-      <div className="h-[250px] w-full px-4">
-        <Line
-          data={selectedChart === 'Day' ? dayChartData : monthChartData}
-          options={{
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: function (context) {
-                    return `₹${(context.raw as number).toLocaleString()} `;
+      {/* chart container */}
+      <div className="flex h-[250px] w-full items-center justify-center px-4">
+        {hasData ? (
+          <Line
+            data={chartData}
+            options={{
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                tooltip: {
+                  callbacks: {
+                    label: function (context) {
+                      return `₹${(context.raw as number).toLocaleString()} `;
+                    },
                   },
                 },
               },
-            },
-            scales: {
-              x: {
-                ticks: {
-                  color: '#6b7280',
-                  font: {
-                    size: 16,
-                    family: 'Inter',
+              scales: {
+                x: {
+                  ticks: {
+                    color: '#6b7280',
+                    font: {
+                      size: 12,
+                      family: 'Inter',
+                    },
+                  },
+                  grid: {
+                    display: false,
                   },
                 },
-                grid: {
-                  display: false,
+                y: {
+                  beginAtZero: true,
+                  ticks: {
+                    callback: (value: number | string) => {
+                      const num = Number(value);
+                      if (num >= 1000000) return `₹${num / 1000000} M`;
+                      if (num >= 1000) return `₹${num / 1000} k`;
+                      return `₹${num}`;
+                    },
+                    color: '#6b7280',
+                    font: {
+                      size: 12,
+                      weight: 500,
+                      family: 'Inter',
+                    },
+                  },
+                  grid: {
+                    color: '#e5e7eb',
+                  },
                 },
               },
-              y: {
-                ticks: {
-                  callback: (value: number | string) => {
-                    const num = Number(value);
-                    if (num >= 1000000) return `₹${num / 1000000} M`;
-                    if (num >= 1000) return `₹${num / 1000} k`;
-                    return `₹${num}`;
-                  },
-                  color: '#6b7280',
-                  font: {
-                    size: 16,
-                    weight: 500,
-                    family: 'Inter',
-                  },
-                },
-                grid: {
-                  color: '#e5e7eb',
-                },
-              },
-            },
-          }}
-        />
+            }}
+          />
+        ) : (
+          <div className="flex flex-col items-center gap-2 text-muted-foreground">
+            <FileQuestion className="h-8 w-8 opacity-20" />
+            <p className="text-sm font-medium">No sales data recorded yet</p>
+          </div>
+        )}
       </div>
     </div>
   );

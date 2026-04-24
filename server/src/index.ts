@@ -98,5 +98,5 @@ app.get("/",(req: Request,res: Response) => {
 //    SERVER
 const PORT = process.env.PORT || 8000
 server.listen(PORT,() => {
-    console.log(`Server start running on port ${PORT}`)
+    //console.log(`Server start running on port ${PORT}`)
 })

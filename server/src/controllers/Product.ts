@@ -15,11 +15,11 @@ export const CreateProduct = async(req: Request,res: Response):Promise<any> => {
         
         const { name , categoryId ,description , variants }: {name: string,categoryId: string,description: string,variants:string} = req.body;
         const file = req.files?.thumbnail;
-        console.log("variants",variants);
+        //console.log("variants",variants);
         const productVariants:ProductVariantInterface[] = JSON.parse(variants);
-        console.log("json variant",productVariants)
+        //console.log("json variant",productVariants)
 
-        console.log("Create product file",file)
+        //console.log("Create product file",file)
 
         const fileUploadRes = await uploadToCloudinary(file,"my-files");
 
@@ -58,7 +58,7 @@ export const CreateProduct = async(req: Request,res: Response):Promise<any> => {
         return res.status(200).json({productRes})
 
     } catch (error) {
-        console.log(error);
+        //console.log(error);
         return res.status(499).json({message:"Something wrong during product creation!"});
     }
 }
@@ -72,7 +72,7 @@ export const UpdateProduct = async(req: Request,res: Response):Promise<any> => {
         if(file){
             const uploadRes = await uploadToCloudinary(file,"my-files");
             productData.thumbnail = uploadRes.secure_url;
-            console.log("Product update thumbnail",productData.thumbnail)
+            //console.log("Product update thumbnail",productData.thumbnail)
         }
 
         const result = await prisma.product.update({
@@ -90,7 +90,7 @@ export const UpdateProduct = async(req: Request,res: Response):Promise<any> => {
         })
 
     } catch (error) {
-        console.log(error);
+        //console.log(error);
         return res.status(499).json({message:"Something wrong during product updation!"});
     }
 }
@@ -105,7 +105,7 @@ export const DeleteProduct = async(req: Request,res: Response):Promise<any> => {
        });
        return res.status(200).json({messae: "Product deleted successfully!"})
     } catch (error) {
-        console.log(error);
+        //console.log(error);
         return res.status(499).json({message:"Something wrong during product deletion!"});
     }
 }
@@ -139,7 +139,7 @@ export const GetAllProducts = async(req: Request,res: Response):Promise<any> => 
             }
         });
 
-        // console.log(restaurantId,allProducts)
+        // //console.log(restaurantId,allProducts)
 
         // const popularProducts = await prisma.product.findMany({
         //     take:10,
@@ -155,7 +155,7 @@ export const GetAllProducts = async(req: Request,res: Response):Promise<any> => 
 
 
     } catch (error) {
-        console.log(error);
+        //console.log(error);
         return res.status(499).json({message:"Something wrong during product retreive!"});
     }
 }
@@ -177,7 +177,7 @@ export const GetProductByQuery = async(req: Request,res: Response):Promise<any> 
             products: products
         })
     } catch (error) {
-        console.log(error);
+        //console.log(error);
         return res.status(499).json({message:"Something wrong during product retrieve!"});
     }
 }
@@ -198,14 +198,14 @@ export const GetAllProductsByCategory = async(req: Request,res: Response):Promis
             products:products
         })
     } catch (error) {
-        console.log(error);
+        //console.log(error);
         return res.status(499).json({message:"Something wrong during product retrieve!"});
     }
 }
 
 export const CreateProductVaraint = async(req: Request,res: Response): Promise<any> => {
     try {
-        console.log(req.body)
+        //console.log(req.body)
         const { size , price , salePrice , productId } = req.body;
         if(!size || !price  || !productId)
             return res.status(401).json({message: "All fields are required"});
@@ -224,7 +224,7 @@ export const CreateProductVaraint = async(req: Request,res: Response): Promise<a
 
         return res.status(200).json({result});
     } catch (error) {
-       console.log("Error while create product variants",error); 
+       //console.log("Error while create product variants",error); 
     }
 }
 
@@ -232,8 +232,8 @@ export const UpdateProductVaraint = async(req: Request,res: Response): Promise<a
     try {
         const {...updatedData} = req.body;
         const { id } = req.params;
-        console.log(updatedData)
-        console.log(id)
+        //console.log(updatedData)
+        //console.log(id)
 
         const result = await prisma.productVariant.update({
             where:{
@@ -246,7 +246,7 @@ export const UpdateProductVaraint = async(req: Request,res: Response): Promise<a
         })
         return res.status(200).json({result})
     } catch (error) {
-       console.log("Error while update product variants",error); 
+       //console.log("Error while update product variants",error); 
     }
 }
 
@@ -260,7 +260,7 @@ export const DeleteProductVaraint = async(req: Request,res: Response): Promise<a
         })
         return res.status(200).json({message: "Product variant deleted!"})
     } catch (error) {
-       console.log("Error while delete product variants",error); 
+       //console.log("Error while delete product variants",error); 
     }
 }
 
@@ -269,6 +269,6 @@ export const GetAllProductVaraint = async(req: Request,res: Response): Promise<a
         const result = await prisma.productVariant.findMany({});
         return res.status(200).json({result})
     } catch (error) {
-       console.log("Error while fetching product variants",error); 
+       //console.log("Error while fetching product variants",error); 
     }
 }

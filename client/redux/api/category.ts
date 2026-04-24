@@ -1,12 +1,14 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { RootState } from '../redux';
 import { ApiResponse } from '@/types/common';
-import {
-  AddCategoryInterface,
-  Category,
-  UpdateCategoryInterface,
+export {
+  type AddCategoryInterface,
+  type Category,
+  type UpdateCategoryInterface,
 } from '@/types/category';
 import { API_URLS } from '@/constants/Urls';
+import { Category } from './category';
+import { AddCategoryInterface } from './category';
 
 export const categoryApi = createApi({
   baseQuery: fetchBaseQuery({
@@ -24,11 +26,12 @@ export const categoryApi = createApi({
 
   tagTypes: ['GetAllCategories'],
   endpoints: (build) => ({
-    getAllCategories: build.query<ApiResponse<Category[]>, void>({
+    getAllCategories: build.query<Category[], void>({
       query: () => '/',
       providesTags: ['GetAllCategories'],
+      transformResponse: (response: ApiResponse<Category[]>) => response.data
     }),
-    addCategory: build.mutation<void, AddCategoryInterface>({
+    addCategory: build.mutation<ApiResponse<string>, AddCategoryInterface>({
       query: (data) => ({
         url: '/',
         method: 'POST',
@@ -36,15 +39,15 @@ export const categoryApi = createApi({
       }),
       invalidatesTags: ['GetAllCategories'],
     }),
-    updateCategory: build.mutation<void, UpdateCategoryInterface>({
-      query: (id, ...body) => ({
+    updateCategory: build.mutation<ApiResponse<string>, { id: string; data: FormData }>({
+      query: ({ id, data }) => ({
         url: `/${id}`,
         method: 'PUT',
-        body: body,
+        body: data,
       }),
       invalidatesTags: ['GetAllCategories'],
     }),
-    deleteCategory: build.mutation<void, void>({
+    deleteCategory: build.mutation<ApiResponse<string>, void>({
       query: (id) => ({
         url: `/${id}`,
         method: 'DELETE',

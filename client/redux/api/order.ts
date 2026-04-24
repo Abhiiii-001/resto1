@@ -2,7 +2,11 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { addOrdersBulk } from '../states/orderSlice';
 import { RootState } from '../redux';
 import { ApiResponse } from '@/types/common';
-import { CreateOrderPayload, Order, UpdateOrderPayload } from '@/types/order';
+import {
+  CreateOrderPayload,
+  Order,
+  UpdateOrderPayload,
+} from '@/types/order';
 import { API_URLS } from '@/constants/Urls';
 
 export const orderApi = createApi({
@@ -29,18 +33,18 @@ export const orderApi = createApi({
             throw new Error(data?.message);
           }
           const order = data?.data || [];
-          // console.log("Order api order response",order);
+          // //console.log("Order api order response",order);
           const filteredOrder = order.filter(
             (ord) => ord.status == 'Pending' || ord.status == 'Ready',
           );
           dispatch(addOrdersBulk(filteredOrder));
         } catch (error) {
-          console.log('Order save error', error);
+          //console.log('Order save error', error);
         }
       },
       providesTags: ['getOrders'],
     }),
-    createOrder: builder.mutation<string, CreateOrderPayload>({
+    createOrder: builder.mutation<ApiResponse<string>, CreateOrderPayload>({
       query: (data) => ({
         url: '/create-order',
         method: 'POST',
@@ -48,7 +52,7 @@ export const orderApi = createApi({
       }),
       invalidatesTags: ['getOrders'],
     }),
-    updateOrderStatus: builder.mutation<string, UpdateOrderPayload>({
+    updateOrderStatus: builder.mutation<ApiResponse<string>, UpdateOrderPayload>({
       query: ({ id, data }) => ({
         url: `/${id}`,
         method: 'PUT',

@@ -3,10 +3,13 @@ export type User = {
   email: string;
   name: string;
   number: string;
-  canModify: boolean;
+  canModify?: boolean;
   role: string;
-  restaurantId: string;
+  restaurantId?: string;
   isVerified: boolean;
+  thumbnail?: string;
+  slogan?: string;
+  address?: string;
 };
 
 export type AddUpdateUserPayload = {
@@ -17,4 +20,5 @@ export type AddUpdateUserPayload = {
   canModify?: boolean;
   role: string;
   restaurantId: string;
+  isVerified?: boolean;
 };

@@ -7,9 +7,11 @@ import {
 import { CheckCircleIcon, OctagonAlert, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
+import { Button } from '@/components/ui/button';
+import { User } from '@/types/employee';
 
 type Props = {
-  emp: any;
+  emp: User;
 };
 
 function EmployeeCard({ emp }: Props) {
@@ -24,17 +26,16 @@ function EmployeeCard({ emp }: Props) {
   const toggleVerified = async () => {
     const toastId = toast.loading('Loading..');
     try {
-      console.log('Is verified handler', emp);
       const res = await updateEmployee({
-        id: emp.id,
-        data: { isVerified: !emp.isVerified },
+        ...emp,
+        isVerified: !emp.isVerified,
       }).unwrap();
       if (!res?.success) {
         throw new Error(res.message);
       } else {
         toast.success('User verified!');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating verification status:', error);
       toast.error(error.message);
     }
@@ -47,23 +48,21 @@ function EmployeeCard({ emp }: Props) {
     const toastId = toast.loading('Loading..');
     try {
       const res = await updateEmployee({
-        id: emp.id,
-        data: { canModify: !emp.canModify },
+        ...emp,
+        canModify: !emp.canModify,
       }).unwrap();
       if (!res?.success) {
         throw new Error(res.message);
       } else {
         toast.success('Change updated!');
       }
-      console.log('Can Modify ', emp);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating canModify status:', error);
       toast.error(error.message);
     }
     toast.dismiss(toastId);
   };
 
-  //  Delete employee
   const handleDeleteEmployee = async () => {
     const toastId = toast.loading('Deleting...');
     try {
@@ -73,7 +72,7 @@ function EmployeeCard({ emp }: Props) {
       } else {
         toast.success('User deleted!');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting user:', error);
       toast.error(error.message);
     }
@@ -81,95 +80,104 @@ function EmployeeCard({ emp }: Props) {
   };
 
   return (
-    <div
-      key={emp.id}
-      className="grid h-[140px] w-full grid-cols-11 items-center gap-4 rounded-xl border bg-white p-4 shadow-md"
-    >
-      <div className="col-span-1 flex justify-center">
-        <img
-          src={
-            emp.image
-              ? emp.image
-              : `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=random`
-          }
-          alt={emp.name}
-          className="h-16 w-16 rounded-full"
-        />
-      </div>
-      <div className="col-span-3">
-        <h2 className="text-lg font-semibold text-black">{emp.name}</h2>
-        <p className="mt-1 cursor-pointer text-sm font-semibold text-gray-600 opacity-60 hover:text-blue-800">
-          {emp.number}
-        </p>
-        <p className="cursor-pointer text-sm font-semibold text-gray-600 opacity-60 hover:text-blue-800">
-          {emp.email}
-        </p>
+    <div className="grid grid-cols-12 items-center gap-4 bg-white px-6 py-4 transition-colors hover:bg-gray-50/50">
+      {/* Profile Image */}
+      <div className="col-span-1 flex items-center">
+        <div className="h-12 w-12 overflow-hidden rounded-full border border-gray-100 bg-gray-50 shadow-sm">
+          <img
+            src={
+              `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=random`
+            }
+            alt={emp.name}
+            className="h-full w-full object-cover"
+          />
+        </div>
       </div>
 
-      <div className="col-span-2 w-fit rounded-xl border px-6 py-1">
-        <p className="text-sm font-semibold uppercase text-gray-600">
-          {emp.role}
-        </p>
+      {/* Personal Details */}
+      <div className="col-span-3 pr-4">
+        <h2 className="font-semibold text-gray-900 truncate">{emp.name}</h2>
+        <div className="mt-0.5 flex flex-col gap-0.5 text-xs text-muted-foreground">
+          <p className="truncate hover:text-primary cursor-pointer transition-colors">{emp.email}</p>
+          <p className="hover:text-primary cursor-pointer transition-colors">{emp.number}</p>
+        </div>
       </div>
 
-      {/* Verified Button */}
+      {/* Role */}
       <div className="col-span-2">
-        {/* isVerified  true */}
-        {emp.isVerified === true ? (
-          <div className="flex items-center gap-1 text-sm font-semibold text-blue-400">
-            <CheckCircleIcon size={18} />
-            <p className="">Verified</p>
+        <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium uppercase tracking-wide text-blue-700 ring-1 ring-inset ring-blue-700/10">
+          {emp.role}
+        </span>
+      </div>
+
+      {/* Verification Status */}
+      <div className="col-span-2">
+        {emp.isVerified ? (
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+            <CheckCircleIcon className="h-3.5 w-3.5" />
+            <span>Verified</span>
           </div>
         ) : (
           <button
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-amber-50 px-2 py-1 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-600/20 transition-colors hover:bg-amber-100"
             onClick={() => {
               setConfirmationDialogData({
-                title: 'Are you sure to verify the user?',
-                desc: 'Only verify if you know the user because he can interace with your restaurant',
+                title: 'Verify User?',
+                desc: 'Only verify this user if you trust them to interact with your restaurant data.',
                 clickHanlder: toggleVerified,
               });
               setConfirmationDialog(true);
             }}
           >
-            <div className="flex items-center gap-1 text-sm font-semibold text-red-400">
-              <OctagonAlert size={18} />
-              <p className="">Pending</p>
-            </div>
+            <OctagonAlert className="h-3.5 w-3.5" />
+            <span>Pending</span>
           </button>
         )}
       </div>
 
-      {/* Can Modify  */}
-      <div className="col-span-2">
+      {/* Can Modify Toggle */}
+      <div className="col-span-2 flex items-center">
         <button
-          className={`relative inline-flex h-8 w-16 items-center justify-center rounded-full transition-all duration-300 ${emp.canModify ? 'bg-blue-300' : 'bg-gray-300'} }`}
+          type="button"
           disabled={updateEmployeeLoader}
           onClick={toggleCanModify}
+          className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+            emp.canModify ? 'bg-primary' : 'bg-gray-300'
+          }`}
         >
+          <span className="sr-only">Toggle Modification Access</span>
           <span
-            className={`absolute left-1 top-1 h-6 w-6 transform rounded-full bg-white transition-all duration-300 ${
-              emp.canModify ? 'translate-x-8' : 'translate-x-0'
+            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+              emp.canModify ? 'translate-x-2.5' : '-translate-x-2.5'
             }`}
-          ></span>
+          />
         </button>
+        <span className="ml-3 text-xs font-medium text-muted-foreground">
+          {emp.canModify ? 'Allowed' : 'Read-only'}
+        </span>
       </div>
 
-      {/* Delete Button */}
-      <div className="col-span-1">
-        <button
-          className="flex items-center gap-1 rounded-[12px] border px-3 py-2 text-red-400 transition-all duration-200 hover:scale-105 hover:text-red-500 active:scale-95"
+      {/* Actions */}
+      <div className="col-span-2 flex justify-end">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
           onClick={() => {
             setConfirmationDialogData({
-              title: 'Are you sure to delete?',
-              desc: "This action can't be revert so think again.",
+              title: 'Delete Employee?',
+              desc: 'This action cannot be undone. This user will lose all access to the restaurant.',
               clickHanlder: handleDeleteEmployee,
             });
             setConfirmationDialog(true);
           }}
+          title="Delete Employee"
         >
-          <Trash2 size={18} />
-        </button>
+          <Trash2 className="h-4 w-4" />
+        </Button>
       </div>
+
+      {/* Confirmation Dialog */}
       {confirmationDialog && (
         <AlertModal
           title={confirmationDialogData.title}

@@ -1,0 +1,66 @@
+{
+  "mission": "To democratize digital ordering for small food businesses. We want to remove the barriers of 'app downloads' and 'login walls' so your customers can enjoy your food faster.",
+  "vision": "A world where every neighborhood cafe and street-side outlet has access to world-class technology that helps them grow without adding overhead or complexity.",
+  "values": [
+    {
+      "title": "Frictionless First",
+      "desc": "No logins, no signups. Just scan and order."
+    },
+    {
+      "title": "Small Business Ally",
+      "desc": "We build for the owner, not the enterprise."
+    },
+    {
+      "title": "Mobile Optimized",
+      "desc": "Designed for the phone in every customer's hand."
+    },
+    {
+      "title": "Growth Mindset",
+      "desc": "Helping local outlets compete with the big chains."
+    }
+  ],
+  "milestones": [
+    {
+      "year": "2026",
+      "title": "The Neighborhood Idea",
+      "desc": "Started in a small cafe, trying to solve the problem of lunch-hour queues."
+    },
+    {
+      "year": "2027",
+      "title": "First 50 Outlets",
+      "desc": "Localized pilot with cafes and snack bars in our home city."
+    },
+    {
+      "year": "2028",
+      "title": "The No-Login Breakthrough",
+      "desc": "Redesigned our entire platform to remove customer login requirements."
+    },
+    {
+      "year": "2030",
+      "title": "Empowering 500+ Heroes",
+      "desc": "Now helping local entrepreneurs nationwide digitize their service."
+    }
+  ],
+  "team": [
+    {
+      "name": "Abhishek Kumar",
+      "role": "CEO & Founder",
+      "bio": "Passionate about helping local food entrepreneurs succeed."
+    },
+    {
+      "name": "Aman Kumar Singh",
+      "role": "CTO",
+      "bio": "The architect behind our frictionless QR technology."
+    },
+    {
+      "name": "Satyam Kumar",
+      "role": "Head of Success",
+      "bio": "Working directly with outlet owners to ensure growth."
+    },
+    {
+      "name": "Anoymous",
+      "role": "Design Lead",
+      "bio": "Creating interfaces that even a busy chef can use."
+    }
+  ]
+}

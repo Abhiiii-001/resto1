@@ -1,0 +1,44 @@
+{
+  "hero": {
+    "title": "Smart Ordering for Your Cafe & Outlet.",
+    "subtitle": "Empower your small restaurant with QR ordering. Customers scan, order, and pay instantly—no app or login required."
+  },
+  "testimonials": [
+    {
+      "name": "Rajesh K.",
+      "role": "Owner, Sunrise Cafe",
+      "content": "Restro made our morning rush so much easier. Customers scan the QR at the counter and order while waiting. No more long queues!",
+      "img": "https://i.pravatar.cc/100?img=60"
+    },
+    {
+      "name": "Sarah M.",
+      "role": "Founder, Sweet Treats",
+      "content": "The fact that customers don't need to login is a game changer. Ordering is instant, and my sales have actually gone up.",
+      "img": "https://i.pravatar.cc/100?img=45"
+    },
+    {
+      "name": "Anand V.",
+      "role": "Manager, Burger Point",
+      "content": "I can update my menu from my phone in seconds. If we run out of a dish, I just mark it as sold out instantly.",
+      "img": "https://i.pravatar.cc/100?img=33"
+    }
+  ],
+  "faqs": [
+    {
+      "question": "Do customers really not need to login?",
+      "answer": "Yes! Frictionless ordering is our core promise. Customers simply scan the QR, add items to their cart, and place the order. No email or phone number required."
+    },
+    {
+      "question": "What kind of hardware do I need?",
+      "answer": "None. You can manage your entire restaurant from a smartphone, tablet, or laptop. Just print your QR codes and you're good to go."
+    },
+    {
+      "question": "Is it really free?",
+      "answer": "Our Starter plan is 100% free with all the core features you need to run your outlet. Paid plans with advanced features are coming soon."
+    },
+    {
+      "question": "Can I use it for takeaways?",
+      "answer": "Absolutely. You can place a QR code at your counter for takeaway orders to reduce wait times during peak hours."
+    }
+  ]
+}

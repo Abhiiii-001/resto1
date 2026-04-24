@@ -28,7 +28,7 @@ type Props = {
 // ]
 
 function Products({ data , setClickedProduct }: Props) {
-  console.log("Product data", data);
+  //console.log("Product data", data);
   return (
     <div className="grid grid-cols-1 py-4 px-6 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {data ? (

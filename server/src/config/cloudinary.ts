@@ -9,7 +9,7 @@ const cloudinaryConnect = () => {
             api_secret: process.env.CLOUD_API_SECRET 
         });
     } catch (error) {
-        console.log(error);
+        //console.log(error);
     }
 }
 

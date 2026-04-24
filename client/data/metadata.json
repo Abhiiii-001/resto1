@@ -1,0 +1,78 @@
+{
+  "global": {
+    "title": {
+      "default": "Restro - Smart QR Ordering for Local Cafes & Outlets",
+      "template": "%s | Restro"
+    },
+    "description": "Empower your small restaurant or cafe with frictionless QR ordering. No app downloads, no login walls. Just scan, order, and grow.",
+    "keywords": [
+      "restaurant management",
+      "QR ordering",
+      "digital menu",
+      "cafe software",
+      "food outlet POS",
+      "frictionless ordering",
+      "contactless menu",
+      "small business food tech"
+    ],
+    "authors": [{ "name": "Restro Team", "url": "https://restro.com" }],
+    "creator": "Restro",
+    "publisher": "Restro Inc.",
+    "openGraph": {
+      "type": "website",
+      "locale": "en_US",
+      "url": "https://restro.com",
+      "siteName": "Restro",
+      "title": "Restro - Frictionless QR Ordering for Small Outlets",
+      "description": "Give your customers a 5-star digital experience without the login walls. Perfect for cafes, bars, and food stalls.",
+      "images": [
+        {
+          "url": "https://restro.com/og-image.png",
+          "width": 1200,
+          "height": 630,
+          "alt": "Restro Dashboard Preview"
+        }
+      ]
+    },
+    "twitter": {
+      "card": "summary_large_image",
+      "title": "Restro - Smart QR Ordering",
+      "description": "No apps, no logins. Just smart ordering for your cafe.",
+      "images": ["https://restro.com/twitter-image.png"],
+      "creator": "@restro"
+    },
+    "robots": {
+      "index": true,
+      "follow": true,
+      "googleBot": {
+        "index": true,
+        "follow": true,
+        "maxVideoPreview": -1,
+        "maxImagePreview": "large",
+        "maxSnippet": -1
+      }
+    }
+  },
+  "pages": {
+    "home": {
+      "title": "Restro - Smart QR Ordering for Local Cafes",
+      "description": "Start your digital journey today. Free QR menus for small food outlets."
+    },
+    "about": {
+      "title": "Our Story - Empowering Local Cafes",
+      "description": "Learn how Restro is democratizing digital tools for neighborhood food heroes."
+    },
+    "contact": {
+      "title": "Contact Us - We're Here to Help",
+      "description": "Have questions about setting up your QR menu? Our team is ready to assist you."
+    },
+    "signin": {
+      "title": "Sign In to Your Dashboard",
+      "description": "Manage your restaurant, track orders, and update your menu."
+    },
+    "signup": {
+      "title": "Start Your Free Trial",
+      "description": "Join 500+ small outlets growing with Restro. Get your QR menu in minutes."
+    }
+  }
+}

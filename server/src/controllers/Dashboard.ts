@@ -88,15 +88,20 @@ export const GetDashboardData = async(req: Request,res: Response): Promise<any> 
         
           const label: string[] = [];
           const statusData: number[] = [];
+          let totalPending = 0;
         
           for (const status of statusCounts) {
             label.push(status.status);
             statusData.push(status._count._all)
+            if (status.status === 'Pending') {
+              totalPending = status._count._all;
+            }
           }
 
         const dahsboardData = {
             stats: {
-                ...restaurant
+                ...restaurant,
+                totalPending
             },
             saleSummary: {
                 day: daySummary,

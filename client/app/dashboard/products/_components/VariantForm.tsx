@@ -6,18 +6,28 @@ import {
 import { Check, Edit, PlusIcon, Trash2, X } from 'lucide-react';
 import React, { ChangeEvent, useState } from 'react';
 import { toast } from 'react-toastify';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { ProductVariantInterface } from '@/types/products';
 
-type Props = {};
+interface VariantFormProps {
+  variants: ProductVariantInterface[];
+  setVariants: React.Dispatch<React.SetStateAction<ProductVariantInterface[]>>;
+  isEdit: boolean;
+  productId?: string;
+  standalone?: boolean;
+}
 
 const VariantForm = ({
   variants,
   setVariants,
   isEdit,
   productId = '',
-}: any) => {
+  standalone = false,
+}: VariantFormProps) => {
   const [variantAddOption, setVariantAddOption] = useState(!isEdit);
   const [editableVariant, setEditableVariant] = useState('');
-  const [createVariantData, setCreateVaraintData] = useState({
+  const [createVariantData, setCreateVaraintData] = useState<{ size: string; price: number }>({
     size: '',
     price: 0,
   });
@@ -35,70 +45,72 @@ const VariantForm = ({
     { isLoading: deleteVariantLoading, isError: deleteVariantError },
   ] = useDeleteProductVariantMutation();
 
-  const updateVariantHandler = async (variant: any) => {
+  const updateVariantHandler = async (variant: ProductVariantInterface) => {
     const toastId = toast.loading('Updating...');
     try {
       const res = await updateProductVariant({
         id: variant.id,
         size: variant.size,
-        price: parseInt(variant.price),
+        price: Number(variant.price),
         isOutOfStock: variant.isOutOfStock,
       }).unwrap();
       if (updateVariantError) throw new Error('Something wrong!');
 
       toast.success('Updation Successfully!');
     } catch (error) {
-      console.log('Error while updating variant', error);
+      //console.log('Error while updating variant', error);
       toast.error('Updation Failed');
     }
     setEditableVariant('');
     toast.dismiss(toastId);
   };
 
-  // Create variant handler
-
   const createVariantHandler = async () => {
-    console.log('Variant Handler');
+    if (!createVariantData.size || createVariantData.price <= 0) {
+      toast.error('Please enter a valid size and price');
+      return;
+    }
     const alreadyPresent = variants.filter(
-      (variant: any) => variant.size === createVariantData.size,
+      (variant: any) => variant.size.toLowerCase() === createVariantData.size.toLowerCase(),
     );
-    console.log(alreadyPresent);
 
-    if (alreadyPresent.length != 0) {
-      toast.error('Already Present size');
-    } else if (isEdit) {
+    if (alreadyPresent.length !== 0) {
+      toast.error('Size already exists');
+      return;
+    }
+
+    if (isEdit) {
       const toastId = toast.loading('Creating...');
       try {
         const res = await createProductVariant({
           ...createVariantData,
           productId: productId,
         }).unwrap();
-        console.log('Create varinat response', res);
         if (createVariantError) {
           toast.error('Something went wrong!');
           return;
         }
         toast.success('Variant added!');
       } catch (error) {
-        console.log(error);
+        //console.log(error);
         toast.error('Variant add failed!');
       }
       toast.dismiss(toastId);
     } else {
-      variants.push({ id: variants.length, ...createVariantData });
+      variants.push({ id: String(variants.length), ...createVariantData });
     }
     setCreateVaraintData({ size: '', price: 0 });
     setVariantAddOption(false);
   };
 
-  const deleteVariantHandler = async (v: any) => {
+  const deleteVariantHandler = async (v: ProductVariantInterface) => {
     if (!isEdit) {
       setVariants(variants.filter((vari: any) => vari.size !== v.size));
       return;
     }
 
-    if (variants.length == 1) {
-      toast.warning('Atleast one variant required!');
+    if (variants.length === 1) {
+      toast.warning('At least one variant is required!');
       return;
     }
 
@@ -108,255 +120,225 @@ const VariantForm = ({
       if (deleteVariantError) throw new Error('Something wrong!');
       toast.success('Deletion Successfully!');
     } catch (error) {
-      console.log('Error while deleting variant', error);
+      //console.log('Error while deleting variant', error);
       toast.error('Deletion Failed');
     }
     toast.dismiss(toastId);
   };
 
   return (
-    <div className="w-full">
-      <div className="flex w-full items-center justify-between">
-        <h2 className="py-2 text-2xl font-semibold">Variants</h2>
-
-        <div
-          onClick={() => setVariantAddOption(!variantAddOption)}
-          className="scale-110 cursor-pointer rounded-xl bg-blue-300 px-2 py-1"
-        >
-          {variantAddOption ? <X /> : <PlusIcon />}
+    <div className={`w-full ${standalone ? '' : 'rounded-xl border border-border bg-gray-50/50 p-4'}`}>
+      <div className="flex w-full items-center justify-between mb-4">
+        <div>
+          <h2 className="text-lg font-semibold text-foreground">Variants & Pricing</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">Manage sizes and pricing for this product</p>
         </div>
+
+        <Button
+          type="button"
+          variant={variantAddOption ? "outline" : "default"}
+          size="sm"
+          className="gap-2"
+          onClick={() => setVariantAddOption(!variantAddOption)}
+        >
+          {variantAddOption ? <X className="h-4 w-4" /> : <PlusIcon className="h-4 w-4" />}
+          {variantAddOption ? "Cancel" : "Add Variant"}
+        </Button>
       </div>
+
       {updateVariantLoading || createVariantLoading || deleteVariantLoading ? (
-        <div className="my-4"> Loading....</div>
+        <div className="my-4 text-sm text-muted-foreground flex items-center justify-center py-4"> Loading variant data...</div>
       ) : (
-        <>
-          {/* Varinats list */}
-          <div className="my-4">
-            {variants.length === 0 && variantAddOption == false ? (
-              <div className="w-full px-6 py-8 text-center font-semibold">
-                {' '}
-                No Variant Added
+        <div className="space-y-4">
+          {/* Variants list */}
+          <div className="space-y-2">
+            {variants.length === 0 && !variantAddOption ? (
+              <div className="w-full rounded-lg border border-dashed border-gray-300 px-6 py-8 text-center text-sm font-medium text-muted-foreground bg-white">
+                No variants added yet.
               </div>
             ) : (
-              variants?.map((v: any, index: any) => {
-                return (
-                  <div>
-                    {editableVariant === v.id ? (
-                      // variant field during editing
-
-                      <div className="w-full space-y-1">
-                        <div className="flex w-full items-center gap-4">
-                          {/* Size input and label */}
-                          <div className="w-full">
-                            <label
-                              htmlFor="size"
-                              className="block text-[1rem] font-semibold text-gray-600"
-                            >
-                              Size <sup className="pl-1 text-pink-800">*</sup>
-                            </label>
-                            <input
-                              id="size"
-                              required
-                              type="text"
-                              placeholder="Ex: S"
-                              defaultValue={v.size}
-                              onChange={(e) => (v.size = e.target.value)}
-                              className="input-style w-full !py-1"
-                            />
-                          </div>
-
-                          {/* Price input and label */}
-                          <div className="w-full">
-                            <label
-                              htmlFor="price"
-                              className="block text-[1rem] font-semibold text-gray-600"
-                            >
-                              Prize <sup className="pl-1 text-pink-800">*</sup>
-                            </label>
-                            <input
-                              id="price"
-                              type="text"
-                              required
-                              placeholder="Ex: 123"
-                              defaultValue={v.price}
-                              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                (v.price = e.target.value)
-                              }
-                              className="input-style w-full !py-1"
-                            />
-                          </div>
-
-                          {/* Variant edit button */}
-                          <div className="flex items-center justify-center gap-2">
-                            <div
-                              onClick={() => setEditableVariant('')}
-                              className="mt-4 cursor-pointer text-red-400 hover:text-red-600"
-                            >
-                              <X />
-                            </div>
-                            <button
-                              disabled={
-                                updateVariantLoading ||
-                                createVariantLoading ||
-                                deleteVariantLoading
-                              }
-                              onClick={() => updateVariantHandler(v)}
-                              className="flex h-full scale-110 cursor-pointer items-center justify-center pt-4 text-blue-500 hover:text-blue-700"
-                            >
-                              <Check />
-                            </button>
-                          </div>
+              variants?.map((v: ProductVariantInterface, index: number) => (
+                <div key={v.id || index} className="w-full">
+                  {editableVariant === v.id ? (
+                    // Edit Mode
+                    <div className="w-full rounded-lg border border-border bg-white p-3 shadow-sm">
+                      <div className="flex w-full items-start gap-3">
+                        <div className="w-full">
+                          <label htmlFor="size" className="mb-1 block text-xs font-semibold text-foreground">
+                            Size <span className="text-destructive">*</span>
+                          </label>
+                          <Input
+                            id="size"
+                            required
+                            type="text"
+                            placeholder="Ex: Small"
+                            defaultValue={v.size}
+                            onChange={(e) => (v.size = e.target.value)}
+                            className="h-9"
+                          />
                         </div>
-                      </div>
-                    ) : (
-                      <div
-                        className="flex w-full items-center justify-between py-2"
-                        key={index}
-                      >
-                        <div className="flex items-center gap-2">
-                          <p className="text-sm font-semibold text-gray-600">
-                            Size:
-                          </p>
-                          <div className="min-w-20 text-wrap rounded-xl bg-blue-300 px-2 py-1 text-center">
-                            {v?.size.length > 6
-                              ? v.size.slice(0, 5) + '...'
-                              : v.size}
-                          </div>
+
+                        <div className="w-full">
+                          <label htmlFor="price" className="mb-1 block text-xs font-semibold text-foreground">
+                            Price <span className="text-destructive">*</span>
+                          </label>
+                          <Input
+                            id="price"
+                            type="number"
+                            required
+                            placeholder="Ex: 123"
+                            defaultValue={v.price}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => (v.price = Number(e.target.value))}
+                            className="h-9"
+                          />
                         </div>
-                        <div className="flex items-center gap-2">
-                          <p className="text-sm font-semibold text-gray-600">
-                            Price:
-                          </p>
-                          <div className="min-w-20 rounded-xl bg-blue-300 px-2 py-1 text-center">
-                            {v?.price}
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3 rounded-xl border border-gray-300 bg-gray-200 px-4 py-1">
-                          <button
-                            className="cursor-pointer text-red-500 hover:text-red-700"
-                            onClick={() => deleteVariantHandler(v)}
-                            disabled={
-                              updateVariantLoading ||
-                              createVariantLoading ||
-                              deleteVariantLoading
-                            }
+
+                        <div className="flex h-[60px] items-end pb-0.5 gap-1">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="h-9 w-9 text-muted-foreground hover:bg-gray-100"
+                            onClick={() => setEditableVariant('')}
                           >
-                            <Trash2 />
-                          </button>
-                          {isEdit && (
-                            <>
-                              <button
-                                className="cursor-pointer text-blue-500 hover:text-blue-700"
-                                onClick={() => {
-                                  setEditableVariant(v.id);
-                                }}
-                              >
-                                <Edit />
-                              </button>
-                              <label
-                                htmlFor={v.id}
-                                className="relative inline-block h-6 w-12 cursor-pointer rounded-full bg-gray-300 transition [-webkit-tap-highlight-color:_transparent] has-[:checked]:bg-blue-500"
-                              >
-                                <input
-                                  type="checkbox"
-                                  id={v.id}
-                                  className="peer sr-only"
-                                  checked={v.isOutOfStock}
-                                  onChange={() => {
-                                    updateProductVariant({
-                                      ...v,
-                                      isOutOfStock: !v.isOutOfStock,
-                                    });
-                                  }}
-                                  disabled={
-                                    updateVariantLoading ||
-                                    createVariantLoading ||
-                                    deleteVariantLoading
-                                  }
-                                />
-
-                                <span className="absolute inset-y-0 start-0 m-1 size-4 rounded-full bg-white transition-all peer-checked:start-6"></span>
-                              </label>
-                            </>
-                          )}
+                            <X className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            type="button"
+                            size="icon"
+                            className="h-9 w-9 bg-green-600 hover:bg-green-700 text-white"
+                            disabled={updateVariantLoading || createVariantLoading || deleteVariantLoading}
+                            onClick={() => updateVariantHandler(v)}
+                          >
+                            <Check className="h-4 w-4" />
+                          </Button>
                         </div>
                       </div>
-                    )}
-                  </div>
-                );
-              })
+                    </div>
+                  ) : (
+                    // View Mode
+                    <div className="flex w-full items-center justify-between rounded-lg border border-border bg-white px-4 py-3 shadow-sm transition-colors hover:bg-gray-50/50">
+                      <div className="flex items-center gap-6">
+                        <div className="flex flex-col">
+                          <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Size</span>
+                          <span className="font-semibold text-foreground">{v.size}</span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Price</span>
+                          <span className="font-semibold text-foreground">₹{v.price}</span>
+                        </div>
+                        {isEdit && v.isOutOfStock && (
+                          <span className="inline-flex items-center rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+                            Out of Stock
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-1">
+                        {isEdit && (
+                          <>
+                            <div className="flex items-center gap-2 mr-2">
+                              <span className="text-xs font-medium text-muted-foreground">In Stock</span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  updateProductVariant({
+                                    ...v,
+                                    isOutOfStock: !v.isOutOfStock,
+                                  });
+                                }}
+                                disabled={updateVariantLoading || createVariantLoading || deleteVariantLoading}
+                                className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+                                  !v.isOutOfStock ? 'bg-primary' : 'bg-gray-300'
+                                }`}
+                              >
+                                <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                                  !v.isOutOfStock ? 'translate-x-2' : '-translate-x-2'
+                                }`} />
+                              </button>
+                            </div>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+                              onClick={() => setEditableVariant(v.id)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </>
+                        )}
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
+                          onClick={() => deleteVariantHandler(v)}
+                          disabled={updateVariantLoading || createVariantLoading || deleteVariantLoading}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))
             )}
           </div>
 
-          {/* Variant Add form  */}
-
+          {/* Add Form */}
           {variantAddOption && (
-            <div className="w-full space-y-1">
-              <div className="flex w-full items-center gap-4">
-                {/* Size input and label */}
+            <div className="w-full rounded-lg border border-primary/20 bg-primary/5 p-4 mt-2">
+              <h3 className="mb-3 text-sm font-semibold text-primary">Add New Variant</h3>
+              <div className="flex w-full items-start gap-3">
                 <div className="w-full">
-                  <label
-                    htmlFor="size"
-                    className="block text-[1rem] font-semibold text-gray-600"
-                  >
-                    Size <sup className="pl-1 text-pink-800">*</sup>
+                  <label htmlFor="new-size" className="mb-1 block text-xs font-semibold text-foreground">
+                    Size <span className="text-destructive">*</span>
                   </label>
-                  <input
-                    id="size"
+                  <Input
+                    id="new-size"
                     required
                     type="text"
-                    placeholder="Ex: S"
+                    placeholder="Ex: Medium"
                     value={createVariantData.size}
                     onChange={(e) =>
-                      setCreateVaraintData({
-                        size: e.target.value,
-                        price: createVariantData.price,
-                      })
+                      setCreateVaraintData({ ...createVariantData, size: e.target.value })
                     }
-                    className="input-style w-full"
+                    className="h-9 bg-white"
                   />
                 </div>
 
-                {/* Price input and label */}
                 <div className="w-full">
-                  <label
-                    htmlFor="price"
-                    className="block text-[1rem] font-semibold text-gray-600"
-                  >
-                    Prize <sup className="pl-1 text-pink-800">*</sup>
+                  <label htmlFor="new-price" className="mb-1 block text-xs font-semibold text-foreground">
+                    Price <span className="text-destructive">*</span>
                   </label>
-                  <input
-                    id="price"
+                  <Input
+                    id="new-price"
                     type="number"
                     required
-                    placeholder="Ex: 123"
-                    value={createVariantData.price}
+                    placeholder="Ex: 299"
+                    value={createVariantData.price || ''}
                     onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      setCreateVaraintData({
-                        size: createVariantData.size,
-                        price: parseInt(e.target.value),
-                      })
+                      setCreateVaraintData({ ...createVariantData, price: parseInt(e.target.value) || 0 })
                     }
-                    className="input-style w-full"
+                    className="h-9 bg-white"
                   />
                 </div>
 
-                {/* Variant create button */}
-                <button
-                  disabled={
-                    createVariantLoading ||
-                    updateVariantLoading ||
-                    deleteVariantLoading
-                  }
-                  onClick={createVariantHandler}
-                  className="flex h-full scale-125 cursor-pointer items-center justify-center pt-4 text-blue-500"
-                >
-                  <Check />
-                </button>
+                <div className="flex h-[60px] items-end pb-0.5">
+                  <Button
+                    type="button"
+                    className="h-9 px-4 bg-primary text-primary-foreground hover:bg-primary/90"
+                    disabled={createVariantLoading || updateVariantLoading || deleteVariantLoading}
+                    onClick={createVariantHandler}
+                  >
+                    Add
+                  </Button>
+                </div>
               </div>
             </div>
           )}
-        </>
+        </div>
       )}
     </div>
   );

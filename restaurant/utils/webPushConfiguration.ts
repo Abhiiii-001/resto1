@@ -6,7 +6,7 @@ export async function requestNotificationPermission(setSubscription: any) {
 
   try {
     const registration = await navigator.serviceWorker.register("/service-worker.js");
-    console.log("Service Worker Registered:", registration);
+    //console.log("Service Worker Registered:", registration);
 
 
     if (!registration.active) {
@@ -22,7 +22,7 @@ export async function requestNotificationPermission(setSubscription: any) {
 
     const subscription = await subscribeUserToPush(registration);
     setSubscription(subscription);
-    console.log("Push Subscription:", subscription);
+    //console.log("Push Subscription:", subscription);
   } catch (error) {
     console.error("Push Subscription Failed:", error);
   }

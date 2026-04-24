@@ -10,16 +10,17 @@ import TotalOrderChart from './_component/TotalOrderChart';
 import { useAppSelector } from '@/redux/redux';
 import { useGetDashboardDataQuery } from '@/redux/api/dashboard';
 import Loader from '@/components/common/Loader';
+import { skipToken } from '@reduxjs/toolkit/query';
 import { USER_ROLE_TYPE } from '@/constants/CommonConstant';
 import { redirect } from 'next/navigation';
 import { Summary } from '@/types/dashboard';
 
 function Dashboard() {
-  const { isAuthenticated, restaurantId, role } = useAppSelector(
+  const { isAuthenticated, restaurantId, role, token } = useAppSelector(
     (state) => state.auth,
   );
   const { data: dashboardData, isLoading } =
-    useGetDashboardDataQuery(restaurantId);
+    useGetDashboardDataQuery(restaurantId && token ? restaurantId : skipToken);
 
   const dayData: number[] = [];
   const dayOrderData: number[] = [];
@@ -47,19 +48,15 @@ function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-[#E7E9E2] px-10 py-4 lg:overflow-hidden">
-      <div className="my-2 flex flex-col items-start justify-between gap-1">
+    <div className="min-h-screen w-full bg-gray-50/50 px-4 py-6 md:px-10">
+      <div className="mb-6 flex flex-col items-start justify-between gap-1">
         <div className="flex w-full items-center justify-between py-2">
-          <h2 className="text-3xl font-semibold text-gray-900">Dashboard</h2>
+          <h2 className="text-3xl font-bold tracking-tight text-foreground">Dashboard</h2>
         </div>
-        <div className="flex flex-row gap-2 text-[16px] font-semibold text-gray-400">
-          <Link href={'/'} className="hover:text-gray-600">
-            Home
-          </Link>
-          {'>'}
-          <Link href={'/dashboard'} className="hover:text-gray-600">
-            Dashboard
-          </Link>
+        <div className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
+          <Link href={'/'} className="transition-colors hover:text-foreground">Home</Link>
+          <span>/</span>
+          <span className="text-foreground">Dashboard</span>
         </div>
       </div>
 

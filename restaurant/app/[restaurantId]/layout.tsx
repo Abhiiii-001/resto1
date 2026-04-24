@@ -4,7 +4,7 @@ import { Suspense } from "react";
 
 const RestaurantLayout = ({ children }: { children: React.ReactNode }) => {
   const isLoading = useRouteLoader();
-  console.log("isLoading",isLoading);
+  //console.log("isLoading",isLoading);
   return (
     <div className="min-h-screen flex">
       <main className={`w-full`}>

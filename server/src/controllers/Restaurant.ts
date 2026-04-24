@@ -13,10 +13,10 @@ export const GetAllRestaurants = async(req: Request,res: Response):Promise<any> 
                 resCode: true
             }
         });
-        console.log(restaurant);
+        //console.log(restaurant);
         return res.status(200).json({message: "Restaurants name fetched",restaurant: restaurant})
     } catch (error) {
-        console.log("Error during get all restaurants",error);
+        //console.log("Error during get all restaurants",error);
     }
 }
 
@@ -29,7 +29,7 @@ export const GetRestaurantDetails = async(req: Request, res: Response):Promise<a
             }
         });
         if(!restaurant){
-            return res.status(499).json({
+            return res.status(404).json({
                 success: false,
                 message: "Shop not found!",
             })
@@ -40,8 +40,8 @@ export const GetRestaurantDetails = async(req: Request, res: Response):Promise<a
             data: restaurant
         })
     } catch (error) {
-        console.log("Error during get restaurant details",error);
-        return res.status(499).json({
+        //console.log("Error during get restaurant details",error);
+        return res.status(500).json({
             success: false,
             message: "Shop details didn't fetched!",
         })
@@ -60,8 +60,8 @@ export const UpdateRestaurantDetails = async(req: Request,res: Response):Promise
             });
         }
 
-        // console.log("data",data,thumbnail);
-        // console.log(restaurantId)
+        // //console.log("data",data,thumbnail);
+        // //console.log(restaurantId)
 
         const restaurant = await prisma.restaurant.findUnique({
             where:{
@@ -73,7 +73,7 @@ export const UpdateRestaurantDetails = async(req: Request,res: Response):Promise
                 thumbnail: true
             }
         });
-        // console.log("restaurant",restaurant);
+        // //console.log("restaurant",restaurant);
 
         if(!restaurant){
             return res.status(404).json({
@@ -85,7 +85,7 @@ export const UpdateRestaurantDetails = async(req: Request,res: Response):Promise
         if(thumbnail){
             const uploadRes = await uploadToCloudinary(thumbnail,"my-files");
             data.thumbnail = uploadRes.secure_url;
-            console.log("Restaurant update thumbnail",data.thumbnail)
+            //console.log("Restaurant update thumbnail",data.thumbnail)
         }
         
         const updatedRestaurant = await prisma.restaurant.update({
@@ -96,7 +96,7 @@ export const UpdateRestaurantDetails = async(req: Request,res: Response):Promise
             data: {...data}
         });
         
-        console.log("Updated restauarant",updatedRestaurant);
+        //console.log("Updated restauarant",updatedRestaurant);
 
         return res.status(200).json({
             success: true,
@@ -105,7 +105,7 @@ export const UpdateRestaurantDetails = async(req: Request,res: Response):Promise
         })
 
     } catch (error) {
-        return res.status(499).json({
+        return res.status(500).json({
             success: false,
             message: "Something wrong!"
         })
@@ -138,7 +138,7 @@ export const DeleteRestaurant = async(req: Request,res: Response): Promise<any> 
         });
 
     } catch (error) {
-        return res.status(499).json({
+        return res.status(500).json({
             success: false,
             message: "Something went wrong!"
         })

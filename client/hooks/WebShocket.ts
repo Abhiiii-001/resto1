@@ -32,19 +32,19 @@ const useSocket = (restaurantId: string, url: string) => {
     });
 
     socketRef.current.on('connect', () => {
-      console.log('Socket.IO Connected');
+      //console.log('Socket.IO Connected');
       dispatch(setSocketConnected(true));
       // Join the restaurant-specific room
       socketRef.current?.emit('joinRoom', restaurantId);
     });
 
     socketRef.current.on('newOrder', (orderData: Order) => {
-      console.log('New order received:', orderData);
+      //console.log('New order received:', orderData);
       dispatch(addOrder(orderData)); // Add new order to Redux store
     });
 
     socketRef.current.on('disconnect', () => {
-      console.log('Socket.IO Disconnected');
+      //console.log('Socket.IO Disconnected');
       dispatch(setSocketConnected(false));
     });
 
@@ -59,7 +59,7 @@ const useSocket = (restaurantId: string, url: string) => {
   }, [restaurantId, url, dispatch]);
 
   const isConnected = useSelector(
-    (state: RootState) => state.order?.socketConnected,
+    (state: RootState) => state.orders?.socketConnected,
   );
   return { isConnected };
 };

@@ -12,7 +12,7 @@ type Props = {}
 
 function Success({data}: any) {
 
-  console.log("Success data",data);
+  //console.log("Success data",data);
 
     const {width,height} = useWindowSize();
     const qrCode = new QRCodeStyling({

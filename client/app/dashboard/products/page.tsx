@@ -1,117 +1,37 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Swiper from 'swiper';
 import { useAppSelector } from '@/redux/redux';
 import {
   AddCategoryInterface,
   Category,
   useAddCategoryMutation,
   useGetAllCategoriesQuery,
+  useUpdateCategoryMutation,
 } from '@/redux/api/category';
 import Loader from '@/components/common/Loader';
-import Image from 'next/image';
 import Dialog from '@/components/common/Dialog';
 import CreateCategory from './_components/CreateCategory';
 import { toast } from 'react-toastify';
-import { ProductInterface, useGetProductsQuery } from '@/redux/api/products';
+import { useGetProductsQuery } from '@/redux/api/products';
 import ProductGrid from './_components/ProductGrid';
 import { useRouter } from 'next/navigation';
+import { skipToken } from '@reduxjs/toolkit/query';
 import CreateProduct from './_components/CreateProductDialog';
-
-type Props = {};
-
-const category = [
-  {
-    id: 'drinks',
-    name: 'Drinks',
-  },
-  {
-    id: 'burger',
-    name: 'Burger',
-  },
-  {
-    id: 'pizza',
-    name: 'Pizza',
-  },
-  {
-    id: 'roti',
-    name: 'Roti',
-  },
-  {
-    id: 'chicken',
-    name: 'Chicken',
-  },
-  {
-    id: 'roti',
-    name: 'Roti',
-  },
-  {
-    id: 'chicken',
-    name: 'Chicken',
-  },
-  {
-    id: 'roti',
-    name: 'Roti',
-  },
-  {
-    id: 'chicken',
-    name: 'Chicken',
-  },
-  {
-    id: 'roti',
-    name: 'Roti',
-  },
-  {
-    id: 'chicken',
-    name: 'Chicken',
-  },
-  {
-    id: 'roti',
-    name: 'Roti',
-  },
-  {
-    id: 'chicken',
-    name: 'Chicken',
-  },
-  {
-    id: 'roti',
-    name: 'Roti',
-  },
-  {
-    id: 'chicken',
-    name: 'Chicken',
-  },
-  {
-    id: 'roti',
-    name: 'Roti',
-  },
-  {
-    id: 'chicken',
-    name: 'Chicken',
-  },
-  {
-    id: 'roti',
-    name: 'Roti',
-  },
-  {
-    id: 'chicken',
-    name: 'Chicken',
-  },
-];
+import { Button } from '@/components/ui/button';
+import { Plus, FolderPlus, ChevronRight } from 'lucide-react';
+import { ProductInterface } from '@/types/products';
 
 function Products() {
-  const router = useRouter();
-
   const { isSidebarCollapsed } = useAppSelector((state) => state.global);
-  const { user } = useAppSelector((state) => state.auth);
+  const { user, token } = useAppSelector((state) => state.auth);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategroy] = useState<string>('all');
   const [createProductModal, setCreateProductModal] = useState<boolean>(false);
+  const [isEditCategory, setIsEditCategory] = useState<boolean>(false);
 
   //Category Data Query
-  const { data, isSuccess, isLoading } = useGetAllCategoriesQuery();
-  const category: Category[] | undefined = data?.categories;
+  const { data: category, isSuccess, isLoading } = useGetAllCategoriesQuery();
 
   //Product Data Query
   const {
@@ -119,147 +39,168 @@ function Products() {
     isSuccess: isSuccess1,
     error,
     isLoading: isLoading2,
-  } = useGetProductsQuery(user.role === 'USER' ? user.restaurantId : user.id);
+  } = useGetProductsQuery(
+    user && token ? (user.role === 'USER' ? user.restaurantId || '' : user.id) : skipToken
+  );
   const [products, setProducts] = useState<ProductInterface[]>(
-    getProductQueryData?.products,
+    getProductQueryData?.products || [],
   );
 
   //Add category mutation
   const [createCategoryApi, { isLoading: isLoading1 }] =
     useAddCategoryMutation();
+  const [updateCategoryApi, { isLoading: isUpdatingCategory }] = useUpdateCategoryMutation();
 
   useEffect(() => {
-    setProducts(getProductQueryData?.products);
-    console.log('getProductQueryData', getProductQueryData?.products);
+    if (getProductQueryData?.products) setProducts(getProductQueryData.products);
   }, [isSuccess1, getProductQueryData]);
-  let p: any;
+
   useEffect(() => {
-    console.log('Selected CategoryId', selectedCategory);
-    if (selectedCategory == 'all') setProducts(getProductQueryData?.products);
+    if (selectedCategory == 'all') setProducts(getProductQueryData?.products || []);
     else
       setProducts(
-        getProductQueryData?.products.filter(
-          (p) => p.categoryId === selectedCategory,
-        ),
+        getProductQueryData?.products?.filter(
+          (p: any) => p.categoryId === selectedCategory,
+        ) || [],
       );
-    console.log(products);
-  }, [selectedCategory]);
-
-  console.log(data);
+  }, [selectedCategory, getProductQueryData]);
 
   const createCategoryHandler = async (data: AddCategoryInterface) => {
-    const toastId = toast.loading('Loading....');
+    const toastId = toast.loading('Creating category...');
     try {
       const form = new FormData();
       form.append('name', data.name);
       form.append('thumbnail', data.thumbnail);
 
-      const response = await createCategoryApi(form).unwrap();
-      console.log('Category creation response', response);
+      const response = await createCategoryApi(form as unknown as AddCategoryInterface).unwrap();
       toast.success('Category created!');
+      setIsOpen(false);
     } catch (error) {
       toast.error('Category creation failed!');
-      console.log('Error during category creation', error);
     }
     toast.dismiss(toastId);
   };
 
-  if (isLoading || isLoading1 || isLoading2) return <Loader />;
+  const updateCategoryHandler = async (data: AddCategoryInterface) => {
+    if (!selectedCategory || selectedCategory === 'all') return;
+    const toastId = toast.loading('Updating category...');
+    try {
+      const form = new FormData();
+      form.append('name', data.name);
+      if (data.thumbnail instanceof File) {
+        form.append('thumbnail', data.thumbnail);
+      }
+
+      await updateCategoryApi({ id: selectedCategory, data: form }).unwrap();
+      toast.success('Category updated!');
+      setIsOpen(false);
+      setIsEditCategory(false);
+    } catch (error) {
+      toast.error('Category update failed!');
+    }
+    toast.dismiss(toastId);
+  };
+
+  if (isLoading || isLoading2) return <Loader />;
 
   return (
-    <div className="mr-6 h-full w-full px-10 py-8">
+    <div className="flex h-full w-full flex-col px-4 py-6 md:px-10 bg-gray-50/50 min-h-screen">
       {/* Header section */}
-      <div className="flex flex-col items-start justify-between gap-1">
-        <div className="flex w-full items-center justify-between py-2">
-          <h2 className="text-3xl font-semibold text-gray-900">Products</h2>
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              onClick={() => setCreateProductModal(true)}
-              className="rounded-xl bg-blue-400 px-4 py-3 text-sm font-semibold text-gray-100 transition-all duration-200 hover:bg-blue-300"
-            >
-              + Create Product
-            </button>
-            <div
-              className="rounded-xl bg-blue-400 px-4 py-3 text-sm font-semibold text-gray-100 transition-all duration-200 hover:bg-blue-300"
-              onClick={() => setIsOpen((prev) => !prev)}
-            >
-              + Create Category
-              <Dialog
-                isOpen={isOpen}
-                setIsOpen={setIsOpen}
-                component={
-                  <CreateCategory
-                    setIsOpen={setIsOpen}
-                    onSubmitHandler={createCategoryHandler}
-                  />
-                }
-              />
-            </div>
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900">Products</h2>
+          <div className="mt-2 flex items-center text-sm font-medium text-gray-500">
+            <Link href="/" className="transition-colors hover:text-gray-900">Home</Link>
+            <ChevronRight className="mx-1 h-4 w-4" />
+            <Link href="/dashboard" className="transition-colors hover:text-gray-900">Dashboard</Link>
+            <ChevronRight className="mx-1 h-4 w-4" />
+            <span className="text-gray-900">Products</span>
           </div>
         </div>
-        <div className="flex flex-row gap-2 text-[16px] font-semibold text-gray-400">
-          <Link href={'/'} className="hover:text-gray-600">
-            Home
-          </Link>
-          {'>'}
-          <Link href={'/dashboard'} className="hover:text-gray-600">
-            Dashboard
-          </Link>
-          {'>'}
-          <Link href={'/dashboard/products'} className="hover:text-gray-600">
-            Products
-          </Link>
+        
+        <div className="flex flex-wrap items-center gap-3">
+          <Button onClick={() => {
+            setIsEditCategory(false);
+            setIsOpen(true);
+          }} variant="outline" className="gap-2 bg-white">
+            <FolderPlus className="h-4 w-4" />
+            Create Category
+          </Button>
+          <Button onClick={() => setCreateProductModal(true)} className="gap-2">
+            <Plus className="h-4 w-4" />
+            Create Product
+          </Button>
         </div>
       </div>
+
+      <Dialog
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        component={
+          <CreateCategory
+            setIsOpen={setIsOpen}
+            onSubmitHandler={isEditCategory ? updateCategoryHandler : createCategoryHandler}
+            isEdit={isEditCategory}
+            category={category?.find((c) => c.id === selectedCategory)}
+          />
+        }
+      />
 
       {/* Category Section */}
-      <div className="mt-2 flex w-full items-center justify-between">
-        <div
-          className={`${
-            isSidebarCollapsed ? 'w-full' : 'lg:w-[1500px]'
-          } no-scrollbar my-6 flex flex-row items-center gap-6 overflow-x-scroll`}
-        >
-          <div
-            className={`flex cursor-pointer flex-col items-center justify-center border px-5 py-3 hover:scale-95 hover:shadow-xl ${selectedCategory == 'all' ? 'border-2 border-gray-800' : 'border-gray-400'} rounded-xl border-opacity-50 bg-gray-100`}
+      <div className="mb-6">
+        <div className="flex w-full items-center gap-3 overflow-x-auto pb-2 no-scrollbar">
+          <button
+            className={`flex-none rounded-full px-5 py-2 text-sm font-semibold transition-all ${
+              selectedCategory === 'all'
+                ? 'bg-primary text-primary-foreground shadow-sm'
+                : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+            }`}
             onClick={() => setSelectedCategroy('all')}
           >
-            <p className="text-sm font-semibold text-gray-600 lg:text-[16px]">
-              All
-            </p>
-          </div>
+            All Products
+          </button>
+          
           {isSuccess &&
-            category?.map((cat, index) => {
-              return (
-                <div
-                  key={index}
-                  className={`flex cursor-pointer flex-col items-center justify-center text-nowrap border px-5 py-3 hover:scale-95 hover:shadow-xl ${selectedCategory == cat.id ? 'border-2 border-gray-800' : 'border-gray-400'} rounded-xl border-opacity-50 bg-gray-100`}
-                  onClick={() => setSelectedCategroy(cat.id)}
-                >
-                  <p className="text-sm font-semibold text-gray-600 lg:text-[16px]">
-                    {cat.name}
-                  </p>
-                </div>
-              );
-            })}
+            category?.map((cat) => (
+              <button
+                key={cat.id}
+                className={`flex-none rounded-full px-5 py-2 text-sm font-semibold transition-all ${
+                  selectedCategory === cat.id
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+                }`}
+                onClick={() => setSelectedCategroy(cat.id)}
+              >
+                {cat.name}
+              </button>
+            ))}
         </div>
-      </div>
-
-      {/* Products */}
-      <div className="h-full w-full overflow-auto">
-        {isSuccess1 && products && products.length > 0 ? (
-          <ProductGrid products={products} />
-        ) : (
-          <div className="flex h-[60vh] w-full items-center justify-center text-2xl">
-            No Product Found
+        {selectedCategory !== 'all' && (
+          <div className="mt-3 flex justify-end">
+            <button
+              onClick={() => {
+                setIsEditCategory(true);
+                setIsOpen(true);
+              }}
+              className="text-sm font-medium text-blue-600 hover:underline"
+            >
+              Update category detail
+            </button>
           </div>
         )}
       </div>
 
-      {selectedCategory !== 'all' && (
-        <div className="mt-2 cursor-pointer text-sm text-blue-500 underline">
-          Manage category
-        </div>
-      )}
+      {/* Products Grid */}
+      <div className="flex-1 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+        {isSuccess1 && products && products.length > 0 ? (
+          <ProductGrid products={products} />
+        ) : (
+          <div className="flex h-64 flex-col items-center justify-center gap-2">
+            <p className="text-lg font-medium text-gray-500">No products found</p>
+            <p className="text-sm text-gray-400">Create a product to get started.</p>
+          </div>
+        )}
+      </div>
 
       {/* Create product dialog */}
       {createProductModal && (

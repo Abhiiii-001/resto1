@@ -54,6 +54,8 @@ export default {
       },
       fontFamily: {
         clash: ['Clash Display', 'sans-serif'],
+        sans: ['var(--font-geist-sans)', 'sans-serif'],
+        mono: ['var(--font-geist-mono)', 'monospace'],
       },
       borderRadius: {
         lg: 'var(--radius)',

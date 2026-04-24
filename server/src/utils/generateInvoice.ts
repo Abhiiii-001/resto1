@@ -42,7 +42,7 @@ export const generateInvoice = async (data: any, orderCode: string, restaurantDe
       writeStream.on('finish', () => {
         try {
           const fileBuffer = fs.readFileSync(filePath);
-          console.log('File Buffer Generated:', fileBuffer);
+          //console.log('File Buffer Generated:', fileBuffer);
           resolve(fileBuffer);  // Return the file buffer
         } catch (error) {
           console.error('Error reading file:', error);

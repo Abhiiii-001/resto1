@@ -35,7 +35,7 @@ function seedSaleSummary(restaurantId) {
                     amount: getRandomAmount(),
                     duration: 'Day',
                     orders: getRandomOrder(),
-                    cratedAt: getFormattedISOString(i),
+                    createdAt: getFormattedISOString(i),
                     restaurantId,
                 });
             }
@@ -48,7 +48,7 @@ function seedSaleSummary(restaurantId) {
                     amount: getRandomAmount() * 30,
                     duration: 'Month',
                     orders: getRandomOrder() * 30,
-                    cratedAt: date.toISOString(),
+                    createdAt: date.toISOString(),
                     restaurantId,
                 });
             }

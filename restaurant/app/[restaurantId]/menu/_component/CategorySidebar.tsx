@@ -18,7 +18,7 @@ const items = [
 ];
 
 function CategorySidebar({ data, selectedCategory, setSelectedCategory }: any) {
-  console.log("Category slider data", data);
+  //console.log("Category slider data", data);
   useEffect(() => {
     if(data) setSelectedCategory(data[0]);
   },[data])

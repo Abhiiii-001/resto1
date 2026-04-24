@@ -25,7 +25,7 @@ const page = (props: Props) => {
           setRestaurantDetails(restaurantData?.data)
       }
    },[restaurantData])
-   console.log("Restaurant Details",restaurantDetails);
+   //console.log("Restaurant Details",restaurantDetails);
 
   if(restaurantDetailsLoader || !restaurantDetails){
     return <div>

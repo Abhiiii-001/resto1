@@ -2,12 +2,12 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { RootState } from '../redux';
 import { ApiResponse } from '@/types/common';
 import {
-  CreateProductInterface,
-  CreateProductVariantInterface,
-  ProductInterface,
-  ProductVariantInterface,
-  UpdateProductInterface,
-  UpdateProductVariantInterface,
+  type CreateProductInterface,
+  type CreateProductVariantInterface,
+  type ProductInterface,
+  type ProductVariantInterface,
+  type UpdateProductInterface,
+  type UpdateProductVariantInterface,
 } from '@/types/products';
 import { API_URLS } from '@/constants/Urls';
 
@@ -26,7 +26,7 @@ export const productApi = createApi({
   reducerPath: 'product',
   tagTypes: ['Products', 'ProductVariants'],
   endpoints: (build) => ({
-    getProducts: build.query<ApiResponse<ProductInterface[]>, string>({
+    getProducts: build.query<{ products: ProductInterface[]; message: string }, string>({
       query: (id) => `/${id}`,
       providesTags: ['Products', 'ProductVariants'],
     }),

@@ -2,55 +2,20 @@
 import React, { useEffect, useState } from 'react';
 import OrderCard from './_componenets/OrderCard';
 import Link from 'next/link';
-import { Search } from 'lucide-react';
+import { Search, Activity, ChevronRight } from 'lucide-react';
 import { useAppSelector } from '@/redux/redux';
-import {
-  useGetAllOrdersQuery,
-  useUpdateOrderStatusMutation,
-} from '@/redux/api/order';
+import { useGetAllOrdersQuery } from '@/redux/api/order';
+import { Input } from '@/components/ui/input';
+import { skipToken } from '@reduxjs/toolkit/query';
 
-type Props = {};
-
-const dummyData = [
-  {
-    id: 'ajlkal',
-    orderCode: '234561',
-    name: null,
-    status: 'Pending',
-    amount: 345,
-    isPack: false,
-    isVerified: true,
-    invoice: ' jsjfla',
-    paymentOption: 'Cash',
-    createdAt: '',
-    restaurantId: 'fjdalk',
-    orders: [
-      {
-        id: 'jkdsfk',
-        name: 'Paneer Burger',
-        variant: 'small',
-        quantity: 2,
-        unitPrice: 50,
-      },
-      {
-        id: 'jkdsfkbhb',
-        name: 'Paneer Burger',
-        variant: 'small',
-        quantity: 2,
-        unitPrice: 50,
-      },
-    ],
-  },
-];
-
-function LiveOrders({}: Props) {
+function LiveOrders() {
   const { orders } = useAppSelector((state) => state.order);
-  const { restaurantId } = useAppSelector((state) => state.auth);
+  const { restaurantId, token } = useAppSelector((state) => state.auth);
 
   const [query, setQuery] = useState('');
   const [filteredOrders, setFilteredOrders] = useState(orders);
 
-  useGetAllOrdersQuery(restaurantId);
+  useGetAllOrdersQuery(restaurantId && token ? restaurantId : skipToken);
 
   useEffect(() => {
     setFilteredOrders(orders);
@@ -58,49 +23,50 @@ function LiveOrders({}: Props) {
 
   useEffect(() => {
     const data = orders.filter(
-      (ord) =>
-        !query || query == '' || ord.orderCode.toLowerCase().includes(query),
+      (ord: any) =>
+        !query || query === '' || ord.orderCode.toLowerCase().includes(query.toLowerCase()),
     );
     setFilteredOrders(data);
-  }, [query]);
+  }, [query, orders]);
 
   return (
-    <div className="mx-4 my-8 px-6">
-      {/* Heading */}
-      <div className="mb-4 flex flex-col items-start justify-between">
-        <div className="mb-4 flex w-full flex-row items-center justify-between">
-          <div className="flex items-center gap-2 text-3xl font-semibold text-black">
-            Live Orders
+    <div className="flex h-full w-full flex-col px-4 py-6 md:px-10 bg-gray-50/50 min-h-screen">
+      {/* Header section */}
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="flex items-center gap-2">
+            <h2 className="text-3xl font-bold tracking-tight text-foreground">Live Orders</h2>
+            <div className="relative flex h-3 w-3 mb-4">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+            </div>
           </div>
-          <div className="">
-            {/* Search Form */}
-            <SearchForm query={query} setQuery={setQuery} />
+          <div className="mt-2 flex items-center text-sm font-medium text-muted-foreground">
+            <Link href="/" className="transition-colors hover:text-foreground">Home</Link>
+            <ChevronRight className="mx-1 h-4 w-4" />
+            <Link href="/dashboard" className="transition-colors hover:text-foreground">Dashboard</Link>
+            <ChevronRight className="mx-1 h-4 w-4" />
+            <span className="text-foreground">Live Orders</span>
           </div>
         </div>
-
-        <div className="flex flex-row gap-2 pb-4 text-[16px] font-semibold text-gray-400">
-          <Link href={'/'} className="hover:text-gray-600">
-            Home
-          </Link>
-          {'>'}
-          <Link href={'/dashboard'} className="hover:text-gray-600">
-            Dashboard
-          </Link>
-          {'>'}
-          <Link href={'/dashboard/live-orders'} className="hover:text-gray-600">
-            Live Order
-          </Link>
+        
+        <div className="flex items-center gap-4">
+          <SearchForm query={query} setQuery={setQuery} />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 justify-center gap-8 xl:grid-cols-2 2xl:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
         {filteredOrders.length > 0 ? (
-          filteredOrders.map((data, index) => (
+          filteredOrders.map((data: any, index: number) => (
             <OrderCard data={data} key={index} />
           ))
         ) : (
-          <div className="flex h-[50vh] w-[80vw] items-center justify-center text-2xl font-medium text-black">
-            No order available
+          <div className="col-span-full flex h-[400px] w-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-gray-300 bg-white shadow-sm">
+            <div className="rounded-full bg-gray-50 p-4 text-muted-foreground">
+              <Activity className="h-8 w-8 opacity-50" />
+            </div>
+            <p className="text-lg font-medium text-muted-foreground">No active live orders</p>
+            <p className="text-sm text-gray-400">New incoming orders will appear here instantly.</p>
           </div>
         )}
       </div>
@@ -108,33 +74,20 @@ function LiveOrders({}: Props) {
   );
 }
 
-const SearchForm = ({ query, setQuery }) => {
+const SearchForm = ({ query, setQuery }: any) => {
   return (
-    <form className="mx-auto w-full pb-2">
-      <label
-        htmlFor="search"
-        className="sr-only mb-2 text-sm font-medium text-gray-900 dark:text-white"
-      >
-        Search
-      </label>
-      <div className="relative">
-        <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3 text-gray-400">
-          <Search width={16} height={16} />
-        </div>
-        <input
-          type="search"
-          id="search"
-          value={query}
-          onChange={(e) => {
-            e.preventDefault();
-            setQuery(e.target.value);
-          }}
-          className="block rounded-xl border border-gray-300 bg-gray-50 px-12 py-2 font-clash text-sm text-gray-900 focus:border-gray-500 focus:ring-gray-500"
-          placeholder="Search orders..."
-          required
-        />
+    <div className="relative w-full sm:w-[320px]">
+      <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">
+        <Search className="h-4 w-4" />
       </div>
-    </form>
+      <Input
+        type="search"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        className="pl-10"
+        placeholder="Search by Order ID..."
+      />
+    </div>
   );
 };
 

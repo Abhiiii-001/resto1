@@ -18,7 +18,7 @@ function Menu({}: Props) {
   const [ isCartOpen , setIsCartOpen ] = useState<boolean>(false);
   
   const {data: restaurantData,isLoading,isError} = useGetMenuQuery(restaurantId);
-  console.log("Restaurant all data",restaurantData);
+  //console.log("Restaurant all data",restaurantData);
 
   useEffect(() => {
     if(restaurantData)

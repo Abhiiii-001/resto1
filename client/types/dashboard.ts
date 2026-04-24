@@ -30,6 +30,7 @@ export type StatsSummary = {
   totalEarning: number;
   totalOrders: number;
   totalQRScan: number;
+  totalPending: number;
 };
 
 export type OrderStatusSummary = {

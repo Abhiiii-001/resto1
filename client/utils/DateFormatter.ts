@@ -7,23 +7,23 @@ export const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-US', options);
 };
 
-export function formatDateTime(isoString: string) {
+export function formatDateTime(isoString: string): { time: string; day: string } {
   const inputDate = new Date(isoString);
-  const currentDate = new Date(); // Current date: March 27, 2025, in this context
+  const currentDate = new Date();
 
-  // 1. Format Time (e.g., "10:35 AM")
-  const timeOptions = {
+  const timeOptions: Intl.DateTimeFormatOptions = {
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
   };
+
   const timeString = inputDate.toLocaleTimeString('en-US', timeOptions);
 
-  // 2. Calculate Relative Day (e.g., "Today", "One day ago")
-  const diffInMs = currentDate - inputDate;
+  const diffInMs = currentDate.getTime() - inputDate.getTime();
   const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 
-  let dayString;
+  let dayString: string;
+
   switch (diffInDays) {
     case 0:
       dayString = 'Today';
@@ -32,7 +32,7 @@ export function formatDateTime(isoString: string) {
       dayString = 'A day ago';
       break;
     default:
-      dayString = `${diffInDays} days ago`; // For dates older than 1 day
+      dayString = `${diffInDays} days ago`;
   }
 
   return { time: timeString, day: dayString };

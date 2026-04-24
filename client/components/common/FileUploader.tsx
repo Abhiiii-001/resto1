@@ -13,8 +13,8 @@ const FileUploader = ({
   previewUrl?: any;
 }) => {
   const [preview, setPreview] = useState(previewUrl);
-  console.log('Preview', previewUrl);
-  console.log('thumbnail', thumbnail);
+  //console.log('Preview', previewUrl);
+  //console.log('thumbnail', thumbnail);
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       // Update the thumbnail value in the form
@@ -44,7 +44,9 @@ const FileUploader = ({
             className="mx-auto mb-2 h-16 w-16 rounded-md object-cover"
           />
           <div>
-            <p className="text-xs text-gray-500">{thumbnail?.name}</p>
+            <p className="text-xs text-gray-500">
+              {thumbnail instanceof File ? thumbnail.name : 'Existing Image'}
+            </p>
             <button
               className="text-sm underline"
               onClick={() => {

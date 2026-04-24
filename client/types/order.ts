@@ -37,6 +37,7 @@ export type CreateOrderPayload = {
   note?: string;
   amount: number;
   isPack: boolean;
+  status: string;
   paymentOption: string;
   restaurantId: string;
   orders: CreateOrderItem[];

@@ -29,7 +29,7 @@ type Props = {
 function Cart({ isCartOpen, setIsCartOpen }: Props) {
   const router = useRouter();
   const { restaurantId } = useParams();
-  // console.log("Restaurnat Id from cart",restaurantId)
+  // //console.log("Restaurnat Id from cart",restaurantId)
   
   const [isPending, startTransition] = useTransition();
 
