@@ -2,8 +2,7 @@
 import React, { useState } from 'react';
 import SignupForm1 from '../_components/SignupForm1';
 import SignupForm2 from '../_components/SignupForm2';
-import { ArrowLeft, Check } from 'lucide-react';
-import Link from 'next/link';
+import { Check } from 'lucide-react';
 
 function Signup() {
   const [step, setStep] = useState(1);
@@ -12,40 +11,43 @@ function Signup() {
     password: string;
   }>();
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-sky-50 to-blue-100 p-4">
-      <Link href={'/'} className="absolute left-8 top-8">
-        <div className="flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2 font-semibold shadow-md">
-          <ArrowLeft />
-          Back
-        </div>
-      </Link>
-      <div className="w-full max-w-[500px] overflow-hidden rounded-2xl border border-white/20 bg-white/95 shadow-2xl backdrop-blur-sm">
+    <div className="flex flex-1 items-center justify-center h-[90%] bg-gray-50/50 p-4">
+      <div className="w-full max-w-[500px] overflow-hidden rounded-xl border border-border bg-white shadow-sm">
         {/* Header */}
-        <div className="flex flex-col items-start justify-center gap-2 px-8 py-6">
-          <h2 className="w-full text-center font-serif text-3xl font-bold leading-7 text-gray-950">
-            Welcome to <span className="text-4xl text-blue-400">Restro!</span>
+        <div className="flex flex-col items-center justify-center gap-2 px-8 py-8">
+          <div className="mb-2 flex items-center justify-center gap-2">
+            <span className="text-2xl font-bold tracking-tight text-foreground">
+              🍽️ Restro
+            </span>
+          </div>
+          <h2 className="text-2xl font-bold text-foreground">
+            Create your account
           </h2>
-          <p className="w-full text-center text-[16px] font-semibold text-gray-600 opacity-80">
-            Grow your offline bussiness with online utilites
+          <p className="text-center text-sm text-muted-foreground">
+            Grow your offline business with online utilities
           </p>
 
-          <div className="mt-4 flex w-full items-center justify-center">
+          <div className="mt-6 flex w-full items-center justify-center">
             <div
-              className={`flex aspect-square h-12 w-12 cursor-pointer items-center justify-center rounded-full border border-blue-400 bg-blue-400 text-lg text-white ${
-                step === 1 ? '' : 'scale-90'
+              className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-2 text-sm font-bold transition-all ${
+                step === 1 
+                  ? 'border-primary bg-primary text-white' 
+                  : 'border-primary bg-primary text-white shadow-sm'
               }`}
               onClick={() => setStep(1)}
             >
-              {step === 1 ? '1' : <Check />}
+              {step === 1 ? '1' : <Check className="h-5 w-5" />}
             </div>
             <div
-              className={`h-[1px] w-20 border-2 border-dashed ${
-                step === 2 ? 'border-sky-600' : 'border-gray-600'
+              className={`h-[2px] w-16 transition-colors ${
+                step === 2 ? 'bg-primary' : 'bg-border'
               }`}
             ></div>
             <div
-              className={`flex aspect-square h-12 w-12 cursor-pointer items-center justify-center rounded-full border text-lg ${
-                step === 2 ? 'border-blue-400 bg-blue-400 text-white' : ''
+              className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-2 text-sm font-bold transition-all ${
+                step === 2 
+                  ? 'border-primary bg-primary text-white shadow-sm' 
+                  : 'border-border bg-white text-muted-foreground hover:border-muted-foreground/30'
               }`}
             >
               2

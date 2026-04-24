@@ -1,4 +1,6 @@
 import React, { useEffect, useRef } from 'react';
+import { Button } from '@/components/ui/button';
+import { AlertCircle } from 'lucide-react';
 
 type Props = {
   title: string;
@@ -34,34 +36,40 @@ const AlertModal = ({
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
-  }, [isModalOpen]);
+  }, [isModalOpen, setIsModalOpen]);
+
+  if (!isModalOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-200">
       <div
-        className="flex w-full max-w-[400px] flex-col items-center justify-between gap-10 rounded-xl bg-white px-6 py-4"
+        className="w-full max-w-[420px] scale-100 rounded-2xl border border-border bg-background p-6 shadow-2xl transition-transform duration-200"
         ref={dialogRef}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="w-full">
-          <h2 className="text-2xl font-semibold !text-gray-800">{title}</h2>
-          <p className="py-2 text-sm font-semibold text-gray-600 text-opacity-60">
-            {desc}
-          </p>
+        <div className="flex flex-col items-center text-center">
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-600">
+            <AlertCircle size={24} />
+          </div>
+          <h2 className="text-xl font-bold text-foreground">{title}</h2>
+          <p className="mt-2 text-sm text-muted-foreground">{desc}</p>
         </div>
-        <div className="flex w-full items-center justify-end gap-2">
-          <button
-            onClick={() => setIsModalOpen(null)}
-            className="rounded-xl bg-red-400 px-6 py-2 text-gray-200 hover:bg-red-500"
+
+        <div className="mt-6 flex w-full items-center justify-center gap-3">
+          <Button
+            variant="outline"
+            className="flex-1"
+            onClick={() => setIsModalOpen(false)}
           >
-            No
-          </button>
-          <button
+            Cancel
+          </Button>
+          <Button
+            variant="destructive"
+            className="flex-1"
             onClick={clickHandler}
-            className="rounded-xl bg-blue-400 px-6 py-2 text-gray-200 hover:bg-blue-500"
           >
-            Yes
-          </button>
+            Confirm
+          </Button>
         </div>
       </div>
     </div>

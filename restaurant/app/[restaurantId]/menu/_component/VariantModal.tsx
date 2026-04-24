@@ -23,7 +23,7 @@ function VariantModal({ clickedProduct, setClickedProduct }: Props) {
   const { totalAmount, totalItem, orders } = useAppSelector(
     (state) => state.cart
   );
-  console.log("Orders", orders);
+  //console.log("Orders", orders);
 
   const [quantity, setQuantity] = useState(0);
   useEffect(() => {

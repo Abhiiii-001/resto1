@@ -1,46 +1,47 @@
 'use client';
 import { useVerifyTokenMutation } from '@/redux/api/auth';
-import { User, X } from 'lucide-react';
+import { X, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import React, { useEffect } from 'react';
+import Loader from '@/components/common/Loader';
+import { Button } from '@/components/ui/button';
 
-type Props = {};
-
-function Verify({}: Props) {
+function Verify() {
   const { token } = useParams();
   const [verifyToken, { isLoading, isError, isSuccess }] =
     useVerifyTokenMutation();
+
   useEffect(() => {
     if (token) {
-      console.log('token', token);
       verifyToken({
         token: token[0],
       });
     }
-  }, [token]);
+  }, [token, verifyToken]);
+
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
-  if (!isSuccess) {
+  if (!isSuccess && !isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-sky-50 to-blue-100 p-4">
-        <div className="w-full max-w-md overflow-hidden rounded-2xl border border-white/20 bg-white/95 shadow-2xl backdrop-blur-sm">
+      <div className="flex min-h-screen items-center justify-center bg-gray-50/50 p-4">
+        <div className="w-full max-w-md overflow-hidden rounded-xl border border-border bg-white shadow-sm">
           <div className="px-8 py-12 text-center">
-            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
-              <X className="h-8 w-8 text-red-600" />
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
+              <X className="h-8 w-8 text-destructive" />
             </div>
-            <h1 className="mb-4 text-2xl font-bold text-red-500">
-              Invaild Token!!
+            <h1 className="mb-4 text-2xl font-bold text-foreground">
+              Verification Failed
             </h1>
-            <p className="mb-8 text-sky-600">
-              This token may be invalid or expired, check again.
+            <p className="mb-8 text-sm text-muted-foreground">
+              The verification link is invalid or has expired. Please try signing up again or contact support.
             </p>
-            <Link href="/signin">
-              <button className="w-full transform rounded-lg bg-sky-600 px-4 py-3 font-medium text-white shadow-lg transition-all duration-200 hover:scale-[1.02] hover:bg-sky-700 hover:shadow-xl">
+            <Link href="/signin" className="block w-full">
+              <Button variant="outline" className="w-full py-6">
                 Back to Sign In
-              </button>
+              </Button>
             </Link>
           </div>
         </div>
@@ -49,24 +50,31 @@ function Verify({}: Props) {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-sky-50 to-blue-100 p-4">
-      <div className="w-full max-w-md overflow-hidden rounded-2xl border border-white/20 bg-white/95 shadow-2xl backdrop-blur-sm">
-        <div className="px-8 py-12 text-center">
-          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-            {/* <Mail className="h-8 w-8 text-green-600" /> */}
-            <User className="h-8 w-8 text-green-600" />
+    <div className="flex min-h-screen items-center justify-center bg-gray-50/50 p-4">
+      <div className="w-full max-w-md overflow-hidden rounded-xl border border-border bg-white shadow-sm">
+        {/* Header */}
+        <div className="flex flex-col items-center justify-center gap-2 px-8 pt-8 pb-4 text-center">
+          <div className="mb-2 flex items-center justify-center gap-2">
+            <span className="text-2xl font-bold tracking-tight text-foreground">
+              🍽️ Restro
+            </span>
           </div>
-          <h1 className="mb-4 text-2xl font-bold text-sky-800">
-            User is verified now!
+        </div>
+
+        <div className="px-8 py-8 text-center">
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-50">
+            <CheckCircle2 className="h-8 w-8 text-green-600" />
+          </div>
+          <h1 className="mb-4 text-2xl font-bold text-foreground">
+            Email Verified!
           </h1>
-          <p className="mb-8 text-sky-600">
-            Your account is verified now, You can signin to your account with
-            associated email and password.
+          <p className="mb-8 text-sm text-muted-foreground">
+            Your account has been successfully verified. You can now sign in to your dashboard.
           </p>
-          <Link href="/sigin">
-            <button className="w-full transform rounded-lg bg-sky-600 px-4 py-3 font-medium text-white shadow-lg transition-all duration-200 hover:scale-[1.02] hover:bg-sky-700 hover:shadow-xl">
-              Back to Sign In
-            </button>
+          <Link href="/signin" className="block w-full">
+            <Button className="w-full py-6 text-base font-semibold">
+              Sign In Now
+            </Button>
           </Link>
         </div>
       </div>

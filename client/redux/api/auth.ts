@@ -1,16 +1,23 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { RootState } from '../redux';
 import { ApiResponse } from '@/types/common';
-import {
-  ChangePasswordPayload,
-  LoginPayload,
-  ResetPasswordMakerPayload,
-  ResetPasswordPayload,
-  RestaurantSignupPayload,
-  UserSignupPayload,
-  VerifyTokenPayload,
+export {
+  type ChangePasswordPayload,
+  type LoginPayload,
+  type ResetPasswordMakerPayload,
+  type ResetPasswordPayload,
+  type RestaurantSignupPayload,
+  type UserSignupPayload,
+  type VerifyTokenPayload,
 } from '@/types/auth';
 import { API_URLS } from '@/constants/Urls';
+import { UserSignupPayload } from './auth';
+import { RestaurantSignupPayload } from './auth';
+import { LoginPayload } from './auth';
+import { VerifyTokenPayload } from './auth';
+import { ChangePasswordPayload } from './auth';
+import { ResetPasswordPayload } from './auth';
+import { ResetPasswordMakerPayload } from './auth';
 
 export const authApi = createApi({
   baseQuery: fetchBaseQuery({

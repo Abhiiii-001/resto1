@@ -1,0 +1,53 @@
+# ──────────────────────────────────────────────────────────────────
+# LOCAL DEVELOPMENT ONLY
+# Usage: docker compose up --build
+#
+# Spins up:
+#   1. postgres  — local DB with persistent volume
+#   2. server    — your Express API (waits for postgres to be healthy)
+#
+# For production, use docker-compose.prod.yml (no postgres container)
+# ──────────────────────────────────────────────────────────────────
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: restro_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: restro_user
+      POSTGRES_PASSWORD: restro_pass
+      POSTGRES_DB: restro_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - restro_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U restro_user -d restro_db']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  server: 
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: restro_server
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - '8000:8000'
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: sh -c "npx prisma generate && npm run dev"
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://restro_user:restro_pass@postgres:5432/restro_db
+      PORT: 8000
+
+volumes:
+  restro_pgdata:
+    driver: local

@@ -1,15 +1,14 @@
-import { useState, useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
+import { X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface DialogProps {
   component: React.ReactNode;
-  //   onSave: (formData: { input1: string; input2: string }) => void;
   isOpen: boolean;
   setIsOpen: any;
 }
 
 const Dialog: React.FC<DialogProps> = ({ component, isOpen, setIsOpen }) => {
-  //   const [isOpen, setIsOpen] = useState(false);
-
   const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -29,21 +28,29 @@ const Dialog: React.FC<DialogProps> = ({ component, isOpen, setIsOpen }) => {
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
-  }, [isOpen]);
+  }, [isOpen, setIsOpen]);
+
+  if (!isOpen) return null;
 
   return (
-    <div>
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div
-            className="w-96 min-w-[480px] rounded-xl bg-gray-200 p-6 shadow-[rgba(75,85,99,_0.24)_0px_3px_8px] lg:min-w-[600px]"
-            ref={dialogRef}
-            onClick={(e) => e.stopPropagation()} // Prevent closing on content click
-          >
-            {component}
-          </div>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-200 p-4">
+      <div
+        className="relative w-full max-w-2xl scale-100 max-h-[90vh] overflow-y-auto rounded-2xl border border-border bg-background shadow-2xl transition-transform duration-200"
+        ref={dialogRef}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute right-4 top-4 z-10 text-muted-foreground hover:bg-gray-100 hover:text-foreground"
+          onClick={() => setIsOpen(false)}
+        >
+          <X className="h-4 w-4" />
+        </Button>
+        <div className="p-6 md:p-8">
+          {component}
         </div>
-      )}
+      </div>
     </div>
   );
 };

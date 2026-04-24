@@ -2,7 +2,8 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { RootState } from '../redux';
 import { API_URLS } from '@/constants/Urls';
 import { ApiResponse } from '@/types/common';
-import { DashboardData } from '@/types/dashboard';
+import { DashboardData } from './dashboard';
+export { type DashboardData } from '@/types/dashboard';
 
 export const dashboardApi = createApi({
   baseQuery: fetchBaseQuery({

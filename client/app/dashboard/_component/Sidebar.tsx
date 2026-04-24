@@ -2,24 +2,23 @@
 
 import { useAppDispatch, useAppSelector } from '@/redux/redux';
 import { setIsSidebarCollapsed } from '@/redux/states/globalSlice';
-import { addOrder } from '@/redux/states/orderSlice';
 import {
   Archive,
   Clipboard,
   Layout,
   LucideIcon,
-  Menu,
   QrCode,
   Radio,
   SlidersHorizontal,
   User,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
-
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
-
-import { io } from 'socket.io-client';
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface SidebarLinkProps {
   href: string;
@@ -39,21 +38,22 @@ const SidebarLink = ({
     pathname === href || (pathname === '/' && href === '/dashboard');
 
   return (
-    <Link href={href}>
+    <Link href={href} className="block w-full">
       <div
-        className={`flex cursor-pointer items-center ${
-          isCollapsed ? 'justify-center py-4' : 'justify-start px-8 py-4'
-        } gap-3 transition-colors hover:bg-blue-100 hover:text-blue-500 ${
-          isActive ? 'bg-blue-200 text-white' : ''
-        } }`}
+        className={cn(
+          'flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-300',
+          isActive
+            ? 'bg-primary/10 text-primary'
+            : 'text-muted-foreground hover:bg-gray-100 hover:text-foreground',
+        )}
       >
-        <Icon className="h-6 w-6 !text-gray-700" />
-
-        <span
-          className={`${
-            isCollapsed ? 'hidden' : 'block'
-          } font-medium text-gray-700`}
-        >
+        <div className="flex h-5 w-5 shrink-0 items-center justify-center">
+          <Icon className={cn('h-5 w-5', isActive ? 'text-primary' : '')} />
+        </div>
+        <span className={cn(
+          "transition-all duration-300 overflow-hidden whitespace-nowrap",
+          isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100"
+        )}>
           {label}
         </span>
       </div>
@@ -71,44 +71,24 @@ const Sidebar = () => {
     dispatch(setIsSidebarCollapsed(!isSidebarCollapsed));
   };
 
-  const [newOrderModal, setNewOrderModal] = useState(null);
-
-  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
-  console.log('User data', user, isAuthenticated);
-
-  //web socket configuration
-
-  // const socket = io('http://localhost:8000',{
-  //   path:"/socket-server-path"
-  // })
-  // useEffect(() => {
-  //    if(isAuthenticated){
-  //       //join room
-  //       socket.emit("joinRoom",user.role == "User" ? user?.restaurantId : user.id);
-
-  //       //listen for new order
-  //       socket.on('newOrder',(orderData) => {
-  //         console.log("New Order Recieved",orderData);
-  //         dispatch(addOrder(orderData));
-  //         setNewOrderModal(orderData);
-  //       });
-
-  //       return () => {
-  //         socket.off("newOrder");
-  //       }
-  //    }
-  // },[])
-
-  const sidebarClassNames = `fixed flex flex-col  ${
-    isSidebarCollapsed ? 'w-10 md:w-16' : 'w-72 md:w-64'
-  } bg-white transition-all duration-300 overflow-hidden h-full shadow-md z-40`;
+  const sidebarClassNames = cn(
+    'flex h-full w-full flex-col bg-white border-r border-border transition-all duration-300 overflow-hidden shadow-sm z-40',
+    isSidebarCollapsed ? 'w-0 lg:w-[60px] -translate-x-full lg:translate-x-0' : 'w-64 translate-x-0',
+  );
 
   return (
-    <div className={sidebarClassNames}>
-      {/* TOP LOGO */}
+    <>
+      {/* Mobile Overlay */}
+      {!isSidebarCollapsed && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden" 
+          onClick={toggleSidebar}
+        />
+      )}
 
+      <div className={sidebarClassNames}>
       {/* LINKS */}
-      <div className="mt-20 flex-grow">
+      <div className="flex-grow overflow-y-auto py-6 px-2 space-y-2">
         <SidebarLink
           href="/dashboard"
           icon={Layout}
@@ -154,10 +134,13 @@ const Sidebar = () => {
       </div>
 
       {/* FOOTER */}
-      <div className={`${isSidebarCollapsed ? 'hidden' : 'block'} mb-10`}>
-        <p className="text-center text-xs text-gray-500">&copy; 2025 Restro</p>
-      </div>
+      {!isSidebarCollapsed && (
+        <div className="mb-6 px-4">
+          <p className="text-center text-xs text-muted-foreground">&copy; {new Date().getFullYear()} Restro</p>
+        </div>
+      )}
     </div>
+</>
   );
 };
 

@@ -30,7 +30,7 @@ export async function seedSaleSummary(restaurantId: string) {
         amount: getRandomAmount(),
         duration: 'Day' as Duration,
         orders: getRandomOrder(),
-        cratedAt: getFormattedISOString(i),
+        createdAt: getFormattedISOString(i),
         restaurantId,
       });
     }
@@ -44,7 +44,7 @@ export async function seedSaleSummary(restaurantId: string) {
         amount: getRandomAmount()*30,
         duration: 'Month' as Duration,
         orders: getRandomOrder() * 30,
-        cratedAt: date.toISOString(),
+        createdAt: date.toISOString(),
         restaurantId,
       });
     }
@@ -52,7 +52,7 @@ export async function seedSaleSummary(restaurantId: string) {
     // Insert into DB
     await prisma.saleSummary.createMany({ data: saleData });
 
-    console.log('✅ Seeded SaleSummary data successfully!');
+    //console.log('✅ Seeded SaleSummary data successfully!');
   } catch (error) {
     console.error('❌ Failed to seed SaleSummary:', error);
   } finally {

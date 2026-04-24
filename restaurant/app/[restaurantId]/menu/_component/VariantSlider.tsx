@@ -19,7 +19,7 @@ type Props = {
 };
 
 function VariantSlider({ data ,currentVariant , setCurrentVariant}: Props) {
-  // console.log("Variant slider data",data);
+  // //console.log("Variant slider data",data);
 
   return (
     <div className="w-full ">

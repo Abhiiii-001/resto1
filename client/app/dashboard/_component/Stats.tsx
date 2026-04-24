@@ -17,87 +17,84 @@ type Props = {
 type StatsCardProps = {
   title: string;
   content: string | number;
-  gain: number | null;
+  gain?: number | null;
+  description?: string;
   icon: LucideIcon;
-  color: string;
+  iconBg: string;
+  iconColor: string;
 };
 
-function StatsCard({ title, content, gain, icon, color }: StatsCardProps) {
-  const Icon = icon;
+function StatsCard({ title, content, gain, description, icon: Icon, iconBg, iconColor }: StatsCardProps) {
   return (
-    <div className="flex w-full flex-col items-start justify-between gap-8 rounded-xl bg-white px-4 py-3 lg:max-w-[270px]">
-      <div className="flex w-full flex-row items-center justify-between lg:gap-12">
-        <div className="flex flex-col items-start justify-center gap-2">
-          <p className="text-[0.95rem] font-medium text-gray-800">{title}</p>
-          <p className="text-[1.4rem] font-semibold">
-            {title === 'Total Earning' ? '₹ ' : ''}
-            {content}
+    <div className="flex w-full flex-col items-start justify-between gap-6 rounded-xl border border-border bg-white px-5 py-4 shadow-sm transition-all hover:shadow-md">
+      <div className="flex w-full flex-row items-center justify-between">
+        <div className="flex flex-col gap-1">
+          <p className="text-sm font-medium text-muted-foreground">{title}</p>
+          <p className="text-2xl font-bold text-foreground">
+            {title === 'Total Earning' ? '₹' : ''}{content}
           </p>
         </div>
 
-        <div className={` ${color} rounded-2xl p-2`}>
-          <Icon width={28} height={28} />
+        <div className={`${iconBg} rounded-xl p-2.5`}>
+          <Icon className={`h-6 w-6 ${iconColor}`} />
         </div>
       </div>
 
       {gain ? (
-        <div className={`flex items-center gap-1`}>
+        <div className="flex items-center gap-1.5 text-sm">
           <div
-            className={`${gain > 0 ? 'text-green-400' : 'text-red-400'} flex gap-1`}
+            className={`flex items-center gap-1 font-semibold ${gain > 0 ? 'text-green-600' : 'text-red-500'}`}
           >
-            {gain > 0 ? <TrendingUp /> : <TrendingDown />} {gain}%{' '}
+            {gain > 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
+            {Math.abs(gain)}%
           </div>
-          {gain > 0 ? 'up ' : 'down'} from yesterday
+          <span className="text-muted-foreground">{gain > 0 ? 'up' : 'down'} from yesterday</span>
         </div>
-      ) : (
-        <div className="text-sm">
-          <sup className="text-pink-500">*</sup>
-          Check live product for more details
+      ) : description ? (
+        <div className="text-xs font-medium text-muted-foreground/80">
+          {description}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
 
-const mockdata = {
-  pendingOrder: 12,
-  earningGain: -1.3,
-  ordersGain: 2.5,
-  qrGain: 4,
-};
-//w-full grid grid-cols-2 lg:grid-cols-4  justify-between gap-8
 function Stats(props: Props) {
   const { data } = props;
   return (
     <div className="col-span-3 row-span-2 xl:row-span-2 2xl:col-span-2">
-      <div className="grid w-full grid-cols-2 justify-between gap-8 lg:grid-cols-4 lg:gap-4">
+      <div className="grid w-full grid-cols-2 gap-4 lg:grid-cols-4">
         <StatsCard
-          title={'Total Earning'}
+          title="Total Earning"
           content={data.totalEarning}
-          gain={mockdata.earningGain}
+          description="Total revenue generated"
           icon={LineChart}
-          color={'bg-purple-300 text-purple-700'}
+          iconBg="bg-purple-50"
+          iconColor="text-purple-600"
         />
         <StatsCard
-          title={'Total Orders'}
+          title="Total Orders"
           content={data.totalOrders}
-          gain={mockdata.ordersGain}
+          description="Lifetime orders processed"
           icon={Box}
-          color={'bg-yellow-300 text-yellow-700'}
+          iconBg="bg-amber-50"
+          iconColor="text-amber-600"
         />
         <StatsCard
-          title={'Total QR Scan'}
+          title="Total QR Scan"
           content={data.totalQRScan}
-          gain={mockdata.qrGain}
+          description="Direct customer engagement"
           icon={QrCode}
-          color={'bg-green-300 text-green-700'}
+          iconBg="bg-green-50"
+          iconColor="text-green-600"
         />
         <StatsCard
-          title={'Total Pending'}
-          content={mockdata.pendingOrder}
-          gain={null}
+          title="Total Pending"
+          content={data.totalPending || 0}
+          description="Orders awaiting action"
           icon={TimerReset}
-          color={'bg-orange-300 text-orange-700'}
+          iconBg="bg-primary/10"
+          iconColor="text-primary"
         />
       </div>
     </div>

@@ -1,11 +1,11 @@
 // Product Variant
 export interface ProductVariantInterface {
   id: string;
-  size: string;
-  price: number;
-  salePrice: number;
-  isOutOfStock: boolean;
-  productId: string;
+  size?: string;
+  price?: number;
+  salePrice?: number;
+  isOutOfStock?: boolean;
+  productId?: string;
 }
 export interface CreateProductVariantInterface {
   size: string;
@@ -18,6 +18,7 @@ export interface UpdateProductVariantInterface {
   size?: string;
   price?: number;
   salePrice?: number;
+  isOutOfStock?: boolean;
 }
 
 // Product

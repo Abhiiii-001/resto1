@@ -24,7 +24,7 @@ function Header({ isCartOpen, setIsCartOpen }: Props) {
       setRestaurantDetails(restaurantData?.data);
     }
   }, [restaurantData]);
-  console.log("Restaurant Details", restaurantDetails);
+  //console.log("Restaurant Details", restaurantDetails);
 
   const { totalItem } = useAppSelector((state) => state.cart);
 

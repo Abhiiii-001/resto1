@@ -67,7 +67,7 @@ const calculateSummary = (duration) => __awaiter(void 0, void 0, void 0, functio
                 amount: totalAmount,
                 duration,
                 orders: orders.length,
-                cratedAt: labelDate.toISOString(), // set to start of the period
+                createdAt: labelDate.toISOString(), // set to start of the period
                 restaurantId: restaurant.id,
             },
         });

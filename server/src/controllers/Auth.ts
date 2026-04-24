@@ -109,7 +109,7 @@ export const UserSignup = async(req: Request,res: Response): Promise<any> => {
     });
 
      } catch (error:any) {
-      console.log("Error",error.message);
+      //console.log("Error",error.message);
       return res.status(500).json({success: false,message:"Signup Failed!"});
    }
 }
@@ -117,7 +117,7 @@ export const UserSignup = async(req: Request,res: Response): Promise<any> => {
 export const RestaurantSignup = async(req: Request,res: Response): Promise<any> => {
    try {
     const reqData: RestaurantSignupInterface = req.body;
-    console.log(reqData);
+    //console.log(reqData);
     const {
         name,
         slogan,
@@ -128,7 +128,7 @@ export const RestaurantSignup = async(req: Request,res: Response): Promise<any> 
     } = reqData;
 
     const file = req.files?.thumbnail;
-    console.log(file);
+    //console.log(file);
 
     
     //check user is already present
@@ -146,13 +146,13 @@ export const RestaurantSignup = async(req: Request,res: Response): Promise<any> 
 
       //upload file
       const thumbnailUploadRes = await uploadToCloudinary(file,'my-files');
-      console.log("UPLOAD FILE RESPONSE : ",thumbnailUploadRes);
+      //console.log("UPLOAD FILE RESPONSE : ",thumbnailUploadRes);
       // fs.unlinkSync(file.tempFilePath); 
 
     //hash password
     const hashedPassword: string = (await bcrypt.hash(password,10)).toString();
     const verificationToken =  crypto.randomUUID().toString();
-    console.log("verification token",verificationToken);
+    //console.log("verification token",verificationToken);
 
     //generate resCode
     let code = generateRandomNumber(4).toString();
@@ -179,7 +179,7 @@ export const RestaurantSignup = async(req: Request,res: Response): Promise<any> 
             verificationToken
         }
     });
-    console.log(restaurant)
+    //console.log(restaurant)
     if(!restaurant)
         return res.status(500).json({success: false,message:"Something wrong while user creation!"});
 
@@ -198,7 +198,7 @@ export const RestaurantSignup = async(req: Request,res: Response): Promise<any> 
         mailResponse:mailResponse?.response
     });
    } catch (error:any) {
-      console.log("Error",error.message);
+      //console.log("Error",error.message);
       return res.status(500).json({success: false,message:"Signup Failed!"});
    }
 }
@@ -246,7 +246,7 @@ export const Login = async(req: Request,res: Response): Promise<any> => {
  
       const match = await bcrypt.compare(password,user.password);
 
-      console.log(match);
+      //console.log(match);
  
       if(!match){
          return res.status(404).json({success: false,message: "Incorrect Password!"});
@@ -276,7 +276,7 @@ export const Login = async(req: Request,res: Response): Promise<any> => {
           token:token
        });
      } catch (error:any) {
-      console.log("Error",error.message);
+      //console.log("Error",error.message);
       return res.status(500).json({success: false,message:"Login Failed!"});
    }
 }
@@ -286,7 +286,7 @@ export const Logout = async(req: Request,res: Response): Promise<any> => {
       res.clearCookie('token'); // Clear the cookie
       res.status(200).json({success: true, message: "Logged out successfully" });
    } catch (error) {
-        console.log(error);
+        //console.log(error);
         return res.status(405).json({success: false,message: "Logout Failed!"});
    }
 }
@@ -302,7 +302,7 @@ export const VerifyToken = async(req: Request,res: Response): Promise<any> => {
             message: "Token not found"
          });
       }
-      console.log(token);
+      //console.log(token);
       let user = await prisma.restaurant.findUnique({
          where:{
             verificationToken: token
@@ -312,7 +312,7 @@ export const VerifyToken = async(req: Request,res: Response): Promise<any> => {
             role: true,
          }
       });
-      console.log(user);
+      //console.log(user);
       if(!user){
          user = await prisma.user.findUnique({
             where:{
@@ -324,7 +324,7 @@ export const VerifyToken = async(req: Request,res: Response): Promise<any> => {
             }
          });
       }
-      console.log(user);
+      //console.log(user);
       if(!user) {
          return res.status(401).json({
             success: false,
@@ -354,14 +354,14 @@ export const VerifyToken = async(req: Request,res: Response): Promise<any> => {
             }
           })
       }
-      console.log(2);
+      //console.log(2);
 
       return res.status(200).json({
          success: true,
          message: "User verified successfully!"
       })
    } catch (error) {
-       console.log("Verify token error",error);
+       //console.log("Verify token error",error);
        return res.status(499).json({
          success: false,
          message: "Something went wrong!"
@@ -540,8 +540,8 @@ export const ResetPasswordMaker = async(req: Request,res: Response): Promise<any
       }
 
       const hashedNewPassword = (await bcrypt.hash(password,10)).toString();
-      console.log(hashedNewPassword)
-      console.log(password)
+      //console.log(hashedNewPassword)
+      //console.log(password)
       if(user.role === "Restaurant"){
         await prisma.restaurant.update({
             where: {id: user.id},

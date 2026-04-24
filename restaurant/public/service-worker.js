@@ -1,5 +1,5 @@
 self.addEventListener("push", (event) => {
-  console.log("Push event received:", event);
+  //console.log("Push event received:", event);
 
   if (!event.data) {
     console.warn("Push event has no data!");
@@ -14,7 +14,7 @@ self.addEventListener("push", (event) => {
     return;
   }
 
-  console.log("Notification Data:", data);
+  //console.log("Notification Data:", data);
 
   event.waitUntil(
     self.registration.showNotification(data.title || "New Notification", {
@@ -28,7 +28,7 @@ self.addEventListener("push", (event) => {
 });
 
 self.addEventListener("notificationclick", (event) => {
-  console.log("Notification Clicked:", event);
+  //console.log("Notification Clicked:", event);
   event.notification.close();
 
   event.waitUntil(

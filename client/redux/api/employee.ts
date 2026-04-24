@@ -21,13 +21,14 @@ export const employeeApi = createApi({
 
   //fetch all call
   endpoints: (builder) => ({
-    getAllEmployees: builder.query<ApiResponse<User[]>, string>({
+    getAllEmployees: builder.query<User[], string>({
       query: (restaurantId) => ({ url: `/${restaurantId}` }),
       providesTags: ['getallEmployees'],
+      transformResponse: (response: ApiResponse<User[]>) => response.data,
     }),
 
     // post call
-    addEmployee: builder.mutation<string, AddUpdateUserPayload>({
+    addEmployee: builder.mutation<ApiResponse<string>, AddUpdateUserPayload>({
       query: ({ restaurantId, ...data }) => ({
         url: `/${restaurantId}`,
         method: 'POST',
@@ -36,7 +37,7 @@ export const employeeApi = createApi({
       invalidatesTags: ['getallEmployees'],
     }),
     // update call
-    updateEmployee: builder.mutation<string, AddUpdateUserPayload>({
+    updateEmployee: builder.mutation<ApiResponse<string>, Partial<AddUpdateUserPayload>>({
       query: ({ id, ...data }) => ({
         url: `/${id}`,
         method: 'PUT',
@@ -46,8 +47,8 @@ export const employeeApi = createApi({
     }),
 
     //delete call
-    deleteEmployee: builder.mutation<string, { id: string }>({
-      query: ({ id }) => ({
+    deleteEmployee: builder.mutation<ApiResponse<string>, string>({
+      query: ( id ) => ({
         url: `/${id}`,
         method: 'DELETE',
       }),

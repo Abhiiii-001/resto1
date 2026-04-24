@@ -29,7 +29,7 @@ export const CreateOrder = async(req: Request,res: Response): Promise<any> => {
         });
     }
 
-    // console.log("suborderdata",orders)
+    // //console.log("suborderdata",orders)
     // const subOrders = JSON.parse(orders);
     const restaurantDetails = await prisma.restaurant.findUnique({
         where:{
@@ -40,7 +40,7 @@ export const CreateOrder = async(req: Request,res: Response): Promise<any> => {
     const orderCode = generateOrderCode();
     const invoiceBuffer = await generateInvoice(req.body,orderCode,restaurantDetails);
     const invoiceRes:any = await uploadPDFToCloudinary(invoiceBuffer);
-    console.log("Invoice Response",invoiceRes);
+    //console.log("Invoice Response",invoiceRes);
    await prisma.$transaction(async(prisma) => {
         let totalAmount = 0;
         //create order 
@@ -59,7 +59,7 @@ export const CreateOrder = async(req: Request,res: Response): Promise<any> => {
             }
         });
 
-        console.log("order",order)
+        //console.log("order",order)
 
         for(const subOrderData of orders){
 
@@ -86,7 +86,7 @@ export const CreateOrder = async(req: Request,res: Response): Promise<any> => {
                     orderId: order.id
                 }
             })
-         console.log("suborder",t)
+         //console.log("suborder",t)
         }
 
 
@@ -124,7 +124,7 @@ export const CreateOrder = async(req: Request,res: Response): Promise<any> => {
     
     
    } catch (error) {
-     console.log(error)
+     //console.log(error)
       return res.status(500).json({
             success: false,
             message: "Something wrong while creating order!"
@@ -165,7 +165,7 @@ export const VerifyOrder = async(req: Request,res: Response): Promise<any> => {
         })
 
     } catch (error) {
-        console.log("Verify order error",error);
+        //console.log("Verify order error",error);
         return res.status(499).json({
             success: false,
             message: "Something wrong while verifying order"
@@ -186,7 +186,7 @@ export const UpdateStatus = async(req: Request,res: Response): Promise<any> => {
            })
         }
 
-        console.log("Id at update status",id);
+        //console.log("Id at update status",id);
         
         const order = await prisma.order.update({
            where:{
@@ -194,7 +194,7 @@ export const UpdateStatus = async(req: Request,res: Response): Promise<any> => {
            },
            data:{status}
         });
-        console.log("Order",order)
+        //console.log("Order",order)
         
         if(!order){
            return res.status(402).json({
@@ -233,7 +233,7 @@ export const UpdateStatus = async(req: Request,res: Response): Promise<any> => {
         })
 
     } catch (error) {
-        console.log("Something wrong while update status!",error)
+        //console.log("Something wrong while update status!",error)
         return res.status(499).json({
             success: false,
             message: "Something wrong while update status!"
@@ -262,7 +262,7 @@ export const GetAllOrders = async(req: Request,res: Response): Promise<any> => {
         });
 
     } catch (error) {
-        console.log("Get all orders error",error);
+        //console.log("Get all orders error",error);
         return res.status(499).json({
             success: false,
             message: "Something wrong , while retriving all orders"
@@ -274,7 +274,7 @@ export const Subscribe = async(req: Request,res: Response): Promise<any> => {
     try {
      const { orderId , subscription } = req.body;
 
-    console.log("Subscribe",orderId,subscription);
+    //console.log("Subscribe",orderId,subscription);
 
     subscriptionData[orderId] = subscription;
     const response = await prisma.order.update({
@@ -287,7 +287,7 @@ export const Subscribe = async(req: Request,res: Response): Promise<any> => {
         data: response
     });
     } catch (error) {
-        console.log("Error inside subscribe order",error);
+        //console.log("Error inside subscribe order",error);
         return res.status(499).json({
             success:false,
             message: "Subsrciption couldn't saved!"

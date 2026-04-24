@@ -1,0 +1,12 @@
+{
+  "email": "hello@restro.com",
+  "phone": "+91 88888 77777",
+  "address": "42 Heritage Plaza, MG Road, Bangalore, India",
+  "hours": "Mon - Sat: 9:00 AM - 10:00 PM",
+  "socials": {
+    "twitter": "https://twitter.com/restro",
+    "facebook": "https://facebook.com/restro",
+    "instagram": "https://instagram.com/restro",
+    "linkedin": "https://linkedin.com/company/restro"
+  }
+}

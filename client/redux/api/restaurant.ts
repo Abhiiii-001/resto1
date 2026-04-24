@@ -28,27 +28,28 @@ export const restaurantApi = createApi({
 
   endpoints: (build) => ({
     getAllRestaurantId: build.query<
-      ApiResponse<RestaurantDropdownChoics>,
+      RestaurantDropdownChoics[],
       void
     >({
       query: () => ({
         url: '/all',
       }),
+      transformResponse: (response: { message: string, restaurant: RestaurantDropdownChoics[] }) => response.restaurant,
     }),
 
     updateRestuarantDetails: build.mutation<
       ApiResponse<string>,
-      { restaurantId: string; data: any }
+      { restaurantId: string; isOpen: boolean }
     >({
-      query: ({ restaurantId, ...data }) => ({
+      query: ({ restaurantId, isOpen }) => ({
         url: `/${restaurantId}`,
         method: 'PUT',
-        body: data,
+        body: { isOpen },
       }),
       invalidatesTags: ['RestaurantDetails'],
     }),
 
-    deleteRestaurant: build.mutation<any, any>({
+    deleteRestaurant: build.mutation<ApiResponse<string>, any>({
       query: ({ restaurantId }) => ({
         url: `/delete/${restaurantId}`,
         method: 'PUT',
@@ -59,7 +60,7 @@ export const restaurantApi = createApi({
       query: (id) => ({
         url: `/${id}`,
       }),
-      transformResponse: (response) => response?.data,
+      transformResponse: (response: { success: boolean; data: any }) => response.data,
       providesTags: ['RestaurantDetails'],
     }),
   }),

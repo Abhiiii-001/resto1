@@ -43,7 +43,7 @@ const GetDashboardData = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 duration: "Day"
             },
             orderBy: {
-                cratedAt: "desc"
+                createdAt: "desc"
             },
             take: 7
         });
@@ -53,7 +53,7 @@ const GetDashboardData = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 duration: "Month"
             },
             orderBy: {
-                cratedAt: "desc"
+                createdAt: "desc"
             },
             take: 12
         });

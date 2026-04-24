@@ -1,7 +1,10 @@
 'use client';
 import { useState } from 'react';
-
-const EditProfileModal = ({ isOpen, onClose }) => {
+type props = {
+  isOpen: boolean;
+  onClose: () => void
+}
+const EditProfileModal = ({ isOpen, onClose }: props) => {
   const [user] = useState({
     name: 'Aman Singh',
     email: 'amankrsingh58@gmail.com',
