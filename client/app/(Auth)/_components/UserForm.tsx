@@ -37,7 +37,6 @@ function UserForm({ prevFormData }: Props) {
       data.email = prevFormData.email;
       data.password = prevFormData.password;
       const res = await signup(data as unknown as UserSignupPayload).unwrap();
-      //console.log('User signup res', res);
       if (!res || !res?.success) {
         throw new Error(res?.message || 'Something went wrong!');
       }
@@ -57,9 +56,6 @@ function UserForm({ prevFormData }: Props) {
     toast.dismiss(toastId);
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
 
   return (
     <form className="w-full space-y-4" onSubmit={handleSubmit(onSubmitHandler)}>

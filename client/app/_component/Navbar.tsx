@@ -25,19 +25,22 @@ import Loader from '@/components/common/Loader';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { USER_ROLE_TYPE } from '@/constants/CommonConstant';
 
 function Navbar() {
   const dispatch = useAppDispatch();
   const pathname = usePathname();
 
   const { isSidebarCollapsed } = useAppSelector((state) => state.global);
-  const { user, token, isAuthenticated, restaurantId } = useAppSelector(
+  const { user, token, isAuthenticated, restaurantId, canManage } = useAppSelector(
     (state) => state.auth,
   );
 
   const { data: RestaurantDetails } = useGetRestaurantDetailsQuery(
     restaurantId && token ? restaurantId : skipToken,
   );
+
+  const canToggleStoreStatus = user?.role === USER_ROLE_TYPE.RESTAURANT || canManage;
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(
@@ -113,9 +116,7 @@ function Navbar() {
 
   return (
     <nav
-      className={cn(
-        'fixed z-50 flex h-16 w-full flex-row items-center justify-between border-b border-border bg-white px-5 shadow-sm transition-all duration-300',
-      )}
+      className={`fixed z-50 flex h-16 w-full flex-row items-center justify-between border-b border-border bg-white ${isDashboard ? 'px-4' : 'px-8'} shadow-sm transition-all duration-300`}
     >
       {/* LEFT — Logo + sidebar toggle */}
       <div className="flex flex-row items-center gap-4">
@@ -161,6 +162,7 @@ function Navbar() {
         isAuthenticated ? (
           <div className="flex h-full items-center gap-3 py-2">
             {/* Open / Close Sign Board */}
+            {canToggleStoreStatus && 
             <button
               onClick={shopOpenCloseHandler}
               title={isOpen ? 'Click to close store' : 'Click to open store'}
@@ -173,7 +175,7 @@ function Navbar() {
                 height={48}
                 className="cursor-pointer transition-transform duration-200 hover:scale-105"
               />
-            </button>
+            </button>}
 
             {/* Bell */}
             <Button variant="ghost" size="icon" className="relative h-9 w-9 text-muted-foreground hover:text-foreground">
@@ -269,7 +271,6 @@ function Navbar() {
         )
       )}
 
-      {(logoutLoader || updateRestaurantStatusLoader) && <Loader />}
     </nav>
   );
 }

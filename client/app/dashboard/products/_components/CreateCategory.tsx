@@ -10,9 +10,10 @@ interface Props {
   onSubmitHandler: (data: AddCategoryInterface) => Promise<void>;
   isEdit?: boolean;
   category?: Category;
+  disableSubmitButton?: boolean;
 }
 
-const CreateCategory = ({ setIsOpen, onSubmitHandler, isEdit, category }: Props) => {
+const CreateCategory = ({ setIsOpen, onSubmitHandler, isEdit, category, disableSubmitButton }: Props) => {
   const {
     register,
     handleSubmit,
@@ -93,6 +94,7 @@ const CreateCategory = ({ setIsOpen, onSubmitHandler, isEdit, category }: Props)
           </Button>
           <Button
             type="submit"
+            disabled={disableSubmitButton}
           >
             Save Category
           </Button>

@@ -19,6 +19,7 @@ import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { USER_ROLE_TYPE } from '@/constants/CommonConstant';
 
 interface SidebarLinkProps {
   href: string;
@@ -66,6 +67,8 @@ const Sidebar = () => {
   const isSidebarCollapsed = useAppSelector(
     (state) => state.global.isSidebarCollapsed,
   );
+  const {canManage, role} = useAppSelector((state)=>state.auth)
+
 
   const toggleSidebar = () => {
     dispatch(setIsSidebarCollapsed(!isSidebarCollapsed));
@@ -89,12 +92,13 @@ const Sidebar = () => {
       <div className={sidebarClassNames}>
       {/* LINKS */}
       <div className="flex-grow overflow-y-auto py-6 px-2 space-y-2">
+        {role !== USER_ROLE_TYPE.EMPLOYEE && 
         <SidebarLink
           href="/dashboard"
           icon={Layout}
           label="Dashboard"
           isCollapsed={isSidebarCollapsed}
-        />
+        />}
         <SidebarLink
           href="/dashboard/products"
           icon={Clipboard}
@@ -113,12 +117,13 @@ const Sidebar = () => {
           label="Order History"
           isCollapsed={isSidebarCollapsed}
         />
+        {role !== USER_ROLE_TYPE.EMPLOYEE && 
         <SidebarLink
           href="/dashboard/employee"
           icon={User}
           label="Team"
           isCollapsed={isSidebarCollapsed}
-        />
+        />}
         <SidebarLink
           href="/dashboard/qrcode"
           icon={QrCode}

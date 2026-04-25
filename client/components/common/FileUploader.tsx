@@ -13,8 +13,6 @@ const FileUploader = ({
   previewUrl?: any;
 }) => {
   const [preview, setPreview] = useState(previewUrl);
-  //console.log('Preview', previewUrl);
-  //console.log('thumbnail', thumbnail);
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       // Update the thumbnail value in the form

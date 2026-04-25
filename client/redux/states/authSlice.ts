@@ -31,7 +31,7 @@ const authSlice = createSlice({
       state.restaurantId =
         state.role == USER_ROLE_TYPE.RESTAURANT
           ? action.payload.user.id
-          : action.payload.restaurantId;
+          : action.payload.user.restaurantId;
       state.isAuthenticated = true;
       state.canManage =
         action.payload.role === USER_ROLE_TYPE.RESTAURANT ||

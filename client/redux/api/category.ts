@@ -29,7 +29,7 @@ export const categoryApi = createApi({
     getAllCategories: build.query<Category[], void>({
       query: () => '/',
       providesTags: ['GetAllCategories'],
-      transformResponse: (response: ApiResponse<Category[]>) => response.data
+      transformResponse: (response: {categories: Category[]}) => response.categories
     }),
     addCategory: build.mutation<ApiResponse<string>, AddCategoryInterface>({
       query: (data) => ({

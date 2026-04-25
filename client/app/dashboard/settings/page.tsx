@@ -34,6 +34,8 @@ import { toast } from 'react-toastify';
 import { setUser } from '@/redux/states/authSlice';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { USER_ROLE_TYPE } from '@/constants/CommonConstant';
+import Image from 'next/image';
 
 export default function EmployeeSettings() {
   const dispatch = useAppDispatch();
@@ -111,7 +113,6 @@ export default function EmployeeSettings() {
       toast.success('Password changed successfully!');
       setExpanded(null);
     } catch (error: any) {
-      //console.log('Change password error', error);
       toast.error(error?.message || 'Failed to change password');
     }
   };
@@ -120,12 +121,12 @@ export default function EmployeeSettings() {
     setIsEditing(false);
     try {
       let response;
-      if (role === 'Restaurant') {
+      if (role === USER_ROLE_TYPE.RESTAURANT) {
         response = await updateRestaurantApi({
           restaurantId: user?.id,
           ...personalDetails,
         }).unwrap();
-      } else if (role === 'User') {
+      } else if (role === USER_ROLE_TYPE.EMPLOYEE) {
         response = await updateEmployeeApi({
           id: user?.id,
           ...personalDetails,
@@ -139,7 +140,6 @@ export default function EmployeeSettings() {
       dispatch(setUser(response?.data));
       toast.success('Information Updated successfully!');
     } catch (error: any) {
-      //console.log('Update user error', error);
       toast.error(error?.message || 'Something went wrong!');
     }
   };
@@ -160,9 +160,7 @@ export default function EmployeeSettings() {
       }
 
       toast.success('Account Deleted!');
-      // Typically you'd also log the user out here
     } catch (error: any) {
-      //console.log('Delete user error', error);
       toast.error(error?.message || 'Something went wrong!');
     }
   };
@@ -207,17 +205,17 @@ export default function EmployeeSettings() {
                     accept="image/*"
                     className="hidden"
                     onChange={handleImageChange}
-                    disabled={role !== 'Restaurant'}
+                    disabled={role !== USER_ROLE_TYPE.RESTAURANT || !isEditing}
                   />
-                  <div className="relative h-32 w-32 sm:h-40 sm:w-40 overflow-hidden rounded-full border-4 border-white bg-white shadow-lg transition-transform duration-300 group-hover:scale-105">
-                    {profileImage ? (
-                      <img src={profileImage} alt="Profile" className="h-full w-full object-cover" />
+                  <div className={`relative h-32 w-32 sm:h-40 sm:w-40 overflow-hidden rounded-full border-4 border-white bg-white shadow-lg ${isEditing && role === USER_ROLE_TYPE.RESTAURANT ? 'transition-transform duration-300 group-hover:scale-105' : ''}`}>
+                    {role === USER_ROLE_TYPE.RESTAURANT && profileImage ? (
+                      <Image src={profileImage} alt="Profile" width={160} height={160} className="h-full w-full object-cover" />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center bg-gray-100 text-gray-400">
                         <User size={48} />
                       </div>
                     )}
-                    {role === 'Restaurant' && (
+                    {role === USER_ROLE_TYPE.RESTAURANT && isEditing && (
                       <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                         <Camera className="text-white" size={32} />
                       </div>
@@ -270,11 +268,11 @@ export default function EmployeeSettings() {
             >
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
-                  {role === 'Restaurant' ? <Building2 size={20} /> : <User size={20} />}
+                  {role === USER_ROLE_TYPE.RESTAURANT ? <Building2 size={20} /> : <User size={20} />}
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900">
-                    {role === 'Restaurant' ? 'Restaurant Information' : 'Personal Information'}
+                    {role === USER_ROLE_TYPE.RESTAURANT ? 'Restaurant Information' : 'Personal Information'}
                   </h3>
                   <p className="text-sm text-gray-500">Update your basic profile details.</p>
                 </div>

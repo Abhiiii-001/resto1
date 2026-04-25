@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useAppSelector } from '@/redux/redux';
 import {
   AddCategoryInterface,
-  Category,
   useAddCategoryMutation,
   useGetAllCategoriesQuery,
   useUpdateCategoryMutation,
@@ -15,45 +14,43 @@ import CreateCategory from './_components/CreateCategory';
 import { toast } from 'react-toastify';
 import { useGetProductsQuery } from '@/redux/api/products';
 import ProductGrid from './_components/ProductGrid';
-import { useRouter } from 'next/navigation';
 import { skipToken } from '@reduxjs/toolkit/query';
 import CreateProduct from './_components/CreateProductDialog';
 import { Button } from '@/components/ui/button';
 import { Plus, FolderPlus, ChevronRight } from 'lucide-react';
 import { ProductInterface } from '@/types/products';
+import { USER_ROLE_TYPE } from '@/constants/CommonConstant';
 
 function Products() {
-  const { isSidebarCollapsed } = useAppSelector((state) => state.global);
-  const { user, token } = useAppSelector((state) => state.auth);
+  const { user, token, role, canManage, restaurantId } = useAppSelector((state) => state.auth);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategroy] = useState<string>('all');
   const [createProductModal, setCreateProductModal] = useState<boolean>(false);
   const [isEditCategory, setIsEditCategory] = useState<boolean>(false);
 
   //Category Data Query
-  const { data: category, isSuccess, isLoading } = useGetAllCategoriesQuery();
+  const { data: category, isSuccess: isCategoriesFetched, isLoading: isFetchingCategory } = useGetAllCategoriesQuery();
 
   //Product Data Query
   const {
     data: getProductQueryData,
-    isSuccess: isSuccess1,
-    error,
-    isLoading: isLoading2,
+    isSuccess: isProductFetched,
+    isLoading: isFetchingProducts,
   } = useGetProductsQuery(
-    user && token ? (user.role === 'USER' ? user.restaurantId || '' : user.id) : skipToken
+    user && token ? restaurantId : skipToken
   );
   const [products, setProducts] = useState<ProductInterface[]>(
     getProductQueryData?.products || [],
   );
 
   //Add category mutation
-  const [createCategoryApi, { isLoading: isLoading1 }] =
+  const [createCategoryApi, { isLoading: isCreatingCategory }] =
     useAddCategoryMutation();
   const [updateCategoryApi, { isLoading: isUpdatingCategory }] = useUpdateCategoryMutation();
 
   useEffect(() => {
     if (getProductQueryData?.products) setProducts(getProductQueryData.products);
-  }, [isSuccess1, getProductQueryData]);
+  }, [isProductFetched, getProductQueryData]);
 
   useEffect(() => {
     if (selectedCategory == 'all') setProducts(getProductQueryData?.products || []);
@@ -101,7 +98,7 @@ function Products() {
     toast.dismiss(toastId);
   };
 
-  if (isLoading || isLoading2) return <Loader />;
+  if (isFetchingCategory || isFetchingProducts) return <Loader />;
 
   return (
     <div className="flex h-full w-full flex-col px-4 py-6 md:px-10 bg-gray-50/50 min-h-screen">
@@ -118,6 +115,7 @@ function Products() {
           </div>
         </div>
         
+       {(role === USER_ROLE_TYPE.RESTAURANT || canManage) && 
         <div className="flex flex-wrap items-center gap-3">
           <Button onClick={() => {
             setIsEditCategory(false);
@@ -130,7 +128,7 @@ function Products() {
             <Plus className="h-4 w-4" />
             Create Product
           </Button>
-        </div>
+        </div>}
       </div>
 
       <Dialog
@@ -142,6 +140,7 @@ function Products() {
             onSubmitHandler={isEditCategory ? updateCategoryHandler : createCategoryHandler}
             isEdit={isEditCategory}
             category={category?.find((c) => c.id === selectedCategory)}
+            disableSubmitButton={isUpdatingCategory || isCreatingCategory}
           />
         }
       />
@@ -160,7 +159,7 @@ function Products() {
             All Products
           </button>
           
-          {isSuccess &&
+          {isCategoriesFetched &&
             category?.map((cat) => (
               <button
                 key={cat.id}
@@ -192,7 +191,7 @@ function Products() {
 
       {/* Products Grid */}
       <div className="flex-1 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-        {isSuccess1 && products && products.length > 0 ? (
+        {isProductFetched && products && products.length > 0 ? (
           <ProductGrid products={products} />
         ) : (
           <div className="flex h-64 flex-col items-center justify-center gap-2">
