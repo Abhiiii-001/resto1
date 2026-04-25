@@ -17,7 +17,6 @@ const orderSlice = createSlice({
     },
     addOrdersBulk: (state, action) => {
       const orders = action.payload;
-      //console.log(orders);
       state.orders = orders;
       state.count = orders?.length;
     },

@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { RootState } from '../redux';
 import { ApiResponse } from '@/types/common';
-import { RestaurantDropdownChoics } from '@/types/restaurant';
+import { Restaurant, RestaurantDropdownChoics } from '@/types/restaurant';
 import { API_URLS } from '@/constants/Urls';
 
 export interface RestaurantIdInterface {
@@ -39,12 +39,12 @@ export const restaurantApi = createApi({
 
     updateRestuarantDetails: build.mutation<
       ApiResponse<string>,
-      { restaurantId: string; isOpen: boolean }
+      Partial<Restaurant>
     >({
-      query: ({ restaurantId, isOpen }) => ({
+      query: ({ restaurantId, ...data }) => ({
         url: `/${restaurantId}`,
         method: 'PUT',
-        body: { isOpen },
+        body: data,
       }),
       invalidatesTags: ['RestaurantDetails'],
     }),

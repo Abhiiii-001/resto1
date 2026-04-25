@@ -8,10 +8,13 @@ import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import { useAppSelector } from '@/redux/redux';
+import { USER_ROLE_TYPE } from '@/constants/CommonConstant';
 
 const SignIn: React.FC = () => {
   const dispatch = useDispatch();
   const router = useRouter();
+  const {role} = useAppSelector((state) => state.auth)
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -35,7 +38,11 @@ const SignIn: React.FC = () => {
       dispatch(setCredentials(response)); // Save user & token in Redux
 
       toast.success('Login Success!');
-      router.push('/dashboard');
+      if (role === USER_ROLE_TYPE.RESTAURANT) {
+        router.push('/dashboard');
+      } else {
+        router.push('/dashboard/live-orders');
+      }
     } catch (err: any) {
       console.error('Login failed:', err.data.message);
       toast.error(err.data.message);

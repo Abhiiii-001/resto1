@@ -33,13 +33,11 @@ export const orderApi = createApi({
             throw new Error(data?.message);
           }
           const order = data?.data || [];
-          // //console.log("Order api order response",order);
           const filteredOrder = order.filter(
             (ord) => ord.status == 'Pending' || ord.status == 'Ready',
           );
           dispatch(addOrdersBulk(filteredOrder));
-        } catch (error) {
-          //console.log('Order save error', error);
+        } catch (_) {
         }
       },
       providesTags: ['getOrders'],

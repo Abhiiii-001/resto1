@@ -56,7 +56,6 @@ function RestaurantForm({ prevFormData }: Props) {
         throw new Error(response?.message || 'Something went wrong!');
       }
 
-      //console.log(response);
       toast.success('Signup Success!');
       router.push('/signin');
       toast.info('Login Now!');

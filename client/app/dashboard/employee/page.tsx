@@ -91,7 +91,7 @@ function EmployeesPage() {
               <div className="col-span-3">Personal Details</div>
               <div className="col-span-2">Role</div>
               <div className="col-span-2">Status</div>
-              <div className="col-span-2">Access</div>
+              <div className="col-span-2">Menu Edit Access</div>
               <div className="col-span-2 text-right pr-6">Actions</div>
             </div>
 

@@ -11,8 +11,13 @@ import { toast } from 'react-toastify';
 import VariantForm from './VariantForm';
 import { Button } from '@/components/ui/button';
 import { ProductInterface, ProductVariantInterface } from '@/types/products';
+import { useAppSelector } from '@/redux/redux';
+import { USER_ROLE_TYPE } from '@/constants/CommonConstant';
+import Image from 'next/image';
 
 const ProductCard = ({ data }: { data: ProductInterface }) => {
+  const {role, canManage} = useAppSelector(state => state.auth)
+
   const [isEditModal, setIsEditModal] = useState(false);
   const [isDeleteModal, setIsDeleteModal] = useState<boolean>(false);
   const [isVariantModal, setIsVariantModal] = useState<boolean>(false);
@@ -20,6 +25,8 @@ const ProductCard = ({ data }: { data: ProductInterface }) => {
   const [thumbnail, setThumbnail] = useState(
     'https://res.cloudinary.com/dzl6vf3l9/image/upload/v1732903825/my-files/neq9zh5knfbknb9kddi5.webp',
   );
+
+  const shouldShowActions = role === USER_ROLE_TYPE.RESTAURANT || canManage;
 
   useEffect(() => {
     setThumbnail(data?.thumbnail?.trim());
@@ -43,16 +50,18 @@ const ProductCard = ({ data }: { data: ProductInterface }) => {
   };
 
   return (
-    <div className="grid grid-cols-12 items-center gap-4 bg-white px-6 py-4 transition-colors hover:bg-gray-50/50">
+    <div className={`grid ${shouldShowActions ? 'grid-cols-12': 'grid-cols-10'} items-center gap-4 bg-white px-6 py-4 transition-colors hover:bg-gray-50/50`}>
       {/* Image */}
       <div className="col-span-1">
         <div className="h-12 w-12 overflow-hidden rounded-lg border border-gray-100 bg-gray-50">
-          <img
+          <Image
             src={
               thumbnail ||
               'https://res.cloudinary.com/dzl6vf3l9/image/upload/v1732903825/my-files/neq9zh5knfbknb9kddi5.webp'
             }
             alt={data?.name}
+            height={128}
+            width={128}
             className="h-full w-full object-cover"
           />
         </div>
@@ -101,6 +110,7 @@ const ProductCard = ({ data }: { data: ProductInterface }) => {
       </div>
 
       {/* Actions */}
+      {shouldShowActions && 
       <div className="col-span-2 flex justify-end gap-1">
         <Button
           variant="ghost"
@@ -129,7 +139,7 @@ const ProductCard = ({ data }: { data: ProductInterface }) => {
         >
           <Trash2 className="h-4 w-4" />
         </Button>
-      </div>
+      </div>}
 
       {/* Modals */}
       {isEditModal && (

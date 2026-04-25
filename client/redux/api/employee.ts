@@ -24,7 +24,7 @@ export const employeeApi = createApi({
     getAllEmployees: builder.query<User[], string>({
       query: (restaurantId) => ({ url: `/${restaurantId}` }),
       providesTags: ['getallEmployees'],
-      transformResponse: (response: ApiResponse<User[]>) => response.data,
+      transformResponse: (response: {users: User[]}) => response.users,
     }),
 
     // post call

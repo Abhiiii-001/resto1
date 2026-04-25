@@ -58,7 +58,6 @@ const VariantForm = ({
 
       toast.success('Updation Successfully!');
     } catch (error) {
-      //console.log('Error while updating variant', error);
       toast.error('Updation Failed');
     }
     setEditableVariant('');
@@ -92,7 +91,6 @@ const VariantForm = ({
         }
         toast.success('Variant added!');
       } catch (error) {
-        //console.log(error);
         toast.error('Variant add failed!');
       }
       toast.dismiss(toastId);
@@ -120,14 +118,13 @@ const VariantForm = ({
       if (deleteVariantError) throw new Error('Something wrong!');
       toast.success('Deletion Successfully!');
     } catch (error) {
-      //console.log('Error while deleting variant', error);
       toast.error('Deletion Failed');
     }
     toast.dismiss(toastId);
   };
 
   return (
-    <div className={`w-full ${standalone ? '' : 'rounded-xl border border-border bg-gray-50/50 p-4'}`}>
+    <div className={`w-full mt-8 ${standalone ? '' : 'rounded-xl border border-border bg-gray-50/50 p-4'}`}>
       <div className="flex w-full items-center justify-between mb-4">
         <div>
           <h2 className="text-lg font-semibold text-foreground">Variants & Pricing</h2>
