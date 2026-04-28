@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
 import mailSender from '../utils/mailSender'
+import { welcomeEmailTemplate, verificationEmailTemplate, resetPasswordEmailTemplate, employeeVerifiedTemplate } from '../utils/mailTemplates'
 import uploadToCloudinary from "../utils/cloudinaryUploader"
 
 import dotenv from "dotenv"
@@ -96,10 +97,18 @@ export const UserSignup = async(req: Request,res: Response): Promise<any> => {
 
       const verificationLink = `${process.env.CLIENT_URL}/verify/${verificationToken}`;
       
+      // Send verification email to Restaurant
       const mailResponse =  mailSender(
         restaurant.email,
-        "Verify User",
-        `<p>Click <a href="${verificationLink}">here</a> to verify employee email.</p>`
+        "Verify Employee Account",
+        verificationEmailTemplate(verificationLink, "Employee Verification Required", `A new employee (${name || email}) has signed up and requires your verification to join your workspace.`)
+      );
+
+      // Send welcome email to User
+      mailSender(
+        email,
+        "Welcome to Restro!",
+        welcomeEmailTemplate(name || "Employee", "User")
       );
 
       return res.status(200).json({
@@ -185,10 +194,18 @@ export const RestaurantSignup = async(req: Request,res: Response): Promise<any> 
 
       const verificationLink = `${process.env.CLIET_URL}/verify/${verificationToken}`;
       
+      // Send verification email
       const mailResponse = await mailSender(
         email,
-        "Verify User",
-        `<p>Click <a href="${verificationLink}">here</a> to verify your email.</p>`
+        "Verify Your Restaurant Account",
+        verificationEmailTemplate(verificationLink, "Verify Your Account", "Thank you for registering your restaurant with Restro. Please verify your email address to get started.")
+      );
+
+      // Send welcome email
+      mailSender(
+        email,
+        "Welcome to Restro!",
+        welcomeEmailTemplate(name, "Restaurant")
       );
 
       res.status(200).json({
@@ -303,13 +320,15 @@ export const VerifyToken = async(req: Request,res: Response): Promise<any> => {
          });
       }
       //console.log(token);
-      let user = await prisma.restaurant.findUnique({
+      let user: any = await prisma.restaurant.findUnique({
          where:{
             verificationToken: token
          },
          select:{
             id: true,
             role: true,
+            email: true,
+            name: true,
          }
       });
       //console.log(user);
@@ -321,6 +340,8 @@ export const VerifyToken = async(req: Request,res: Response): Promise<any> => {
             select:{
                id: true,
                role: true,
+               email: true,
+               name: true,
             }
          });
       }
@@ -353,6 +374,13 @@ export const VerifyToken = async(req: Request,res: Response): Promise<any> => {
                // verificationToken:""
             }
           })
+          
+          // Send verified email to User so they can login
+          mailSender(
+             user.email,
+             "Your Account is Verified!",
+             employeeVerifiedTemplate(user.name, `${process.env.CLIENT_URL || ''}/login`)
+          );
       }
       //console.log(2);
 
@@ -492,8 +520,8 @@ export const ResetPassword = async(req: Request,res: Response): Promise<any> => 
    
    const mailResponse = mailSender(
       email,
-      "Reset Password",
-      `<p>Click <a href="${verificationLink}">here</a> to verify employee email.</p>`
+      "Reset Your Restro Password",
+      resetPasswordEmailTemplate(verificationLink)
     );
 
     return res.status(200).json({

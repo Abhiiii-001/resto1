@@ -1,0 +1,82 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: restro_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: restro_user
+      POSTGRES_PASSWORD: restro_pass
+      POSTGRES_DB: restro_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - server_restro_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U restro_user -d restro_db']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  server:
+    image: node:20-alpine
+    container_name: restro_server
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - '8000:8000'
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    working_dir: /app
+    command: sh -c "npm install && npx prisma generate && npm run dev"
+    env_file:
+      - ./server/.env
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://restro_user:restro_pass@postgres:5432/restro_db
+      PORT: 8000
+
+  client:
+    image: node:20-alpine
+    container_name: restro_client
+    restart: unless-stopped
+    ports:
+      - '3001:3001'
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+      - /app/.next
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+    env_file:
+      - ./client/.env
+    environment:
+      NODE_ENV: development
+      WATCHPACK_POLLING: 'true'
+      CHOKIDAR_USEPOLLING: 'true'
+
+  restaurant:
+    image: node:20-alpine
+    container_name: restro_restaurant
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./restaurant:/app
+      - /app/node_modules
+      - /app/.next
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+    env_file:
+      - ./restaurant/.env
+    environment:
+      NODE_ENV: development
+      WATCHPACK_POLLING: 'true'
+      CHOKIDAR_USEPOLLING: 'true'
+
+volumes:
+  server_restro_pgdata:
+    name: server_restro_pgdata
+    external: true

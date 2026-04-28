@@ -68,9 +68,10 @@ export const UpdateCategory = async(req: Request,res: Response): Promise<any> =>
         const { categoryId } = req.params;
 
         if(thumbanil){
-        const thumbnailUploadRes = await uploadToCloudinary(thumbanil,"my-files"); 
+            const thumbnailUploadRes = await uploadToCloudinary(thumbanil,"my-files"); 
             updatedData.thumbanil = thumbnailUploadRes?.secure_url;
         }
+        console.log('debug-cate', thumbanil, updatedData)
         const result = await prisma.category.update({
             where:{
                 id: categoryId

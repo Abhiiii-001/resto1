@@ -10,7 +10,9 @@ export const GetAllRestaurants = async(req: Request,res: Response):Promise<any> 
             select:{
                 id: true,
                 name: true,
-                resCode: true
+                resCode: true,
+                thumbnail: true,
+                slogan: true
             }
         });
         //console.log(restaurant);
