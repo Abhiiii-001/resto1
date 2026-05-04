@@ -17,6 +17,7 @@ const client_1 = require("@prisma/client");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const mailSender_1 = __importDefault(require("../utils/mailSender"));
+const mailTemplates_1 = require("../utils/mailTemplates");
 const cloudinaryUploader_1 = __importDefault(require("../utils/cloudinaryUploader"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const randomCode_1 = require("../utils/randomCode");
@@ -65,7 +66,10 @@ const UserSignup = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (!user)
             return res.status(449).json({ success: false, message: "Something wrong while user creation!" });
         const verificationLink = `${process.env.CLIENT_URL}/verify/${verificationToken}`;
-        const mailResponse = (0, mailSender_1.default)(restaurant.email, "Verify User", `<p>Click <a href="${verificationLink}">here</a> to verify employee email.</p>`);
+        // Send verification email to Restaurant
+        const mailResponse = (0, mailSender_1.default)(restaurant.email, "Verify Employee Account", (0, mailTemplates_1.verificationEmailTemplate)(verificationLink, "Employee Verification Required", `A new employee (${name || email}) has signed up and requires your verification to join your workspace.`));
+        // Send welcome email to User
+        (0, mailSender_1.default)(email, "Welcome to Restro!", (0, mailTemplates_1.welcomeEmailTemplate)(name || "Employee", "User"));
         return res.status(200).json({
             success: true,
             message: "User created! , Waiting for verification by Restaurant",
@@ -73,7 +77,7 @@ const UserSignup = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         });
     }
     catch (error) {
-        console.log("Error", error.message);
+        //console.log("Error",error.message);
         return res.status(500).json({ success: false, message: "Signup Failed!" });
     }
 });
@@ -82,10 +86,10 @@ const RestaurantSignup = (req, res) => __awaiter(void 0, void 0, void 0, functio
     var _a;
     try {
         const reqData = req.body;
-        console.log(reqData);
+        //console.log(reqData);
         const { name, slogan, number, address, email, password, } = reqData;
         const file = (_a = req.files) === null || _a === void 0 ? void 0 : _a.thumbnail;
-        console.log(file);
+        //console.log(file);
         //check user is already present
         const existingUser = yield prisma.user.findUnique({
             where: { email: email }
@@ -98,12 +102,12 @@ const RestaurantSignup = (req, res) => __awaiter(void 0, void 0, void 0, functio
         }
         //upload file
         const thumbnailUploadRes = yield (0, cloudinaryUploader_1.default)(file, 'my-files');
-        console.log("UPLOAD FILE RESPONSE : ", thumbnailUploadRes);
+        //console.log("UPLOAD FILE RESPONSE : ",thumbnailUploadRes);
         // fs.unlinkSync(file.tempFilePath); 
         //hash password
         const hashedPassword = (yield bcrypt_1.default.hash(password, 10)).toString();
         const verificationToken = crypto.randomUUID().toString();
-        console.log("verification token", verificationToken);
+        //console.log("verification token",verificationToken);
         //generate resCode
         let code = (0, randomCode_1.generateRandomNumber)(4).toString();
         while (true) {
@@ -129,11 +133,14 @@ const RestaurantSignup = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 verificationToken
             }
         });
-        console.log(restaurant);
+        //console.log(restaurant)
         if (!restaurant)
             return res.status(500).json({ success: false, message: "Something wrong while user creation!" });
         const verificationLink = `${process.env.CLIET_URL}/verify/${verificationToken}`;
-        const mailResponse = yield (0, mailSender_1.default)(email, "Verify User", `<p>Click <a href="${verificationLink}">here</a> to verify your email.</p>`);
+        // Send verification email
+        const mailResponse = yield (0, mailSender_1.default)(email, "Verify Your Restaurant Account", (0, mailTemplates_1.verificationEmailTemplate)(verificationLink, "Verify Your Account", "Thank you for registering your restaurant with Restro. Please verify your email address to get started."));
+        // Send welcome email
+        (0, mailSender_1.default)(email, "Welcome to Restro!", (0, mailTemplates_1.welcomeEmailTemplate)(name, "Restaurant"));
         res.status(200).json({
             success: true,
             message: "User created! , Waiting for verification",
@@ -142,7 +149,7 @@ const RestaurantSignup = (req, res) => __awaiter(void 0, void 0, void 0, functio
         });
     }
     catch (error) {
-        console.log("Error", error.message);
+        //console.log("Error",error.message);
         return res.status(500).json({ success: false, message: "Signup Failed!" });
     }
 });
@@ -182,7 +189,7 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             });
         }
         const match = yield bcrypt_1.default.compare(password, user.password);
-        console.log(match);
+        //console.log(match);
         if (!match) {
             return res.status(404).json({ success: false, message: "Incorrect Password!" });
         }
@@ -204,7 +211,7 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
     }
     catch (error) {
-        console.log("Error", error.message);
+        //console.log("Error",error.message);
         return res.status(500).json({ success: false, message: "Login Failed!" });
     }
 });
@@ -215,7 +222,7 @@ const Logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(200).json({ success: true, message: "Logged out successfully" });
     }
     catch (error) {
-        console.log(error);
+        //console.log(error);
         return res.status(405).json({ success: false, message: "Logout Failed!" });
     }
 });
@@ -229,7 +236,7 @@ const VerifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 message: "Token not found"
             });
         }
-        console.log(token);
+        //console.log(token);
         let user = yield prisma.restaurant.findUnique({
             where: {
                 verificationToken: token
@@ -237,9 +244,11 @@ const VerifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             select: {
                 id: true,
                 role: true,
+                email: true,
+                name: true,
             }
         });
-        console.log(user);
+        //console.log(user);
         if (!user) {
             user = yield prisma.user.findUnique({
                 where: {
@@ -248,10 +257,12 @@ const VerifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 select: {
                     id: true,
                     role: true,
+                    email: true,
+                    name: true,
                 }
             });
         }
-        console.log(user);
+        //console.log(user);
         if (!user) {
             return res.status(401).json({
                 success: false,
@@ -279,16 +290,18 @@ const VerifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                     // verificationToken:""
                 }
             });
+            // Send verified email to User so they can login
+            (0, mailSender_1.default)(user.email, "Your Account is Verified!", (0, mailTemplates_1.employeeVerifiedTemplate)(user.name, `${process.env.CLIENT_URL || ''}/login`));
         }
-        console.log(2);
+        //console.log(2);
         return res.status(200).json({
             success: true,
             message: "User verified successfully!"
         });
     }
     catch (error) {
-        console.log("Verify token error", error);
-        return res.status(499).json({
+        //console.log("Verify token error",error);
+        return res.status(500).json({
             success: false,
             message: "Something went wrong!"
         });
@@ -353,7 +366,7 @@ const ChangePassword = (req, res) => __awaiter(void 0, void 0, void 0, function*
         });
     }
     catch (error) {
-        return res.status(499).json({
+        return res.status(500).json({
             success: false,
             message: "Something went wrong!"
         });
@@ -401,14 +414,14 @@ const ResetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 data: { verificationToken }
             });
         }
-        const mailResponse = (0, mailSender_1.default)(email, "Reset Password", `<p>Click <a href="${verificationLink}">here</a> to verify employee email.</p>`);
+        const mailResponse = (0, mailSender_1.default)(email, "Reset Your Restro Password", (0, mailTemplates_1.resetPasswordEmailTemplate)(verificationLink));
         return res.status(200).json({
             success: true,
             message: "Check email , for reset the password"
         });
     }
     catch (error) {
-        return res.status(499).json({
+        return res.status(500).json({
             success: false,
             message: "Something went wrong!"
         });
@@ -440,8 +453,8 @@ const ResetPasswordMaker = (req, res) => __awaiter(void 0, void 0, void 0, funct
             });
         }
         const hashedNewPassword = (yield bcrypt_1.default.hash(password, 10)).toString();
-        console.log(hashedNewPassword);
-        console.log(password);
+        //console.log(hashedNewPassword)
+        //console.log(password)
         if (user.role === "Restaurant") {
             yield prisma.restaurant.update({
                 where: { id: user.id },
@@ -464,7 +477,7 @@ const ResetPasswordMaker = (req, res) => __awaiter(void 0, void 0, void 0, funct
         });
     }
     catch (error) {
-        return res.status(499).json({
+        return res.status(500).json({
             success: false,
             message: "Something went wrong!"
         });

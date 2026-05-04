@@ -1,11 +1,11 @@
 "use client";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, ArrowLeft } from "lucide-react";
 import Cart from "./Cart";
 import { useAppSelector } from "@/redux/redux";
-import { useGetRestaurantDetailsQuery } from "@/redux/api/restaurant";
-import { useParams } from "next/navigation";
+import { RestaurantDetailsInterface, useGetRestaurantDetailsQuery } from "@/redux/api/restaurant";
+import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 
 type Props = {
@@ -15,71 +15,78 @@ type Props = {
 
 function Header({ isCartOpen, setIsCartOpen }: Props) {
   const { restaurantId } = useParams();
-  const [restaurantDetails, setRestaurantDetails] = useState();
+  const router = useRouter();
+  const [restaurantDetails, setRestaurantDetails] = useState<RestaurantDetailsInterface | undefined>();
 
-  const { data: restaurantData, isLoading: restaurantDetailsLoader } =
-    useGetRestaurantDetailsQuery(restaurantId);
+  const { data: restaurantData } = useGetRestaurantDetailsQuery(restaurantId as string);
   useEffect(() => {
     if (restaurantData) {
       setRestaurantDetails(restaurantData?.data);
     }
   }, [restaurantData]);
-  //console.log("Restaurant Details", restaurantDetails);
 
   const { totalItem } = useAppSelector((state) => state.cart);
 
   return (
-    <div className="flex items-center justify-between ">
+    <div className="flex items-center justify-between h-full">
+      {/* Left: Back + Restaurant Info */}
       <motion.div
-        initial={{ opacity: 0, scale: 0 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0 }}
-        transition={{
-          duration: 0.4,
-          scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
-        }}
-        className=""
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.4 }}
+        className="flex items-center gap-3 min-w-0"
       >
-        <div className="flex items-center gap-2 ">
-          <div className="w-24 h-24 rounded-full flex items-center justify-center">
-            {/* logo */}
-            <Image
-                src={
-                  restaurantDetails?.thumbnail ||
-                  process.env.NEXT_PUBLIC_DEFAULT_LOGO
-                }
-                alt="logo"
-                width={80}
-                height={80}
-                className="object-contain"
-              />
-          </div>
+        <button
+          onClick={() => router.push(`/${restaurantId}`)}
+          className="p-2 rounded-full hover:bg-gray-100 text-gray-500 transition-colors flex-shrink-0"
+        >
+          <ArrowLeft size={20} />
+        </button>
 
-          <div className="hidden md:flex flex-col">
-            <h1 className="text-4xl font-semibold font-serif">
-              {restaurantDetails?.name}
-            </h1>
-            <p className="text-sm text-richWhite-700 font-serif">
-              {restaurantDetails?.description}
-            </p>
-          </div>
+        <div className="w-9 h-9 rounded-xl border border-gray-100 bg-rGray flex items-center justify-center overflow-hidden flex-shrink-0">
+          <Image
+            src={restaurantDetails?.thumbnail || process.env.NEXT_PUBLIC_DEFAULT_LOGO || "/burger.webp"}
+            alt="logo"
+            width={36}
+            height={36}
+            className="object-contain"
+          />
+        </div>
+
+        {/* Restaurant name — visible on all screen sizes */}
+        <div className="flex flex-col min-w-0">
+          <h1 className="text-sm font-bold text-gray-900 truncate leading-tight">
+            {restaurantDetails?.name || "Menu"}
+          </h1>
+          <p className="text-xs text-gray-400 font-medium truncate hidden sm:block">
+            {restaurantDetails?.slogan || "Browse the menu"}
+          </p>
         </div>
       </motion.div>
 
-      <div
-        onClick={() => setIsCartOpen(true)}
-        className="relative pr-2 cursor-pointer"
+      {/* Right: Cart */}
+      <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.4 }}
+        className="relative"
       >
-        <ShoppingCart className="scale-150" />
-        {
-          totalItem > 0 && <p className="text-xs px-2 font-semibold py-1 rounded-full text-center bg-rRed text-rGray absolute -right-1 -top-4">
-          {totalItem}
-        </p>
-        }
-      </div>
+        <button
+          onClick={() => setIsCartOpen(true)}
+          className="relative p-3 rounded-xl bg-rGray hover:bg-gray-200 transition-colors"
+        >
+          <ShoppingCart size={22} className="text-gray-700" />
+          {totalItem > 0 && (
+            <span className="absolute -top-1.5 -right-1.5 min-w-5 h-5 px-1 flex items-center justify-center text-xs font-bold rounded-full bg-rRed text-white">
+              {totalItem}
+            </span>
+          )}
+        </button>
+      </motion.div>
+
       <AnimatePresence>
         {isCartOpen && (
-          <Cart isCartOpen={isCartOpen} setIsCartOpen={setIsCartOpen} />
+          <Cart setIsCartOpen={setIsCartOpen} />
         )}
       </AnimatePresence>
     </div>

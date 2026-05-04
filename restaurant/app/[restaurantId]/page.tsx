@@ -1,178 +1,163 @@
 "use client";
-import { useGetRestaurantDetailsQuery } from "@/redux/api/restaurant";
-import { ArrowRight } from "lucide-react";
+import { RestaurantDetailsInterface, useGetRestaurantDetailsQuery } from "@/redux/api/restaurant";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState, useTransition } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { easeOut } from "motion";
 import { useAppDispatch } from "@/redux/redux";
 import { setEatingLocation } from "@/redux/states/cartSlice";
+import { ArrowLeft } from "lucide-react";
 
-type Props = {};
-
-const page = (props: Props) => {
+const RestaurantPage = () => {
   const { restaurantId } = useParams();
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
   const router = useRouter();
   const dispatch = useAppDispatch();
-  
-  const [restaurantDetails,setRestaurantDetails] = useState();
 
-   const {data: restaurantData,isLoading: restaurantDetailsLoader} = useGetRestaurantDetailsQuery(restaurantId);
-   useEffect(() => {
-      if(restaurantData){
-          setRestaurantDetails(restaurantData?.data)
-      }
-   },[restaurantData])
-   //console.log("Restaurant Details",restaurantDetails);
+  const [restaurantDetails, setRestaurantDetails] = useState<RestaurantDetailsInterface | undefined>();
 
-  if(restaurantDetailsLoader || !restaurantDetails){
-    return <div>
-      Loading....
-    </div>
+  const { data: restaurantData, isLoading: restaurantDetailsLoader } =
+    useGetRestaurantDetailsQuery(restaurantId as string);
+
+  useEffect(() => {
+    if (restaurantData) {
+      setRestaurantDetails(restaurantData?.data);
+    }
+  }, [restaurantData]);
+
+  if (restaurantDetailsLoader || !restaurantDetails) {
+    return (
+      <div className="min-h-screen bg-rGray flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rRed" />
+          <p className="text-gray-500 font-medium">Loading restaurant...</p>
+        </div>
+      </div>
+    );
   }
 
-  // const restaurantDetails = {
-  //   name: "RestroHub",
-  //   description: "The best restaurant ever you see",
-  //   thumbnail:
-  //     "https://res.cloudinary.com/dzl6vf3l9/image/upload/v1732730028/my-files/uyogxd3ahq36t5qc8cch.png",
-  //   isOpen: true,
-  // };
-
   return (
-    <div className=" w-full h-[100vh] bg-[#EFECE5] overflow-hidden relative">
-      <div className="lg:w-10/12 px-2 mx-auto h-full pt-8 pb-12 flex flex-col justify-between items-start relative">
-        {/* Restaurant header and logo */}
-        <motion.div
-        initial={{ opacity: 0, scale: 0 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0 }}
-        transition={{
-            duration: 0.4,
-            scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
-        }}
-        className="">
-          <div className="flex items-center gap-2 ">
-            <div className="w-24 h-24 rounded-full flex items-center justify-center bg-richYellow-500 ">
-              {/* logo */}
-              <Image
-                src={
-                  restaurantDetails?.thumbnail ||
-                  process.env.NEXT_PUBLIC_DEFAULT_LOGO
-                }
-                alt="logo"
-                width={80}
-                height={80}
-                className="object-contain"
-              />
-            </div>
+    <div className="min-h-screen bg-rGray flex flex-col">
+      {/* Top Bar */}
+      <div className="bg-white border-b border-gray-100 px-6 py-4 flex items-center gap-4">
+        <button
+          onClick={() => router.push("/")}
+          className="p-2 rounded-full hover:bg-gray-100 text-gray-500 transition-colors"
+        >
+          <ArrowLeft size={20} />
+        </button>
+        <span className="text-sm font-medium text-gray-500">Back to Restro</span>
+      </div>
 
-            <div className="flex flex-col">
-              <h1 className="text-4xl font-semibold font-serif">
-                {restaurantDetails?.name}
-              </h1>
-              <p className="text-sm text-richWhite-700 font-serif">
-                {restaurantDetails?.slogan}
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
+
+        {/* Restaurant Info Card */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 flex flex-col items-center mb-12 w-full max-w-sm"
+        >
+          <div className="w-24 h-24 rounded-2xl border border-gray-100 bg-rGray flex items-center justify-center overflow-hidden mb-5 shadow-sm">
+            <Image
+              src={restaurantDetails?.thumbnail || process.env.NEXT_PUBLIC_DEFAULT_LOGO || "/burger.webp"}
+              alt="logo"
+              width={80}
+              height={80}
+              className="object-contain"
+            />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 text-center mb-1">
+            {restaurantDetails?.name}
+          </h1>
+          <p className="text-sm text-gray-500 text-center font-medium">
+            {restaurantDetails?.slogan || "Welcome! How would you like to order?"}
+          </p>
+          {restaurantDetails?.isOpen ? (
+            <span className="mt-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+              Open Now
+            </span>
+          ) : (
+            <span className="mt-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 text-rRed text-xs font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-rRed" />
+              Currently Closed
+            </span>
+          )}
+        </motion.div>
+
+        {/* Order Type Selection */}
+        <AnimatePresence>
+          {restaurantDetails.isOpen ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.15 }}
+              className="w-full max-w-sm"
+            >
+              <p className="text-center text-sm font-semibold text-gray-400 uppercase tracking-wider mb-6">
+                Where would you like to eat?
               </p>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Fixed Description */}
-        <motion.div
-        initial={{ opacity: 0, scale: 0 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0 }}
-        transition={{
-            duration: 0.4,
-            scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
-        }}
-        className="w-full h-60">
-          <div className="w-full font-bold font-serif text-center text-4xl">
-            <div>Where would you like to eat today!!</div>
-          </div>
-        </motion.div>
-
-      <AnimatePresence>
-        {/* button */}
-        <motion.div
-      
-        className="h-50 w-full flex items-center justify-center z-10 ">
-         {
-          restaurantDetails.isOpen ? (
-            <div className="flex items-center gap-10">
-              
-                <motion.div
-                initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale:10 }}
-                  transition={{
-                      duration: 0.4,
-                      scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
+              <div className="grid grid-cols-2 gap-4">
+                {/* Eat In */}
+                <motion.button
+                  whileHover={{ scale: 1.03, y: -4 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="bg-white border-2 border-gray-100 hover:border-rRed rounded-2xl p-6 flex flex-col items-center gap-3 cursor-pointer shadow-sm hover:shadow-md transition-all group"
+                  onClick={() => {
+                    dispatch(setEatingLocation(false));
+                    startTransition(() => {
+                      router.push(`/${restaurantId}/menu`);
+                    });
                   }}
-                className="rounded-xl bg-rGray px-4 cursor-pointer hover:shadow-xl"
-                onClick={() => {
-                  dispatch(setEatingLocation(false));
-                  startTransition(() => {
-                    router.push(`/${restaurantId}/menu`);
-                 })
-                }}
                 >
-
-                  <div className="w-24 h-24 flex items-center justify-center">
-                    <Image src={"/eatIn.png"}  alt="eat-in" height={90} width={90} />
+                  <div className="w-16 h-16 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Image src="/eatIn.png" alt="eat-in" height={60} width={60} />
                   </div>
-                  <p className="pb-4 w-full text-center text-sm font-serif font-semibold">Eat in</p>
+                  <span className="text-sm font-bold text-gray-800 group-hover:text-rRed transition-colors">
+                    Eat In
+                  </span>
+                </motion.button>
 
-                </motion.div>
-
-                <motion.div
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, width: "100vw",height:"100vh" }}
-                transition={{
-                    duration: 0.4,
-                    scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
-                }}
-                className="rounded-xl bg-rGray px-4 cursor-pointer hover:shadow-xl"
-                onClick={() => {
-                  dispatch(setEatingLocation(true));
-                  startTransition(() => {
-                    router.push(`/${restaurantId}/menu`);
-                 })
-                }}
+                {/* Take Out */}
+                <motion.button
+                  whileHover={{ scale: 1.03, y: -4 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="bg-white border-2 border-gray-100 hover:border-rRed rounded-2xl p-6 flex flex-col items-center gap-3 cursor-pointer shadow-sm hover:shadow-md transition-all group"
+                  onClick={() => {
+                    dispatch(setEatingLocation(true));
+                    startTransition(() => {
+                      router.push(`/${restaurantId}/menu`);
+                    });
+                  }}
                 >
-                  <div className="w-24 h-24 flex items-center justify-center">
-                    <Image src={"/takeOut.png"}  alt="take-out" height={150} width={130} />
+                  <div className="w-16 h-16 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Image src="/takeOut.png" alt="take-out" height={60} width={60} />
                   </div>
-                  <p className="pb-4 w-full text-center text-sm font-serif font-semibold">Take out</p>
-                </motion.div>
-
-              
-            </div>
-          ) :(
-            <div className="max-w-64 rounded-xl cursor-not-allowed w-full py-3 text-center font-semibold font-serif text-sm bg-rGray">
-              Shop is currently closed!
-            </div>
-          )
-         }
-        </motion.div>
-      </AnimatePresence>
-
-        {/* Circle */}
-        <motion.div 
-        initial={{x: -250,y: 250}}
-        animate = {{x:0 , y: 0}}
-        exit={{x: -250,y: 250}}
-        transition={{ duration:0.4,ease:easeOut}}
-        className="w-[700px] h-[700px] border-2 border-white z-1 absolute -bottom-[400px] -left-[250px] md:w-[1500px] md:h-[1500px] md:-bottom-[1100px] lg:h-[2500px] lg:w-[2500px] lg:-bottom-[2100px] rounded-full  bg-richYellow-500 lg:right-[350px] " 
-        />
-
+                  <span className="text-sm font-bold text-gray-800 group-hover:text-rRed transition-colors">
+                    Take Out
+                  </span>
+                </motion.button>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-red-50 border border-red-100 rounded-2xl px-8 py-6 text-center max-w-sm w-full"
+            >
+              <p className="text-2xl mb-3">🔒</p>
+              <p className="text-gray-800 font-bold mb-1">Restaurant is closed</p>
+              <p className="text-sm text-gray-500 font-medium">
+                Please check back later. We&apos;ll be ready to serve you soon!
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
 };
 
-export default page;
+export default RestaurantPage;

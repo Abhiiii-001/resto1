@@ -1,109 +1,103 @@
-import Skeleton from "@/app/_component/Skelton";
+import Skeleton from "@/app/_components/Skelton";
 import { ProductVariantsInterface } from "@/redux/api/data";
 import Image from "next/image";
-import React, { Dispatch, SetStateAction, useState } from "react";
-import {
-  EffectCoverflow,
-  Mousewheel,
-  Parallax,
-  Scrollbar,
-} from "swiper/modules";
+import React, { Dispatch, SetStateAction } from "react";
+import { Mousewheel, Scrollbar } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-
 import "swiper/css";
 
 type Props = {
   data: ProductVariantsInterface[];
   currentVariant: ProductVariantsInterface | undefined;
-  setCurrentVariant: Dispatch<SetStateAction<ProductVariantsInterface>>
+  setCurrentVariant: Dispatch<SetStateAction<ProductVariantsInterface>>;
+  thumbnail?: string;
 };
 
-function VariantSlider({ data ,currentVariant , setCurrentVariant}: Props) {
-  // //console.log("Variant slider data",data);
-
+function VariantSlider({ data, currentVariant, setCurrentVariant, thumbnail }: Props) {
   return (
-    <div className="w-full ">
+    <div className="w-full">
       <Swiper
-        modules={[Scrollbar, Mousewheel, Parallax]}
-        direction={"horizontal"}
+        modules={[Scrollbar, Mousewheel]}
+        direction="horizontal"
         slidesPerView={3}
-        // effect="parallax"
         centeredSlides={true}
         mousewheel={{ releaseOnEdges: false }}
-        initialSlide={data?.length / 2 + 1}
-        loop={true}
+        initialSlide={0}
+        loop={data?.length > 3}
         grabCursor={true}
-        scrollbar={{ draggable: false }}
-        spaceBetween={10}
+        spaceBetween={16}
         onSlideChange={(swiper) => {
-          if (data) setCurrentVariant(data[swiper.realIndex]);
+          if (data && data[swiper.realIndex]) setCurrentVariant(data[swiper.realIndex]);
         }}
-        className="w-full transition-all duration-200 py-4"
+        className="w-full py-4 overflow-visible"
       >
         {data ? (
           data.length > 0 ? (
             data.map((item: ProductVariantsInterface) => {
+              const isActive = item.id === currentVariant?.id;
               return (
                 <SwiperSlide
                   key={item.id}
-                  className="flex w-full flex-col items-center justify-center font-serif"
+                  className="flex flex-col items-center justify-center overflow-visible"
+                  onClick={() => setCurrentVariant(item)}
                 >
-                  {/* Image Contianer  */}
-                  <div className="flex w-full items-center justify-center">
-                  <div
-                    className={`${
-                      item.id === currentVariant?.id
-                        ? "bg-rRed text-white scale-125"
-                        : "bg-rGray border"
-                    } h-fit w-24 lg:36 aspect-square flex items-center my-4 justify-center shadow-sm  rounded-full border-white -pr-5`}
-                  >
-                    <Image
-                      src={"/burger.webp"}
-                      alt="burger"
-                      width={180}
-                      height={180}
-                      className="drop-shadow-xl"
-                    />
-                  </div>
+                  {/* Circle image — product thumbnail, fully filled, clipped */}
+                  <div className="flex w-full items-center justify-center pt-3 pb-2">
+                    <div
+                      className={`relative w-20 h-20 rounded-full overflow-hidden flex-shrink-0 transition-all duration-200 ${
+                        isActive
+                          ? "ring-4 ring-rRed ring-offset-2 scale-110 shadow-lg"
+                          : "ring-2 ring-gray-200 opacity-70"
+                      }`}
+                    >
+                      <Image
+                        src={thumbnail || "/burger.webp"}
+                        alt={item.size}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
                   </div>
 
-                  {/* price and size  */}
-                  <div className="mt-8 flex flex-col w-full gap-1 items-center justify-center text-[1rem]">
-                    <div>
-                      {item.size.length > 8
-                        ? item?.size.substring(0, 6) + "..."
-                        : item?.size}
-                    </div>
-                    <div className="text-sm font-bold text-richYellow-500">
+                  {/* Size + price */}
+                  <div className="flex flex-col items-center gap-0.5 mt-2">
+                    <span
+                      className={`text-xs font-bold truncate max-w-[80px] text-center ${
+                        isActive ? "text-rRed" : "text-gray-500"
+                      }`}
+                    >
+                      {item.size.length > 8 ? item.size.substring(0, 7) + "…" : item.size}
+                    </span>
+                    <span
+                      className={`text-sm font-black ${
+                        isActive ? "text-gray-900" : "text-gray-400"
+                      }`}
+                    >
                       ₹{item.price}
-                    </div>
+                    </span>
                   </div>
-
-                  
                 </SwiperSlide>
               );
             })
           ) : (
-            <p>No category added</p>
+            <SwiperSlide>
+              <p className="text-sm text-gray-400 text-center py-4">No variants available</p>
+            </SwiperSlide>
           )
         ) : (
           [...Array(3)].map((_, index) => (
             <SwiperSlide
               key={index}
-              className="w-24 flex flex-col items-center justify-center gap-1 mt-4 md:mt-6"
+              className="flex flex-col items-center justify-center gap-2"
             >
-              <Skeleton additionalClass="w-full aspect-square rounded-full" />
-              <Skeleton additionalClass="w-full h-4 mt-1 rounded-xl" />
+              <Skeleton additionalClass="w-20 h-20 rounded-full" />
+              <Skeleton additionalClass="w-16 h-3 rounded-full" />
             </SwiperSlide>
           ))
         )}
       </Swiper>
     </div>
   );
-}
-
-function VariantCard({ data }: { data: ProductVariantsInterface }) {
-  return <div></div>;
 }
 
 export default VariantSlider;

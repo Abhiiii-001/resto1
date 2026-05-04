@@ -1,138 +1,164 @@
+import PDFDocument from 'pdfkit';
+import QRCode from 'qrcode';
 
-import PDFDocument, { file } from 'pdfkit'
-import fs from 'fs';
-import { PrismaClient } from '@prisma/client';
-import QRCode from 'qrcode'
-import path from 'path'
-
-
+/**
+ * Generates a high-quality, branded PDF invoice as a Buffer.
+ * Now uses direct buffer generation to avoid disk I/O.
+ */
 export const generateInvoice = async (data: any, orderCode: string, restaurantDetails: any): Promise<Buffer> => {
     const { name, note, orders, amount, isPack, paymentOption } = data;
-    const dateTime = new Date(Date.now()).toISOString();
+    const dateTime = new Date().toLocaleString('en-IN', {
+        timeZone: 'Asia/Kolkata',
+        dateStyle: 'medium',
+        timeStyle: 'short'
+    });
+
     const qrCodeImage = await generateQRCode(orderCode);
-    const doc = new PDFDocument();
-    const filePath = path.join(__dirname, 'invoices', `invoice_${orderCode}.pdf`);
-  
-    // Ensure the 'invoices' directory exists
-    const directory = path.dirname(filePath);
-    if (!fs.existsSync(directory)) {
-      fs.mkdirSync(directory, { recursive: true });
-    }
-  
-    return new Promise<Buffer>((resolve, reject) => {
-      const writeStream = fs.createWriteStream(filePath);
-      
-      doc.pipe(writeStream);
-  
-      // Header Section
-      addHeader(doc, restaurantDetails?.name || "Restro", restaurantDetails?.thumbnail, qrCodeImage, dateTime);
-  
-      // Customer Info Section
-      addCustomerInfo(doc, name || "Anonymous", orderCode, dateTime, isPack, paymentOption);
-  
-      // Table of Orders
-      addOrderTable(doc, orders);
-  
-      // Footer with Grand Total and Thank You Message
-      addFooter(doc, amount);
-  
-      // Finalize the PDF
-      doc.end();
-  
-      writeStream.on('finish', () => {
+    const doc = new PDFDocument({ margin: 50, size: 'A4' });
+    const chunks: Buffer[] = [];
+
+    return new Promise<Buffer>(async (resolve, reject) => {
+        doc.on('data', (chunk) => chunks.push(chunk));
+        doc.on('end', () => resolve(Buffer.concat(chunks)));
+        doc.on('error', (err) => reject(err));
+
+        // --- Header Section ---
         try {
-          const fileBuffer = fs.readFileSync(filePath);
-          //console.log('File Buffer Generated:', fileBuffer);
-          resolve(fileBuffer);  // Return the file buffer
+            if (restaurantDetails?.thumbnail) {
+                const response = await fetch(restaurantDetails.thumbnail);
+                const arrayBuffer = await response.arrayBuffer();
+                const logoBuffer = Buffer.from(arrayBuffer);
+                doc.image(logoBuffer, 50, 45, { width: 50 });
+            }
         } catch (error) {
-          console.error('Error reading file:', error);
-          reject(error);
+            console.error("Failed to fetch restaurant logo for PDF:", error);
         }
-      });
-  
-      writeStream.on('error', (error) => {
-        console.error('Error writing file:', error);
-        reject(error);
-      });
+
+        doc
+            .fillColor('#444444')
+            .fontSize(20)
+            .text(restaurantDetails?.name || "Restro", 110, 57)
+            .fontSize(10)
+            .text(restaurantDetails?.address || "", 110, 80)
+            .text(`${restaurantDetails?.email} | ${restaurantDetails?.number}`, 110, 95)
+            .moveDown();
+
+        // Add QR Code at top right
+        doc.image(qrCodeImage, 450, 45, { width: 80 });
+
+        // Horizontal Line
+        doc.strokeColor('#aaaaaa').lineWidth(1).moveTo(50, 135).lineTo(550, 135).stroke();
+
+        // --- Order Info Section ---
+        doc
+            .fillColor('#444444')
+            .fontSize(16)
+            .text('Order Invoice', 50, 160);
+
+        doc
+            .fontSize(10)
+            .text(`Invoice No: ${orderCode}`, 50, 185)
+            .text(`Date: ${dateTime}`, 50, 200)
+            .text(`Status: Pending`, 50, 215);
+
+        doc
+            .fontSize(10)
+            .font('Helvetica-Bold')
+            .text('Customer Name:', 350, 185)
+            .font('Helvetica')
+            .text(name || "Guest", 450, 185)
+            .font('Helvetica-Bold')
+            .text('Order Type:', 350, 200)
+            .font('Helvetica')
+            .text(isPack ? "Take Out" : "Eat In", 450, 200)
+            .font('Helvetica-Bold')
+            .text('Payment:', 350, 215)
+            .font('Helvetica')
+            .text(paymentOption, 450, 215);
+
+        // --- Note Section ---
+        if (note) {
+            doc.moveDown()
+                .fillColor('#666666')
+                .fontSize(9)
+                .text(`Note: ${note}`, 50, 240);
+        }
+
+        // --- Items Table ---
+        const tableTop = 270;
+        doc.font('Helvetica-Bold');
+        generateTableRow(doc, tableTop, 'S.No', 'Item Description', 'Variant', 'Price', 'Qty', 'Total');
+        generateHr(doc, tableTop + 20);
+        doc.font('Helvetica');
+
+        let i;
+        let invoiceTableTop = tableTop + 30;
+
+        for (i = 0; i < orders.length; i++) {
+            const item = orders[i];
+            const position = invoiceTableTop + i * 30;
+
+            // Zebra striping for rows
+            if (i % 2 === 1) {
+                doc.rect(50, position - 5, 500, 25).fill('#f9f9f9');
+                doc.fillColor('#444444');
+            }
+
+            generateTableRow(
+                doc,
+                position,
+                (i + 1).toString(),
+                item.name,
+                item.variant,
+                `₹${item.unitPrice}`,
+                item.quantity.toString(),
+                `₹${(item.unitPrice * item.quantity).toFixed(2)}`
+            );
+
+            generateHr(doc, position + 20);
+        }
+
+        const subtotalPosition = invoiceTableTop + (i + 1) * 30;
+        doc.font('Helvetica-Bold');
+        generateTableRow(
+            doc,
+            subtotalPosition,
+            '',
+            '',
+            '',
+            '',
+            'Grand Total',
+            `₹${amount.toFixed(2)}`
+        );
+        doc.font('Helvetica');
+
+        // --- Footer ---
+        doc
+            .fontSize(10)
+            .text('Thank you for choosing us!', 50, 750, { align: 'center', width: 500 })
+            .fontSize(8)
+            .fillColor('#aaaaaa')
+            .text('This is a computer-generated invoice.', 50, 765, { align: 'center', width: 500 });
+
+        doc.end();
     });
-  };
 
-async function generateQRCode(orderCode:string) {
-    return new Promise((resolve, reject) => {
-      QRCode.toDataURL(orderCode, (err, url) => {
-        if (err) reject(err);
-        else resolve(url);
-      });
-    });
-  }
-
-  function addHeader(doc:any, restaurantName:string, logo:any, qrCodeImage:any, dateTime:any) {
-    // if (logo) {
-    //   doc.image(logo, 50, 45, { width: 80 }); // Restaurant logo
-    // }
-    
+function generateTableRow(doc: any, y: number, sno: string, desc: string, variant: string, price: string, qty: string, total: string) {
     doc
-      .fontSize(20)
-      .text(restaurantName)
-      .fontSize(10)
-      .text(`Date: ${dateTime}`);
-  
-    doc.image(qrCodeImage, 450, 55, { width: 80 }) // QR Code at the top-right
-  }
-
-  function addCustomerInfo(doc:any, customerName:string, orderCode:string, dateTime:string,isPack:boolean,paymentOption:string) {
-    doc
-      .moveDown()
-      .fontSize(12)
-      .text(`Customer Name: ${customerName}`)
-      .text(`Order Code: ${orderCode}`)
-      .text(`Date & Time: ${dateTime}`)
-      .moveDown();
-
-    doc.fontSize(12).text(`Eating location: ${isPack ? "Take Out" : "Eat In"}`);
-    doc.fontSize(12).text(`Payment method: ${paymentOption}`).moveDown().moveDown();
-  }
-  
-  function addOrderTable(doc:any, items:any) {
-    let i;
-    const tableTop = 250;
-    const itemRowHeight = 30;
-
-    doc.moveDown();
-  
-    doc
-      .fontSize(12)
-      .text("S.No", 50, tableTop)
-      .text("Product Name", 100, tableTop)
-      .text("Variant", 200, tableTop)
-      .text("Unit Price", 300, tableTop)
-      .text("Quantity", 400, tableTop)
-      .text("Total", 500, tableTop);
-  
-    for (i = 0; i < items.length; i++) {
-      const item = items[i];
-      const y = tableTop + (i + 1) * itemRowHeight;
-      doc
         .fontSize(10)
-        .text(i + 1, 50, y)
-        .text(item.name, 100, y)
-        .text(item.variant, 200, y)
-        .text(item.unitPrice.toFixed(2), 300, y)
-        .text(item.quantity, 400, y)
-        .text((item.unitPrice * item.quantity).toFixed(2), 500, y);
-    }
-  }
-  
-  // Function to Add Footer with Grand Total and Thank You Message
-  function addFooter(doc:any, grandTotal:number) {
-    doc.moveDown();
-    doc
-      .moveDown()
-      .fontSize(12)
-      .text(`Grand Total: ${grandTotal.toFixed(2)}`, {lineBreak: false, align: "center"  });
-  
-    doc
-      .moveDown()
-      .fontSize(14)
-      .text("Thank you for your order!", { width: 100, align: "left"});
-  }
+        .text(sno, 50, y)
+        .text(desc, 80, y)
+        .text(variant, 250, y)
+        .text(price, 330, y, { width: 60, align: 'right' })
+        .text(qty, 400, y, { width: 40, align: 'right' })
+        .text(total, 480, y, { width: 70, align: 'right' });
+}
+
+function generateHr(doc: any, y: number) {
+    doc.strokeColor('#eeeeee').lineWidth(1).moveTo(50, y).lineTo(550, y).stroke();
+}
+
+async function generateQRCode(orderCode: string): Promise<string> {
+    return await QRCode.toDataURL(orderCode);
+}
+}

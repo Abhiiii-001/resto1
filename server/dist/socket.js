@@ -3,24 +3,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.emitNewOrder = exports.registerSocketHandlers = void 0;
 const registerSocketHandlers = (io) => {
     io.on("connection", (socket) => {
-        console.log("Admin connected: ", socket.id);
-        //seperate room for different restaurants
+        console.log("Socket connected:", socket.id);
         socket.on('joinRoom', (restaurantId) => {
+            if (!restaurantId) {
+                console.warn("Socket tried to join room with empty restaurantId:", socket.id);
+                return;
+            }
             socket.join(restaurantId);
-            console.log(`Admin ${socket.id} joined room : ${restaurantId} `);
-        });
-        socket.on('orderConfirmation', (orderId) => {
-            console.log(`Order ${orderId} verified by admin`);
-            //update order status
+            console.log(`Socket ${socket.id} joined room: ${restaurantId}`);
         });
         socket.on('disconnect', () => {
-            console.log("Admin disconnected", socket.id);
+            console.log("Socket disconnected:", socket.id);
         });
     });
 };
 exports.registerSocketHandlers = registerSocketHandlers;
 const emitNewOrder = (io, restaurantId, orderData) => {
-    // console.log("socket new order",io,restaurantId,orderData)
+    console.log(`Emitting newOrder to room: ${restaurantId}`);
     io.to(restaurantId).emit('newOrder', orderData);
 };
 exports.emitNewOrder = emitNewOrder;

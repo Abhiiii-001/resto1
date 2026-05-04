@@ -37,7 +37,7 @@ export const AddCategory = async(req: Request,res: Response): Promise<any> => {
 
     } catch (error) {
          //console.log(error);
-         return res.status(499).json({message:"Something wrong during category creation!"});
+         return res.status(500).json({message:"Something wrong during category creation!"});
     }
 }
 
@@ -56,7 +56,7 @@ export const RemoveCategory = async(req: Request,res: Response): Promise<any> =>
 
     } catch (error) {
         //console.log(error);
-        return res.status(499).json({message:"Something wrong during category deletion!"});
+        return res.status(500).json({message:"Something wrong during category deletion!"});
    }
 
 }
@@ -82,7 +82,7 @@ export const UpdateCategory = async(req: Request,res: Response): Promise<any> =>
         return res.status(200).json({message: "Category updated!",result: result});
     } catch (error) {
         //console.log(error);
-        return res.status(499).json({message:"Something wrong during category updation!"});
+        return res.status(500).json({message:"Something wrong during category updation!"});
    }
 
 }
@@ -105,7 +105,7 @@ export const GetAllCategories = async(req: Request,res: Response): Promise<any> 
 
     } catch (error) {
         //console.log(error);
-        return res.status(499).json({message:"Something wrong during category retrive!"});
+        return res.status(500).json({message:"Something wrong during category retrive!"});
    }
 }
 
@@ -138,7 +138,7 @@ export const GetAllCategoriesWithProducts = async(req: Request,res: Response):Pr
         
     } catch (error) {
          //console.log("Get all categories with product error",error);
-         return res.status(499).json({
+         return res.status(500).json({
             success: false,
             message:"Something wrong during all data retrieve"
          })

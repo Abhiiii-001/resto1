@@ -17,16 +17,16 @@ const client_1 = require("@prisma/client");
 const summary_1 = require("../utils/summary");
 // Run every day at 00:10 (after day ends)
 node_cron_1.default.schedule("10 0 * * *", () => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("Calculating DAILY summary...");
+    //console.log("Calculating DAILY summary...");
     yield (0, summary_1.calculateSummary)(client_1.Duration.Day);
 }));
 // Run every Monday at 00:20
 // cron.schedule("20 0 * * 1", async () => {
-//   console.log("Calculating WEEKLY summary...");
+//   //console.log("Calculating WEEKLY summary...");
 //   await calculateSummary(Duration.Week);
 // });
 // Run every 1st of month at 00:30
 node_cron_1.default.schedule("30 0 1 * *", () => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("Calculating MONTHLY summary...");
+    //console.log("Calculating MONTHLY summary...");
     yield (0, summary_1.calculateSummary)(client_1.Duration.Month);
 }));

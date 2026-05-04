@@ -390,7 +390,7 @@ export const VerifyToken = async(req: Request,res: Response): Promise<any> => {
       })
    } catch (error) {
        //console.log("Verify token error",error);
-       return res.status(499).json({
+       return res.status(500).json({
          success: false,
          message: "Something went wrong!"
        })
@@ -462,7 +462,7 @@ export const ChangePassword = async(req: Request,res: Response): Promise<any> =>
       })
 
    } catch (error: unknown) {
-      return res.status(499).json({
+      return res.status(500).json({
          success: false,
          message: "Something went wrong!"
       })
@@ -530,7 +530,7 @@ export const ResetPassword = async(req: Request,res: Response): Promise<any> => 
     });
 
   } catch (error) {
-   return res.status(499).json({
+   return res.status(500).json({
       success: false,
       message: "Something went wrong!"
    })
@@ -593,7 +593,7 @@ export const ResetPasswordMaker = async(req: Request,res: Response): Promise<any
       })
 
    } catch (error) {
-      return res.status(499).json({
+      return res.status(500).json({
          success: false,
          message: "Something went wrong!"
       })

@@ -26,7 +26,7 @@ const sendPushNotification = (subscription, message) => __awaiter(void 0, void 0
             // data: { url: message.url || "/" }, // URL to open on click
         });
         yield web_push_1.default.sendNotification(subscription, payload);
-        console.log("Push notification sent");
+        //console.log("Push notification sent");
     }
     catch (error) {
         console.error("Error sending push notification", error);

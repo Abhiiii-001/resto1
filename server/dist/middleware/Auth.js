@@ -24,20 +24,20 @@ const Auth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () 
         const token = req.cookies.token ||
             req.body.token ||
             ((_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(" ")[1]);
-        // console.log("cookie",req.cookies);
-        // console.log("body",req.body);
-        // console.log("headers",req.headers);
+        // //console.log("cookie",req.cookies);
+        // //console.log("body",req.body);
+        // //console.log("headers",req.headers);
         if (!token)
             return res.status(401).json({ message: "Missing data" });
         const secret = process.env.JWT_SECRET || "secret";
         const decoded = jsonwebtoken_1.default.verify(token, secret);
-        console.log(decoded); //id email role restaurantId
+        //console.log(decoded);    //id email role restaurantId
         //@ts-ignore
         req.user = decoded;
         next();
     }
     catch (error) {
-        console.log(error);
+        //console.log(error);
         return res.status(405).json({ message: "Authentication Failed!" });
     }
 });
@@ -53,7 +53,7 @@ const IsRestaurant = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         next();
     }
     catch (error) {
-        console.log(error);
+        //console.log(error);
         return res.status(405).json({ message: "Autorization Failed!" });
     }
 });
@@ -69,7 +69,7 @@ const IsUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
         next();
     }
     catch (error) {
-        console.log(error);
+        //console.log(error);
         return res.status(405).json({ message: "Autorization Failed!" });
     }
 });
@@ -85,7 +85,7 @@ const IsAdmin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
         next();
     }
     catch (error) {
-        console.log(error);
+        //console.log(error);
         return res.status(405).json({ message: "Autorization Failed!" });
     }
 });
@@ -108,7 +108,7 @@ const IsModifier = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         next();
     }
     catch (error) {
-        console.log(error);
+        //console.log(error);
         return res.status(405).json({ message: "Autorization Failed!" });
     }
 });

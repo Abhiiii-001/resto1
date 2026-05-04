@@ -9,7 +9,8 @@ import {
   X,
   Clock,
   UtensilsCrossed,
-  ShoppingBag
+  ShoppingBag,
+  FileText
 } from 'lucide-react';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
@@ -74,6 +75,17 @@ function OrderCard({ data }: Props) {
             >
               {isCopied ? <Check size={14} /> : <CopyIcon size={14} />}
             </Button>
+            {data.invoice && (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-6 w-6 rounded-md text-muted-foreground hover:text-primary"
+                onClick={() => window.open(data.invoice, '_blank')}
+                title="View Invoice"
+              >
+                <FileText size={14} />
+              </Button>
+            )}
           </div>
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <Clock size={12} />

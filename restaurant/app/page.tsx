@@ -16,7 +16,7 @@ import Footer from "./_components/landing/Footer";
 import RestaurantModal from "./_components/RestaurantModal";
 
 export default function Home() {
-  const { data, isLoading } = useGetAllRestaurantIdQuery({});
+  const { data, isLoading } = useGetAllRestaurantIdQuery();
   const restaurants = data?.restaurant || [];
   
   const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);

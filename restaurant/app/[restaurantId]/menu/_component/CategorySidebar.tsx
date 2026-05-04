@@ -1,76 +1,65 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
-import { EffectCoverflow, Mousewheel, Scrollbar } from "swiper/modules";
+import { Mousewheel, Scrollbar } from "swiper/modules";
 import Category from "./Category";
-import Skeleton from "@/app/_component/Skelton";
+import Skeleton from "@/app/_components/Skelton";
+import { CategoryInterface } from "@/redux/api/data";
 
-type Props = {};
+type Props = {
+  data: CategoryInterface[] | undefined;
+  selectedCategory: CategoryInterface | undefined;
+  setSelectedCategory: (category: CategoryInterface) => void;
+};
 
-const items = [
-  { id: 1, name: "Burger", image: "/images/burger.png" },
-  { id: 2, name: "Fries", image: "/images/fries.png" },
-  { id: 3, name: "Pizza", image: "/images/pizza.png" },
-  { id: 4, name: "Soda", image: "/images/soda.png" },
-  { id: 5, name: "Ice Cream", image: "/images/ice-cream.png" },
-  { id: 6, name: "Coffee", image: "/images/coffee.png" },
-];
-
-function CategorySidebar({ data, selectedCategory, setSelectedCategory }: any) {
-  //console.log("Category slider data", data);
+function CategorySidebar({ data, selectedCategory, setSelectedCategory }: Props) {
   useEffect(() => {
-    if(data) setSelectedCategory(data[0]);
-  },[data])
+    if (data && data.length > 0) setSelectedCategory(data[0]);
+  }, [data, setSelectedCategory]);
 
   return (
-    <div className="h-full">
+    <div className="h-full bg-white border-r border-gray-100">
       <Swiper
-        modules={[Scrollbar, Mousewheel, EffectCoverflow]}
+        modules={[Scrollbar, Mousewheel]}
         direction={"vertical"}
-        slidesPerView={4}
-        effect="coverflow"
-        centeredSlides={true}
+        slidesPerView={"auto"}
         mousewheel={{ releaseOnEdges: false }}
-        loop={true}
         grabCursor={true}
-        scrollbar={{ draggable: data ? true : false }}
-        spaceBetween={20}
-        onSlideChange={(swiper) =>{ if(data) setSelectedCategory(data[swiper.realIndex])}}
-        coverflowEffect={{
-          rotate: 0,
-          stretch: 60,
-          depth: 100, // More depth for a better 3D effect
-          modifier: 1,
-          slideShadows: false,
+        scrollbar={{ draggable: !!data }}
+        spaceBetween={8}
+        onSlideChange={(swiper) => {
+          if (data && data[swiper.realIndex]) setSelectedCategory(data[swiper.realIndex]);
         }}
-        className="h-[88vh] lg:screen px-1 transition-all duration-200 z-1"
+        className="h-full px-2 py-4"
         style={{ zIndex: 0 }}
       >
         {data ? (
           data.length > 0 ? (
-            data.map((item: any) => {
-              return (
-                <SwiperSlide
-                  key={item.id}
-                  className={`${
-                    item.id === selectedCategory?.id
-                      ? "bg-rRed text-white"
-                      : "bg-rGray"
-                  }  lg:h-[400px] md:h-[200px] flex items-center justify-center py-2  rounded-xl border-white`}
-                >
-                  <Category data={item} />
-                </SwiperSlide>
-              );
-            })
+            data.map((item: CategoryInterface) => (
+              <SwiperSlide
+                key={item.id}
+                style={{ height: "auto" }}
+                className={`rounded-xl transition-all duration-200 ${
+                  item.id === selectedCategory?.id
+                    ? "bg-rRed"
+                    : "bg-rGray hover:bg-gray-200"
+                }`}
+                onClick={() => setSelectedCategory(item)}
+              >
+                <Category data={item} isActive={item.id === selectedCategory?.id} />
+              </SwiperSlide>
+            ))
           ) : (
-            <p>No category added</p>
+            <SwiperSlide style={{ height: "auto" }}>
+              <p className="text-xs text-gray-400 text-center p-4 font-medium">No categories</p>
+            </SwiperSlide>
           )
         ) : (
           [...Array(6)].map((_, index) => (
-            <SwiperSlide key={index} className="w-24 md:w-32 lg:64 flex flex-col items-center justify-center gap-1 mt-4 md:mt-6">
+            <SwiperSlide key={index} style={{ height: "auto" }} className="p-2">
               <Skeleton additionalClass="w-full aspect-square rounded-xl" />
-              <Skeleton additionalClass="w-full h-4 mt-1 rounded-xl" />
+              <Skeleton additionalClass="w-3/4 h-3 mt-2 mx-auto rounded-xl" />
             </SwiperSlide>
           ))
         )}

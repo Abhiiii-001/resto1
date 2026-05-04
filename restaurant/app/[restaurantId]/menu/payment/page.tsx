@@ -19,7 +19,7 @@ import React, { use, useEffect, useState, useTransition } from "react";
 import { toast } from "react-toastify";
 import { motion } from "motion/react";
 import Success from "./_component/Success";
-import { useGetRestaurantDetailsQuery } from "@/redux/api/restaurant";
+import { RestaurantDetailsInterface, useGetRestaurantDetailsQuery } from "@/redux/api/restaurant";
 import NotificationComponent from "./_component/Notification";
 
 type Props = {};
@@ -27,10 +27,10 @@ type Props = {};
 function Payment({}: Props) {
   const router = useRouter();
   const { restaurantId } = useParams();
-  const [restaurantDetails, setRestaurantDetails] = useState();
+  const [restaurantDetails, setRestaurantDetails] = useState<RestaurantDetailsInterface | undefined>();
 
   const { data: restaurantData, isLoading: restaurantDetailsLoader } =
-    useGetRestaurantDetailsQuery(restaurantId);
+    useGetRestaurantDetailsQuery(restaurantId as string);
   useEffect(() => {
     if (restaurantData) {
       setRestaurantDetails(restaurantData?.data);
@@ -43,11 +43,11 @@ function Payment({}: Props) {
   const cartData = useAppSelector((state) => state.cart);
   const dispatch = useAppDispatch();
 
-  const [invoiceModal, setInvoiceModal] = useState(null);
+  const [invoiceModal, setInvoiceModal] = useState<any>(null);
 
   //subscription send to backend
-  const [orderId , setOrderId] = useState(null);
-  
+  const [orderId , setOrderId] = useState<string | null>(null);
+  const [customerName, setCustomerName] = useState<string>("");
 
   const [createOrderApi, { isLoading }] = useCreateOrderMutation();
 
@@ -69,11 +69,12 @@ function Payment({}: Props) {
         });
 
         const orderData: CreateOrderInterface = {
+          name: customerName,
           amount: cartData.totalAmount,
           isPack: cartData.isPack || false,
           orders: orders,
           paymentOption: mode,
-          restaurantId: restaurantId,
+          restaurantId: restaurantId as string,
         };
 
         dispatch(resetCart());
@@ -81,132 +82,136 @@ function Payment({}: Props) {
         // //console.log(orderData);
 
         const response = await createOrderApi(orderData);
-        //console.log("Create order response", response);
 
         toast.dismiss(toastId);
-        if (response.success == false) {
+        if ("error" in response) {
           throw new Error("Unable to create order!");
         } else {
           toast.success("Order Created!");
-          setOrderId(response?.data?.data?.id)
+          setOrderId(response?.data?.data?.id);
           setInvoiceModal(response.data.data);
         }
       }
     } catch (error: any) {
       // toast.dismiss(toastId);
       //console.log(error);
-      toast.error(error.message);
+      toast.error(error?.message || "Something went wrong");
     }
   };
 
   return (
-    <div className="w-screen h-screen bg-rGreen p-4 relative">
-      <div>
+    <div className="min-h-screen bg-rGray flex flex-col">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-100 px-4 py-4 flex items-center gap-4 sticky top-0 z-10">
         <button
           onClick={() =>
             startTransition(() => {
               router.push(`/${restaurantId}/menu`);
             })
           }
-          className="px-5 py-2 bg-white rounded-xl font-semibold text-sm flex items-center gap-1 hover:bg-opacity-40 transition-all duration-200 "
+          className="p-2 rounded-full hover:bg-gray-100 text-gray-500 transition-colors"
         >
-          <ArrowLeft scale={90} />
-          back
+          <ArrowLeft size={20} />
         </button>
+        <h1 className="text-lg font-bold text-gray-900">Checkout</h1>
       </div>
-      <div className="flex flex-col items-center mt-8">
-        <Image
-          src={
-            restaurantDetails?.thumbnail || process.env.NEXT_PUBLIC_DEFAULT_LOGO
-          }
-          alt="logo"
-          width={200}
-          height={200}
-        />
-        <div className="text-xl uppercase font-bold text-center text-white mt-20">
-          Please select payment option
-        </div>
-        {/* <div className="flex items-center gap-8 mt-8">
-          <button
-          onClick={() => {
-            dispatch(setPayementOption({mode: "Cash"}));
-            CreateOrderHandler("Cash");
-          }}
-          disabled={isLoading}
-          className="w-32 h-40 cursor-pointer bg-white">
-            <p>Cash</p>
-          </button>
-          <button
-          onClick={() => {
-            dispatch(setPayementOption({mode: "Online"}));
-            CreateOrderHandler("Online");
-          }}
-          disabled={isLoading}
-          className="w-32 h-40 cursor-pointer bg-white">
-            <p>Online</p>
-          </button>
-        </div> */}
-        <div className="flex items-center gap-10 mt-10">
-          <motion.div
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 10 }}
-            transition={{
-              duration: 0.4,
-              scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
-            }}
-            className="rounded-xl py-2 bg-rGray px-4 cursor-pointer hover:shadow-xl"
-            onClick={() => {
-              dispatch(setPayementOption({ mode: "Cash" }));
-              CreateOrderHandler("Cash");
-            }}
-          >
-            <div className="w-24 h-24 flex items-center justify-center">
-              <Image
-                src={"/cashPayment.png"}
-                alt="cash"
-                height={90}
-                width={90}
-              />
-            </div>
-            <p className="py-2 w-full text-center text-sm font-semibold uppercase">
-              Pay at counter
-            </p>
-          </motion.div>
 
-          <motion.button
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, width: "100vw", height: "100vh" }}
-            transition={{
-              duration: 0.4,
-              scale: { type: "spring", visualDuration: 0.4, bounce: 0.5 },
-            }}
-            disabled={true}
-            className="rounded-xl bg-rGray px-4 py-2 cursor-not-allowed hover:shadow-xl"
-            onClick={() => {
-              dispatch(setPayementOption({ mode: "Online" }));
-              CreateOrderHandler("Online");
-            }}
-          >
-            <div className="w-24 h-24 flex items-center justify-center">
-              <Image
-                src={"/onlinePayment.png"}
-                alt="online"
-                height={150}
-                width={130}
+      <div className="flex-1 max-w-lg mx-auto w-full px-4 py-8 flex flex-col gap-6">
+        {/* Cart Summary */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 className="text-base font-bold text-gray-900 mb-4">Order Summary</h2>
+          <div className="space-y-3">
+            {cartData?.orders?.map((ord: SubOrderInterface, i: number) => (
+              <div key={i} className="flex justify-between items-center">
+                <div>
+                  <p className="text-sm font-semibold text-gray-800">{ord.product.name}</p>
+                  <p className="text-xs text-gray-400 font-medium">{ord.variant.size} × {ord.quantity}</p>
+                </div>
+                <p className="text-sm font-bold text-gray-900">₹{ord.variant.price * ord.quantity}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
+            <p className="text-sm font-semibold text-gray-600">Total Amount</p>
+            <p className="text-xl font-black text-rRed">₹{cartData?.totalAmount}</p>
+          </div>
+        </div>
+
+        {/* Customer Info */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 className="text-base font-bold text-gray-900 mb-4">Customer Details (Optional)</h2>
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="customerName" className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 px-1">
+                Your Name
+              </label>
+              <input
+                type="text"
+                id="customerName"
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                placeholder="e.g. John Doe"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rRed/20 focus:border-rRed transition-all"
               />
+              <p className="mt-2 text-[10px] text-gray-400 px-1 italic">
+                * This will be displayed on your digital order ticket.
+              </p>
             </div>
-            <p className="py-2 w-full text-center text-sm font-semibold uppercase">
-              Pay online here
-            </p>
-          </motion.button>
+          </div>
+        </div>
+
+        {/* Payment Options */}
+        <div>
+          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 px-1">
+            Select Payment Method
+          </p>
+          <div className="grid grid-cols-2 gap-4">
+            {/* Cash */}
+            <motion.button
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4 }}
+              whileHover={{ scale: 1.03, y: -3 }}
+              whileTap={{ scale: 0.97 }}
+              className="bg-white border-2 border-gray-100 hover:border-rRed rounded-2xl p-6 flex flex-col items-center gap-3 cursor-pointer shadow-sm hover:shadow-md transition-all group"
+              onClick={() => {
+                dispatch(setPayementOption({ mode: "Cash" }));
+                CreateOrderHandler("Cash");
+              }}
+              disabled={isLoading}
+            >
+              <div className="w-16 h-16 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Image src="/cashPayment.png" alt="cash" height={60} width={60} />
+              </div>
+              <span className="text-sm font-bold text-gray-800 group-hover:text-rRed transition-colors">
+                Pay at Counter
+              </span>
+            </motion.button>
+
+            {/* Online — disabled with Coming Soon */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+              className="relative bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl p-6 flex flex-col items-center gap-3 cursor-not-allowed opacity-60"
+            >
+              <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap">
+                Coming Soon
+              </span>
+              <div className="w-16 h-16 flex items-center justify-center">
+                <Image src="/onlinePayment.png" alt="online" height={60} width={60} />
+              </div>
+              <span className="text-sm font-bold text-gray-500">Pay Online</span>
+            </motion.div>
+          </div>
         </div>
       </div>
-      {orderId && <NotificationComponent orderId={orderId}/>}
-      {invoiceModal && <Success data={invoiceModal} />}
+
+      {orderId && <NotificationComponent orderId={orderId} />}
+      {invoiceModal && <Success data={invoiceModal} restaurantDetails={restaurantDetails} />}
     </div>
   );
 }
 
 export default Payment;
+

@@ -32,10 +32,10 @@ const CreateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     try {
         const { name, categoryId, description, variants } = req.body;
         const file = (_a = req.files) === null || _a === void 0 ? void 0 : _a.thumbnail;
-        console.log("variants", variants);
+        //console.log("variants",variants);
         const productVariants = JSON.parse(variants);
-        console.log("json variant", productVariants);
-        console.log("Create product file", file);
+        //console.log("json variant",productVariants)
+        //console.log("Create product file",file)
         const fileUploadRes = yield (0, cloudinaryUploader_1.default)(file, "my-files");
         const productRes = yield prisma.product.create({
             data: {
@@ -70,8 +70,8 @@ const CreateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         return res.status(200).json({ productRes });
     }
     catch (error) {
-        console.log(error);
-        return res.status(499).json({ message: "Something wrong during product creation!" });
+        //console.log(error);
+        return res.status(500).json({ message: "Something wrong during product creation!" });
     }
 });
 exports.CreateProduct = CreateProduct;
@@ -84,7 +84,7 @@ const UpdateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         if (file) {
             const uploadRes = yield (0, cloudinaryUploader_1.default)(file, "my-files");
             productData.thumbnail = uploadRes.secure_url;
-            console.log("Product update thumbnail", productData.thumbnail);
+            //console.log("Product update thumbnail",productData.thumbnail)
         }
         const result = yield prisma.product.update({
             where: {
@@ -100,8 +100,8 @@ const UpdateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         });
     }
     catch (error) {
-        console.log(error);
-        return res.status(499).json({ message: "Something wrong during product updation!" });
+        //console.log(error);
+        return res.status(500).json({ message: "Something wrong during product updation!" });
     }
 });
 exports.UpdateProduct = UpdateProduct;
@@ -116,8 +116,8 @@ const DeleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         return res.status(200).json({ messae: "Product deleted successfully!" });
     }
     catch (error) {
-        console.log(error);
-        return res.status(499).json({ message: "Something wrong during product deletion!" });
+        //console.log(error);
+        return res.status(500).json({ message: "Something wrong during product deletion!" });
     }
 });
 exports.DeleteProduct = DeleteProduct;
@@ -146,7 +146,7 @@ const GetAllProducts = (req, res) => __awaiter(void 0, void 0, void 0, function*
                 }
             }
         });
-        // console.log(restaurantId,allProducts)
+        // //console.log(restaurantId,allProducts)
         // const popularProducts = await prisma.product.findMany({
         //     take:10,
         //     orderBy:{
@@ -159,8 +159,8 @@ const GetAllProducts = (req, res) => __awaiter(void 0, void 0, void 0, function*
         });
     }
     catch (error) {
-        console.log(error);
-        return res.status(499).json({ message: "Something wrong during product retreive!" });
+        //console.log(error);
+        return res.status(500).json({ message: "Something wrong during product retreive!" });
     }
 });
 exports.GetAllProducts = GetAllProducts;
@@ -182,8 +182,8 @@ const GetProductByQuery = (req, res) => __awaiter(void 0, void 0, void 0, functi
         });
     }
     catch (error) {
-        console.log(error);
-        return res.status(499).json({ message: "Something wrong during product retrieve!" });
+        //console.log(error);
+        return res.status(500).json({ message: "Something wrong during product retrieve!" });
     }
 });
 exports.GetProductByQuery = GetProductByQuery;
@@ -204,14 +204,14 @@ const GetAllProductsByCategory = (req, res) => __awaiter(void 0, void 0, void 0,
         });
     }
     catch (error) {
-        console.log(error);
-        return res.status(499).json({ message: "Something wrong during product retrieve!" });
+        //console.log(error);
+        return res.status(500).json({ message: "Something wrong during product retrieve!" });
     }
 });
 exports.GetAllProductsByCategory = GetAllProductsByCategory;
 const CreateProductVaraint = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log(req.body);
+        //console.log(req.body)
         const { size, price, salePrice, productId } = req.body;
         if (!size || !price || !productId)
             return res.status(401).json({ message: "All fields are required" });
@@ -229,7 +229,7 @@ const CreateProductVaraint = (req, res) => __awaiter(void 0, void 0, void 0, fun
         return res.status(200).json({ result });
     }
     catch (error) {
-        console.log("Error while create product variants", error);
+        //console.log("Error while create product variants",error); 
     }
 });
 exports.CreateProductVaraint = CreateProductVaraint;
@@ -237,8 +237,8 @@ const UpdateProductVaraint = (req, res) => __awaiter(void 0, void 0, void 0, fun
     try {
         const updatedData = __rest(req.body, []);
         const { id } = req.params;
-        console.log(updatedData);
-        console.log(id);
+        //console.log(updatedData)
+        //console.log(id)
         const result = yield prisma.productVariant.update({
             where: {
                 id: id
@@ -251,7 +251,7 @@ const UpdateProductVaraint = (req, res) => __awaiter(void 0, void 0, void 0, fun
         return res.status(200).json({ result });
     }
     catch (error) {
-        console.log("Error while update product variants", error);
+        //console.log("Error while update product variants",error); 
     }
 });
 exports.UpdateProductVaraint = UpdateProductVaraint;
@@ -266,7 +266,7 @@ const DeleteProductVaraint = (req, res) => __awaiter(void 0, void 0, void 0, fun
         return res.status(200).json({ message: "Product variant deleted!" });
     }
     catch (error) {
-        console.log("Error while delete product variants", error);
+        //console.log("Error while delete product variants",error); 
     }
 });
 exports.DeleteProductVaraint = DeleteProductVaraint;
@@ -276,7 +276,7 @@ const GetAllProductVaraint = (req, res) => __awaiter(void 0, void 0, void 0, fun
         return res.status(200).json({ result });
     }
     catch (error) {
-        console.log("Error while fetching product variants", error);
+        //console.log("Error while fetching product variants",error); 
     }
 });
 exports.GetAllProductVaraint = GetAllProductVaraint;

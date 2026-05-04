@@ -1,8 +1,6 @@
 import React from 'react'
 
-type Props = {}
-
-function MenuLoader({}: Props) {
+function MenuLoader() {
   return (
     <div>Loading...</div>
   )

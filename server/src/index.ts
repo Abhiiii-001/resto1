@@ -40,11 +40,12 @@ app.use(cors({
     credentials: true,
 }));
 app.use(express.json());
-app.use(helmet());
+app.use(express.urlencoded({ extended: false }));
+app.use(helmet({
+    contentSecurityPolicy: false,
+}));
 app.use(helmet.crossOriginResourcePolicy({ policy:"cross-origin"}));
 app.use(morgan("common"));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(fileUpload({
     useTempFiles : true,
@@ -54,11 +55,10 @@ app.use(fileUpload({
 cloudinaryConnect();
 //add shocket
 const server = http.createServer(app);
-const io = new Server(server,{
-    path:"/socket-server-path",
-    cors:{
-        origin:"*",
-        methods:["GET","POST"],
+const io = new Server(server, {
+    cors: {
+        origin: allowedOrigins,
+        methods: ["GET", "POST"],
         credentials: true
     },
     transports: ["websocket", "polling"],

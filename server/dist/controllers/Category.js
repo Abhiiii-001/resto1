@@ -22,7 +22,7 @@ const AddCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         //Get all requried data
         const { name } = req.body;
         const thumbnail = (_a = req.files) === null || _a === void 0 ? void 0 : _a.thumbnail;
-        console.log(name, thumbnail);
+        //console.log(name,thumbnail);
         //@ts-ignore
         const restaurantId = req.user.restaurantId;
         //check if anyone is null
@@ -43,8 +43,8 @@ const AddCategory = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         return res.status(200).json({ message: "Category created!" });
     }
     catch (error) {
-        console.log(error);
-        return res.status(499).json({ message: "Something wrong during category creation!" });
+        //console.log(error);
+        return res.status(500).json({ message: "Something wrong during category creation!" });
     }
 });
 exports.AddCategory = AddCategory;
@@ -61,8 +61,8 @@ const RemoveCategory = (req, res) => __awaiter(void 0, void 0, void 0, function*
         return res.status(200).json({ message: "Category deleted!" });
     }
     catch (error) {
-        console.log(error);
-        return res.status(499).json({ message: "Something wrong during category deletion!" });
+        //console.log(error);
+        return res.status(500).json({ message: "Something wrong during category deletion!" });
     }
 });
 exports.RemoveCategory = RemoveCategory;
@@ -76,6 +76,7 @@ const UpdateCategory = (req, res) => __awaiter(void 0, void 0, void 0, function*
             const thumbnailUploadRes = yield (0, cloudinaryUploader_1.default)(thumbanil, "my-files");
             updatedData.thumbanil = thumbnailUploadRes === null || thumbnailUploadRes === void 0 ? void 0 : thumbnailUploadRes.secure_url;
         }
+        console.log('debug-cate', thumbanil, updatedData);
         const result = yield prisma.category.update({
             where: {
                 id: categoryId
@@ -85,8 +86,8 @@ const UpdateCategory = (req, res) => __awaiter(void 0, void 0, void 0, function*
         return res.status(200).json({ message: "Category updated!", result: result });
     }
     catch (error) {
-        console.log(error);
-        return res.status(499).json({ message: "Something wrong during category updation!" });
+        //console.log(error);
+        return res.status(500).json({ message: "Something wrong during category updation!" });
     }
 });
 exports.UpdateCategory = UpdateCategory;
@@ -107,8 +108,8 @@ const GetAllCategories = (req, res) => __awaiter(void 0, void 0, void 0, functio
         return res.status(200).json({ categories });
     }
     catch (error) {
-        console.log(error);
-        return res.status(499).json({ message: "Something wrong during category retrive!" });
+        //console.log(error);
+        return res.status(500).json({ message: "Something wrong during category retrive!" });
     }
 });
 exports.GetAllCategories = GetAllCategories;
@@ -138,8 +139,8 @@ const GetAllCategoriesWithProducts = (req, res) => __awaiter(void 0, void 0, voi
         });
     }
     catch (error) {
-        console.log("Get all categories with product error", error);
-        return res.status(499).json({
+        //console.log("Get all categories with product error",error);
+        return res.status(500).json({
             success: false,
             message: "Something wrong during all data retrieve"
         });

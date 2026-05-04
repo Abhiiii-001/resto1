@@ -30,9 +30,9 @@ export default function Navbar() {
           
           <div className="hidden md:flex items-center space-x-8">
             <button onClick={() => scrollTo('hero')} className="text-gray-600 hover:text-rRed font-medium transition-colors">Home</button>
-            <button onClick={() => scrollTo('restaurants')} className="text-gray-600 hover:text-rRed font-medium transition-colors">Restaurants</button>
+            <button onClick={() => router.push('/restaurants')} className="text-gray-600 hover:text-rRed font-medium transition-colors">Restaurants</button>
             <button onClick={() => scrollTo('how-it-works')} className="text-gray-600 hover:text-rRed font-medium transition-colors">How it Works</button>
-            <button onClick={() => scrollTo('why-choose')} className="text-gray-600 hover:text-rRed font-medium transition-colors">About</button>
+            <button onClick={() => router.push('/about')} className="text-gray-600 hover:text-rRed font-medium transition-colors">About</button>
           </div>
 
           <div className="flex items-center">

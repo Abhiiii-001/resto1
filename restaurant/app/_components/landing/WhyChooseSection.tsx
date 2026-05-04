@@ -61,7 +61,7 @@ export default function WhyChooseSection() {
               className="p-8 bg-rGray rounded-3xl border border-gray-100"
             >
               <p className="italic text-gray-800 font-semibold text-lg">
-                "No app download, no login, just scan and eat. It really is that simple."
+                &quot;No app download, no login, just scan and eat. It really is that simple.&quot;
               </p>
               <div className="mt-4 flex items-center gap-3">
                 <div className="w-10 h-10 bg-gray-900 rounded-full"></div>
