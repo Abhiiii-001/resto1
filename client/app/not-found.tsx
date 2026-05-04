@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { UtensilsCrossed, ArrowLeft, Home, Search } from 'lucide-react';
-import { Button } from './_component/ui/Button';
+import { Button } from './_component/ui/button';
 
 export default function NotFound() {
   return (

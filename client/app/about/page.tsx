@@ -6,7 +6,7 @@ import { Target, Award, Heart, Zap, Globe, Users, TrendingUp, CheckCircle2, Shop
 import Image from 'next/image';
 import Link from 'next/link';
 import Footer from '../_component/Footer';
-import { Button } from '../_component/ui/Button';
+import { Button } from '../_component/ui/button';
 import statsData from '@/data/stats.json';
 import aboutData from '@/data/about.json';
 

@@ -1,34 +1,27 @@
 'use client';
 
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform, useInView } from 'framer-motion';
+import React from 'react';
+import { motion, useInView } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { 
-  ChefHat, 
   QrCode, 
   LayoutDashboard, 
-  Zap, 
-  ShieldCheck, 
-  BarChart3, 
   ArrowRight, 
   CheckCircle2, 
-  Smartphone, 
-  UtensilsCrossed, 
   Star,
   Quote,
   Plus,
   Minus,
   HelpCircle,
   Clock,
-  Users,
   Timer,
   ShoppingBag,
   UserCheck,
   Building
 } from 'lucide-react';
 import Footer from './_component/Footer';
-import { Button } from './_component/ui/Button';
+import { Button } from './_component/ui/button';
 
 import statsData from '@/data/stats.json';
 import landingData from '@/data/landing.json';

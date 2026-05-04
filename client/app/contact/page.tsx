@@ -16,7 +16,7 @@ import {
 import contactData from '@/data/contact.json';
 import Image from 'next/image';
 import Footer from '../_component/Footer';
-import { Button } from '../_component/ui/Button';
+import { Button } from '../_component/ui/button';
 
 interface ContactFormData {
   name: string;
