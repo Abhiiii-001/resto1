@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rimraf dist && npx tsc",
+    "build": "rimraf dist && prisma generate && tsc",
     "start": "npm run build && node dist/index.js",
     "dev": "nodemon --legacy-watch --watch src --exec ts-node src/index.ts"
   },
