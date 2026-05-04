@@ -59,7 +59,7 @@ export const CreateProduct = async(req: Request,res: Response):Promise<any> => {
 
     } catch (error) {
         //console.log(error);
-        return res.status(499).json({message:"Something wrong during product creation!"});
+        return res.status(500).json({message:"Something wrong during product creation!"});
     }
 }
 
@@ -91,7 +91,7 @@ export const UpdateProduct = async(req: Request,res: Response):Promise<any> => {
 
     } catch (error) {
         //console.log(error);
-        return res.status(499).json({message:"Something wrong during product updation!"});
+        return res.status(500).json({message:"Something wrong during product updation!"});
     }
 }
 
@@ -106,7 +106,7 @@ export const DeleteProduct = async(req: Request,res: Response):Promise<any> => {
        return res.status(200).json({messae: "Product deleted successfully!"})
     } catch (error) {
         //console.log(error);
-        return res.status(499).json({message:"Something wrong during product deletion!"});
+        return res.status(500).json({message:"Something wrong during product deletion!"});
     }
 }
 
@@ -156,7 +156,7 @@ export const GetAllProducts = async(req: Request,res: Response):Promise<any> => 
 
     } catch (error) {
         //console.log(error);
-        return res.status(499).json({message:"Something wrong during product retreive!"});
+        return res.status(500).json({message:"Something wrong during product retreive!"});
     }
 }
 
@@ -178,7 +178,7 @@ export const GetProductByQuery = async(req: Request,res: Response):Promise<any> 
         })
     } catch (error) {
         //console.log(error);
-        return res.status(499).json({message:"Something wrong during product retrieve!"});
+        return res.status(500).json({message:"Something wrong during product retrieve!"});
     }
 }
 
@@ -199,7 +199,7 @@ export const GetAllProductsByCategory = async(req: Request,res: Response):Promis
         })
     } catch (error) {
         //console.log(error);
-        return res.status(499).json({message:"Something wrong during product retrieve!"});
+        return res.status(500).json({message:"Something wrong during product retrieve!"});
     }
 }
 

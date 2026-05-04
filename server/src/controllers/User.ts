@@ -18,7 +18,7 @@ export const GetAllUsers = async(req: Request,res: Response):Promise<any> => {
 
     } catch (error) {
         //console.log(error);
-        return res.status(499).json({success: false,message: "Something wrong during user fetching!"})
+        return res.status(500).json({success: false,message: "Something wrong during user fetching!"})
     }
 }
 export const UpdateUser = async(req: Request,res: Response):Promise<any> => {
@@ -36,7 +36,7 @@ export const UpdateUser = async(req: Request,res: Response):Promise<any> => {
         return res.status(200).json({success: true,message: "User updated!",data: user});
     } catch (error) {
         //console.log(error);
-        return res.status(499).json({succcess: false,message: "Something wrong during user updating!"})
+        return res.status(500).json({succcess: false,message: "Something wrong during user updating!"})
     }
 }
 export const DeleteUser = async(req: Request,res: Response):Promise<any> => {
@@ -52,7 +52,7 @@ export const DeleteUser = async(req: Request,res: Response):Promise<any> => {
         return res.status(200).json({success: true,message: "User deleted!"})
     } catch (error) {
         //console.log(error);
-        return res.status(499).json({success: false,message: "Something wrong during user deleting!"})
+        return res.status(500).json({success: false,message: "Something wrong during user deleting!"})
     }
 }
 
@@ -109,7 +109,7 @@ export const CreateUser = async(req: Request,res: Response):Promise<any> => {
         })
 
     } catch (error) {
-        return res.status(499).json({
+        return res.status(500).json({
             success: false,
             message: "Something wrong while user creation"
         });
@@ -146,7 +146,7 @@ export const GetUserDetailsById = async(req: Request,res: Response): Promise<any
     });
 
     } catch (error:any) {
-        return res.status(499).json({
+        return res.status(500).json({
             success: false,
             message: error?.message
         });

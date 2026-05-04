@@ -36,7 +36,7 @@ interface MenuResponseInterface {
 
 export const dataApi = createApi({
     baseQuery: fetchBaseQuery({
-        baseUrl: process.env.NEXT_PUBLIC_CATEGORY_BASE_URL,
+        baseUrl: `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/category`,
         credentials: "include"}),
     reducerPath: "data",
     tagTypes:["GetAllData"],

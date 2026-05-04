@@ -1,6 +1,5 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'motion/react';
 import { Instagram, Twitter, Facebook } from 'lucide-react';
 
 export default function Footer() {

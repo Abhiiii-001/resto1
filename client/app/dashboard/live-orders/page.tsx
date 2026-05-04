@@ -5,15 +5,22 @@ import Link from 'next/link';
 import { Search, Activity, ChevronRight } from 'lucide-react';
 import { useAppSelector } from '@/redux/redux';
 import { useGetAllOrdersQuery } from '@/redux/api/order';
+import { useGetRestaurantDetailsQuery } from '@/redux/api/restaurant';
 import { Input } from '@/components/ui/input';
 import { skipToken } from '@reduxjs/toolkit/query';
 
 function LiveOrders() {
-  const { orders } = useAppSelector((state) => state.order);
+  const { orders, socketConnected } = useAppSelector((state) => state.order);
   const { restaurantId, token } = useAppSelector((state) => state.auth);
 
   const [query, setQuery] = useState('');
   const [filteredOrders, setFilteredOrders] = useState(orders);
+
+  const { data: restaurantDetails } = useGetRestaurantDetailsQuery(restaurantId, { 
+    skip: !restaurantId 
+  });
+  
+  const isShopOpen = restaurantDetails?.isOpen ?? false;
 
   useGetAllOrdersQuery(restaurantId && token ? restaurantId : skipToken);
 
@@ -36,9 +43,14 @@ function LiveOrders() {
         <div>
           <div className="flex items-center gap-2">
             <h2 className="text-3xl font-bold tracking-tight text-foreground">Live Orders</h2>
-            <div className="relative flex h-3 w-3 mb-4">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+            <div className="flex items-center gap-2">
+              <div className="relative flex h-3 w-3">
+                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${socketConnected && isShopOpen ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                <span className={`relative inline-flex rounded-full h-3 w-3 ${socketConnected && isShopOpen ? 'bg-green-500' : 'bg-red-500'}`}></span>
+              </div>
+              <span className={`text-xs font-medium uppercase tracking-wider ${socketConnected && isShopOpen ? 'text-green-600' : 'text-red-600'}`}>
+                {!isShopOpen ? 'Shop Closed' : socketConnected ? 'Live' : 'Offline'}
+              </span>
             </div>
           </div>
           <div className="mt-2 flex items-center text-sm font-medium text-muted-foreground">

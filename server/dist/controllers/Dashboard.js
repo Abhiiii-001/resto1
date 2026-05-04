@@ -86,12 +86,16 @@ const GetDashboardData = (req, res) => __awaiter(void 0, void 0, void 0, functio
         });
         const label = [];
         const statusData = [];
+        let totalPending = 0;
         for (const status of statusCounts) {
             label.push(status.status);
             statusData.push(status._count._all);
+            if (status.status === 'Pending') {
+                totalPending = status._count._all;
+            }
         }
         const dahsboardData = {
-            stats: Object.assign({}, restaurant),
+            stats: Object.assign(Object.assign({}, restaurant), { totalPending }),
             saleSummary: {
                 day: daySummary,
                 month: monthSummary
@@ -109,7 +113,7 @@ const GetDashboardData = (req, res) => __awaiter(void 0, void 0, void 0, functio
         });
     }
     catch (error) {
-        return res.status(499).json({
+        return res.status(500).json({
             success: false,
             message: error.message
         });

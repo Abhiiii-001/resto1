@@ -14,7 +14,6 @@ function generateOrderCode() {
     return "ORD-" + crypto.randomBytes(4).toString("hex").toUpperCase();
   }
 
-let subscriptionData  = [];
   
 export const CreateOrder = async(req: Request,res: Response): Promise<any> => {
    try {
@@ -46,7 +45,7 @@ export const CreateOrder = async(req: Request,res: Response): Promise<any> => {
         //create order 
         const order = await prisma.order.create({
             data:{
-                name:"",
+                name: name || "Guest",
                 note,
                 amount,
                 isPack,
@@ -117,7 +116,7 @@ export const CreateOrder = async(req: Request,res: Response): Promise<any> => {
         return res.status(200).json({
             success: true,
             message: "Order created successfully!",
-            data: order
+            data: orderRes
         })
 
    });
@@ -135,7 +134,7 @@ export const CreateOrder = async(req: Request,res: Response): Promise<any> => {
 // Verify order may be use later as a future scope
 export const VerifyOrder = async(req: Request,res: Response): Promise<any> => {
     try {
-        const { orderId } = req.body();
+        const { orderId } = req.body;
 
         const order = await prisma.order.findUnique({
             where:{
@@ -166,7 +165,7 @@ export const VerifyOrder = async(req: Request,res: Response): Promise<any> => {
 
     } catch (error) {
         //console.log("Verify order error",error);
-        return res.status(499).json({
+        return res.status(500).json({
             success: false,
             message: "Something wrong while verifying order"
         });
@@ -175,7 +174,6 @@ export const VerifyOrder = async(req: Request,res: Response): Promise<any> => {
 
 export const UpdateStatus = async(req: Request,res: Response): Promise<any> => {
     try {
-       
         const {status} = req.body;
         const { id } = req.params;
    
@@ -186,57 +184,35 @@ export const UpdateStatus = async(req: Request,res: Response): Promise<any> => {
            })
         }
 
-        //console.log("Id at update status",id);
-        
         const order = await prisma.order.update({
            where:{
                id: id
            },
            data:{status}
         });
-        //console.log("Order",order)
         
         if(!order){
            return res.status(402).json({
                success: false,
-               message: 'Something wrong , Try again!'
+               message: 'Something went wrong, Try again!'
            })
         }
    
-        let message;
-        if(order.status == "Ready"){
-            message = {
-               title: "Your order is ready!",
-               body: "Please pickup ur order at counter!!"
-           }
+        // Industry Standard: Handle notifications for all status updates
+        if (order.subscription) {
+            await NotifyCustomer(order.subscription, status, order.orderCode);
         }
-        if(order.status == "Cancelled"){
-            message = {
-               title: "Your order is cancelled!",
-               body: "Sorry for this incovinence!!"
-           }
-        }
-        if(order.status == "Completed"){
-            message = {
-               title: "Congratulation , you got ur food!",
-               body: "Want to review us??"
-           }
-        }
-   
-        // if(message){
-        //    await sendPushNotification(order.subscription,message);
-        // }
 
         return res.status(200).json({
             success: true,
-            message: "Status changed successfully"
+            message: "Status updated and customer notified"
         })
 
     } catch (error) {
-        //console.log("Something wrong while update status!",error)
-        return res.status(499).json({
+        console.error("Error in UpdateStatus:", error);
+        return res.status(500).json({
             success: false,
-            message: "Something wrong while update status!"
+            message: "Internal server error while updating status"
         })
     }
 }
@@ -263,40 +239,77 @@ export const GetAllOrders = async(req: Request,res: Response): Promise<any> => {
 
     } catch (error) {
         //console.log("Get all orders error",error);
-        return res.status(499).json({
+        return res.status(500).json({
             success: false,
             message: "Something wrong , while retriving all orders"
         })
     }
 }
 
+  
 export const Subscribe = async(req: Request,res: Response): Promise<any> => {
     try {
-     const { orderId , subscription } = req.body;
+        const { orderId , subscription } = req.body;
 
-    //console.log("Subscribe",orderId,subscription);
+        if (!orderId || !subscription) {
+            return res.status(400).json({
+                success: false,
+                message: "OrderId and Subscription are required"
+            });
+        }
+        // Industry Standard: Store the subscription as a string in the DB
+        const subscriptionString = typeof subscription === 'string' ? subscription : JSON.stringify(subscription);
 
-    subscriptionData[orderId] = subscription;
-    const response = await prisma.order.update({
-        where:{id: orderId},
-        data: {subscription}
-    })
-    return res.status(200).json({
-        success: true,
-        message: "Subscription saved",
-        data: response
-    });
+        const response = await prisma.order.update({
+            where: { id: orderId },
+            data: { subscription: subscriptionString }
+        })
+
+        return res.status(200).json({
+            success: true,
+            message: "Subscription saved",
+            data: response
+        });
     } catch (error) {
-        //console.log("Error inside subscribe order",error);
-        return res.status(499).json({
-            success:false,
-            message: "Subsrciption couldn't saved!"
+        console.error("Error inside subscribe order:", error);
+        return res.status(500).json({ // Changed from 499 to 500 for better standards
+            success: false,
+            message: "Subscription couldn't be saved!"
         })
     }
 }
 
-export const NotifyCustomer = async(orderId: string, status: string,subscription: string) => {
+export const NotifyCustomer = async(subscription: string, status: string, orderCode: string) => {
+    try {
+        const notificationMessages: Record<string, { title: string, body: string }> = {
+            "Confirmed": {
+                title: "Order Confirmed!",
+                body: `Your order ${orderCode} has been confirmed and is being prepared.`
+            },
+            "Preparing": {
+                title: "Preparing your food!",
+                body: "Our chefs are working their magic on your order."
+            },
+            "Ready": {
+                title: "Order Ready!",
+                body: "Your order is ready for pickup! Please head to the counter."
+            },
+            "Cancelled": {
+                title: "Order Cancelled",
+                body: "We're sorry, but your order has been cancelled. Please contact the counter for details."
+            },
+            "Completed": {
+                title: "Enjoy your meal!",
+                body: "Thank you for dining with us. We hope to see you again soon!"
+            }
+        };
 
-  
-
+        const message = notificationMessages[status];
+        if (message && subscription) {
+            const subObject = typeof subscription === 'string' ? JSON.parse(subscription) : subscription;
+            await sendPushNotification(subObject, message);
+        }
+    } catch (error) {
+        console.error("Error in NotifyCustomer utility:", error);
+    }
 }

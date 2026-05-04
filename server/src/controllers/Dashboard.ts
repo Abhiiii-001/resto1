@@ -123,7 +123,7 @@ export const GetDashboardData = async(req: Request,res: Response): Promise<any> 
         })
 
     } catch (error:any) {
-        return res.status(499).json({
+        return res.status(500).json({
             success: false,
             message: error.message
         })

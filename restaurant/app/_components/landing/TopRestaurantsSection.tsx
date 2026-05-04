@@ -13,7 +13,7 @@ interface Props {
 
 export default function TopRestaurantsSection({ restaurants, isLoading, setSelectedRestaurant }: Props) {
   const router = useRouter();
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (

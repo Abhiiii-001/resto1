@@ -22,14 +22,16 @@ const GetAllRestaurants = (req, res) => __awaiter(void 0, void 0, void 0, functi
             select: {
                 id: true,
                 name: true,
-                resCode: true
+                resCode: true,
+                thumbnail: true,
+                slogan: true
             }
         });
-        console.log(restaurant);
+        //console.log(restaurant);
         return res.status(200).json({ message: "Restaurants name fetched", restaurant: restaurant });
     }
     catch (error) {
-        console.log("Error during get all restaurants", error);
+        //console.log("Error during get all restaurants",error);
     }
 });
 exports.GetAllRestaurants = GetAllRestaurants;
@@ -42,7 +44,7 @@ const GetRestaurantDetails = (req, res) => __awaiter(void 0, void 0, void 0, fun
             }
         });
         if (!restaurant) {
-            return res.status(499).json({
+            return res.status(404).json({
                 success: false,
                 message: "Shop not found!",
             });
@@ -54,8 +56,8 @@ const GetRestaurantDetails = (req, res) => __awaiter(void 0, void 0, void 0, fun
         });
     }
     catch (error) {
-        console.log("Error during get restaurant details", error);
-        return res.status(499).json({
+        //console.log("Error during get restaurant details",error);
+        return res.status(500).json({
             success: false,
             message: "Shop details didn't fetched!",
         });
@@ -74,8 +76,8 @@ const UpdateRestaurantDetails = (req, res) => __awaiter(void 0, void 0, void 0, 
                 message: "Missing data!"
             });
         }
-        // console.log("data",data,thumbnail);
-        // console.log(restaurantId)
+        // //console.log("data",data,thumbnail);
+        // //console.log(restaurantId)
         const restaurant = yield prisma.restaurant.findUnique({
             where: {
                 id: restaurantId,
@@ -86,7 +88,7 @@ const UpdateRestaurantDetails = (req, res) => __awaiter(void 0, void 0, void 0, 
                 thumbnail: true
             }
         });
-        // console.log("restaurant",restaurant);
+        // //console.log("restaurant",restaurant);
         if (!restaurant) {
             return res.status(404).json({
                 success: false,
@@ -96,7 +98,7 @@ const UpdateRestaurantDetails = (req, res) => __awaiter(void 0, void 0, void 0, 
         if (thumbnail) {
             const uploadRes = yield (0, cloudinaryUploader_1.default)(thumbnail, "my-files");
             data.thumbnail = uploadRes.secure_url;
-            console.log("Restaurant update thumbnail", data.thumbnail);
+            //console.log("Restaurant update thumbnail",data.thumbnail)
         }
         const updatedRestaurant = yield prisma.restaurant.update({
             where: {
@@ -105,7 +107,7 @@ const UpdateRestaurantDetails = (req, res) => __awaiter(void 0, void 0, void 0, 
             },
             data: Object.assign({}, data)
         });
-        console.log("Updated restauarant", updatedRestaurant);
+        //console.log("Updated restauarant",updatedRestaurant);
         return res.status(200).json({
             success: true,
             message: "Restaurant details updated!",
@@ -113,7 +115,7 @@ const UpdateRestaurantDetails = (req, res) => __awaiter(void 0, void 0, void 0, 
         });
     }
     catch (error) {
-        return res.status(499).json({
+        return res.status(500).json({
             success: false,
             message: "Something wrong!"
         });
@@ -144,7 +146,7 @@ const DeleteRestaurant = (req, res) => __awaiter(void 0, void 0, void 0, functio
         });
     }
     catch (error) {
-        return res.status(499).json({
+        return res.status(500).json({
             success: false,
             message: "Something went wrong!"
         });

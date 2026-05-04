@@ -5,6 +5,8 @@ import { ProtectedRoute } from './ProtectedRoute';
 import Sidebar from './Sidebar';
 import { cn } from '@/lib/utils';
 import { useEffect } from 'react';
+import useSocket from '@/hooks/WebShocket';
+import { useGetRestaurantDetailsQuery } from '@/redux/api/restaurant';
 
 export const DashboardLayout = ({
   children,
@@ -12,9 +14,18 @@ export const DashboardLayout = ({
   children: React.ReactNode;
 }) => {
   const dispatch = useAppDispatch();
-  const isSidebarCollapsed = useAppSelector(
-    (state) => state.global.isSidebarCollapsed,
-  );
+  const { isSidebarCollapsed } = useAppSelector((state) => state.global);
+  const { restaurantId } = useAppSelector((state) => state.auth);
+
+  const { data: restaurantDetails } = useGetRestaurantDetailsQuery(restaurantId, { 
+    skip: !restaurantId 
+  });
+  
+  const isShopOpen = restaurantDetails?.isOpen ?? false;
+
+  // Only connect to socket if restaurantId is available AND shop is open
+  const socketUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace('/api', '') || 'http://localhost:8000';
+  useSocket(restaurantId && isShopOpen ? restaurantId : null, socketUrl);
 
   // Auto-collapse sidebar on mobile
   useEffect(() => {

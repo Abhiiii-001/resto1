@@ -14,8 +14,8 @@ const cloudinary_1 = require("cloudinary");
 // Promisify the Cloudinary uploader for easier async/await usage
 const uploadToCloudinary = (file, folder) => __awaiter(void 0, void 0, void 0, function* () {
     return yield cloudinary_1.v2.uploader.upload(file === null || file === void 0 ? void 0 : file.tempFilePath, {
-        resource_type: 'auto', // Automatically detects whether the file is an image, video, or raw file (e.g., PDF)
-        folder: folder || 'uploads', // Upload to a specific folder
+        resource_type: 'auto',
+        folder: folder || 'uploads',
     });
 });
 const uploadPDFToCloudinary = (fileBuffer_1, ...args_1) => __awaiter(void 0, [fileBuffer_1, ...args_1], void 0, function* (fileBuffer, folder = 'invoices') {

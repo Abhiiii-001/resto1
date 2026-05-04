@@ -1,46 +1,44 @@
 // hooks/useSocket.ts
 import { addOrder, setSocketConnected } from '@/redux/states/orderSlice';
+import { Order } from '@/types/order';
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { io, Socket } from 'socket.io-client';
 
-const use施 = 'socket.io-client';
-
 interface RootState {
-  orders: {
+  order: {
     orders: Order[];
     socketConnected: boolean;
   };
 }
 
-interface Order {
-  id: string;
-  customerName: string;
-  total: number;
-}
-
-const useSocket = (restaurantId: string, url: string) => {
+const useSocket = (restaurantId: string | null, url: string) => {
   const dispatch = useDispatch();
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    // Initialize Socket.IO connection
+    if (!restaurantId || !url) return;
+
+    // Initialize Socket.IO connection with correct industry standards
     socketRef.current = io(url, {
       reconnection: true,
       reconnectionAttempts: 5,
-      transports: ['webbsocket', 'polling'],
+      transports: ['websocket', 'polling'],
     });
 
     socketRef.current.on('connect', () => {
-      //console.log('Socket.IO Connected');
+      console.log('Socket.IO Connected:', socketRef.current?.id);
       dispatch(setSocketConnected(true));
-      // Join the restaurant-specific room
-      socketRef.current?.emit('joinRoom', restaurantId);
+      
+      if (restaurantId) {
+        console.log('Joining room:', restaurantId);
+        socketRef.current?.emit('joinRoom', restaurantId);
+      }
     });
 
-    socketRef.current.on('newOrder', (orderData: Order) => {
-      //console.log('New order received:', orderData);
-      dispatch(addOrder(orderData)); // Add new order to Redux store
+    socketRef.current.on('newOrder', (orderData: any) => {
+      console.log('New order received via socket:', orderData);
+      dispatch(addOrder(orderData));
     });
 
     socketRef.current.on('disconnect', () => {
@@ -54,13 +52,16 @@ const useSocket = (restaurantId: string, url: string) => {
 
     // Cleanup on unmount
     return () => {
-      socketRef.current?.disconnect();
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
     };
   }, [restaurantId, url, dispatch]);
 
   const isConnected = useSelector(
-    (state: RootState) => state.orders?.socketConnected,
+    (state: RootState) => state.order?.socketConnected,
   );
+  
   return { isConnected };
 };
 

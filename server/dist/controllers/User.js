@@ -27,8 +27,8 @@ const GetAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         return res.status(200).json({ success: true, message: "All user fetched successfully!", users: users });
     }
     catch (error) {
-        console.log(error);
-        return res.status(499).json({ success: false, message: "Something wrong during user fetching!" });
+        //console.log(error);
+        return res.status(500).json({ success: false, message: "Something wrong during user fetching!" });
     }
 });
 exports.GetAllUsers = GetAllUsers;
@@ -45,8 +45,8 @@ const UpdateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         return res.status(200).json({ success: true, message: "User updated!", data: user });
     }
     catch (error) {
-        console.log(error);
-        return res.status(499).json({ succcess: false, message: "Something wrong during user updating!" });
+        //console.log(error);
+        return res.status(500).json({ succcess: false, message: "Something wrong during user updating!" });
     }
 });
 exports.UpdateUser = UpdateUser;
@@ -63,8 +63,8 @@ const DeleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         return res.status(200).json({ success: true, message: "User deleted!" });
     }
     catch (error) {
-        console.log(error);
-        return res.status(499).json({ success: false, message: "Something wrong during user deleting!" });
+        //console.log(error);
+        return res.status(500).json({ success: false, message: "Something wrong during user deleting!" });
     }
 });
 exports.DeleteUser = DeleteUser;
@@ -114,7 +114,7 @@ const CreateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         });
     }
     catch (error) {
-        return res.status(499).json({
+        return res.status(500).json({
             success: false,
             message: "Something wrong while user creation"
         });
@@ -148,7 +148,7 @@ const GetUserDetailsById = (req, res) => __awaiter(void 0, void 0, void 0, funct
         });
     }
     catch (error) {
-        return res.status(499).json({
+        return res.status(500).json({
             success: false,
             message: error === null || error === void 0 ? void 0 : error.message
         });

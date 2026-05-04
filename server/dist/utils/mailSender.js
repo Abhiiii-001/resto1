@@ -28,11 +28,11 @@ const mailSender = (email, title, body) => __awaiter(void 0, void 0, void 0, fun
             subject: `${title}`,
             html: `${body}`,
         });
-        console.log(info);
+        //console.log(info);
         return info;
     }
     catch (error) {
-        console.log(error.message);
+        //console.log(error.message);
     }
 });
 exports.default = mailSender;

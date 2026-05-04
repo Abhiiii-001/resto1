@@ -21,12 +21,12 @@ export interface CreateOrderInterface {
 
 export const orderApi = createApi({
     baseQuery: fetchBaseQuery({
-        baseUrl: process.env.NEXT_PUBLIC_ORDER_BASE_URL,
+        baseUrl: `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/order`,
         credentials:'include'
     }),
     reducerPath: "order",
     endpoints:(build) => ({
-        createOrder: build.mutation({
+        createOrder: build.mutation<any, CreateOrderInterface>({
             query: (data) => ({
                 url: "/create-order",
                 method: "POST",

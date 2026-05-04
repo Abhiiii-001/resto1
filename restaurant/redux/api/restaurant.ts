@@ -22,15 +22,15 @@ export interface RestaurantIdInterface {
 }
 
 export const restaurantApi = createApi({
-    baseQuery: fetchBaseQuery({baseUrl:process.env.NEXT_PUBLIC_RESTAURANT_BASE_URL}),
+    baseQuery: fetchBaseQuery({baseUrl: `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/restaurant`}),
     reducerPath:"restaurant",
     endpoints: (build) => ({
-        getAllRestaurantId: build.query<any,any>({
+        getAllRestaurantId: build.query<{ restaurant: RestaurantIdInterface[] }, void>({
             query:() => ({
                 url: '/all'
             })
         }),
-        getRestaurantDetails: build.query<any,any>({
+        getRestaurantDetails: build.query<{ data: RestaurantDetailsInterface }, string>({
             query:(id) => ({
                 url: `/${id}`
             })

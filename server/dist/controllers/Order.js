@@ -18,11 +18,11 @@ const crypto_1 = __importDefault(require("crypto"));
 const socket_1 = require("../socket");
 const generateInvoice_1 = require("../utils/generateInvoice");
 const cloudinaryUploader_1 = require("../utils/cloudinaryUploader");
+const notificationSender_1 = require("../utils/notificationSender");
 const prisma = new client_1.PrismaClient();
 function generateOrderCode() {
     return "ORD-" + crypto_1.default.randomBytes(4).toString("hex").toUpperCase();
 }
-let subscriptionData = [];
 const CreateOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, note, orders, amount, isPack, paymentOption, restaurantId } = req.body;
@@ -34,7 +34,7 @@ const CreateOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 message: "Missing data!"
             });
         }
-        // console.log("suborderdata",orders)
+        // //console.log("suborderdata",orders)
         // const subOrders = JSON.parse(orders);
         const restaurantDetails = yield prisma.restaurant.findUnique({
             where: {
@@ -44,13 +44,13 @@ const CreateOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         const orderCode = generateOrderCode();
         const invoiceBuffer = yield (0, generateInvoice_1.generateInvoice)(req.body, orderCode, restaurantDetails);
         const invoiceRes = yield (0, cloudinaryUploader_1.uploadPDFToCloudinary)(invoiceBuffer);
-        console.log("Invoice Response", invoiceRes);
+        //console.log("Invoice Response",invoiceRes);
         yield prisma.$transaction((prisma) => __awaiter(void 0, void 0, void 0, function* () {
             let totalAmount = 0;
             //create order 
             const order = yield prisma.order.create({
                 data: {
-                    name: "",
+                    name: name || "Guest",
                     note,
                     amount,
                     isPack,
@@ -62,7 +62,7 @@ const CreateOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                     createdAt: new Date(Date.now()).toISOString()
                 }
             });
-            console.log("order", order);
+            //console.log("order",order)
             for (const subOrderData of orders) {
                 totalAmount += subOrderData.unitPrice;
                 prisma.productVariant.update({
@@ -85,7 +85,7 @@ const CreateOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                         orderId: order.id
                     }
                 });
-                console.log("suborder", t);
+                //console.log("suborder",t)
             }
             //if calculated amount is not equal to provided amount
             // if(totalAmount !== amount){
@@ -110,12 +110,12 @@ const CreateOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             return res.status(200).json({
                 success: true,
                 message: "Order created successfully!",
-                data: order
+                data: orderRes
             });
         }));
     }
     catch (error) {
-        console.log(error);
+        //console.log(error)
         return res.status(500).json({
             success: false,
             message: "Something wrong while creating order!"
@@ -126,7 +126,7 @@ exports.CreateOrder = CreateOrder;
 // Verify order may be use later as a future scope
 const VerifyOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { orderId } = req.body();
+        const { orderId } = req.body;
         const order = yield prisma.order.findUnique({
             where: {
                 id: orderId
@@ -152,8 +152,8 @@ const VerifyOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         });
     }
     catch (error) {
-        console.log("Verify order error", error);
-        return res.status(499).json({
+        //console.log("Verify order error",error);
+        return res.status(500).json({
             success: false,
             message: "Something wrong while verifying order"
         });
@@ -170,52 +170,32 @@ const UpdateStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 message: "Data missing"
             });
         }
-        console.log("Id at update status", id);
         const order = yield prisma.order.update({
             where: {
                 id: id
             },
             data: { status }
         });
-        console.log("Order", order);
         if (!order) {
             return res.status(402).json({
                 success: false,
-                message: 'Something wrong , Try again!'
+                message: 'Something went wrong, Try again!'
             });
         }
-        let message;
-        if (order.status == "Ready") {
-            message = {
-                title: "Your order is ready!",
-                body: "Please pickup ur order at counter!!"
-            };
+        // Industry Standard: Handle notifications for all status updates
+        if (order.subscription) {
+            yield (0, exports.NotifyCustomer)(order.subscription, status, order.orderCode);
         }
-        if (order.status == "Cancelled") {
-            message = {
-                title: "Your order is cancelled!",
-                body: "Sorry for this incovinence!!"
-            };
-        }
-        if (order.status == "Completed") {
-            message = {
-                title: "Congratulation , you got ur food!",
-                body: "Want to review us??"
-            };
-        }
-        // if(message){
-        //    await sendPushNotification(order.subscription,message);
-        // }
         return res.status(200).json({
             success: true,
-            message: "Status changed successfully"
+            message: "Status updated and customer notified"
         });
     }
     catch (error) {
-        console.log("Something wrong while update status!", error);
-        return res.status(499).json({
+        console.error("Error in UpdateStatus:", error);
+        return res.status(500).json({
             success: false,
-            message: "Something wrong while update status!"
+            message: "Internal server error while updating status"
         });
     }
 });
@@ -238,8 +218,8 @@ const GetAllOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         });
     }
     catch (error) {
-        console.log("Get all orders error", error);
-        return res.status(499).json({
+        //console.log("Get all orders error",error);
+        return res.status(500).json({
             success: false,
             message: "Something wrong , while retriving all orders"
         });
@@ -249,11 +229,17 @@ exports.GetAllOrders = GetAllOrders;
 const Subscribe = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { orderId, subscription } = req.body;
-        console.log("Subscribe", orderId, subscription);
-        subscriptionData[orderId] = subscription;
+        if (!orderId || !subscription) {
+            return res.status(400).json({
+                success: false,
+                message: "OrderId and Subscription are required"
+            });
+        }
+        // Industry Standard: Store the subscription as a string in the DB
+        const subscriptionString = typeof subscription === 'string' ? subscription : JSON.stringify(subscription);
         const response = yield prisma.order.update({
             where: { id: orderId },
-            data: { subscription }
+            data: { subscription: subscriptionString }
         });
         return res.status(200).json({
             success: true,
@@ -262,14 +248,46 @@ const Subscribe = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
     }
     catch (error) {
-        console.log("Error inside subscribe order", error);
-        return res.status(499).json({
+        console.error("Error inside subscribe order:", error);
+        return res.status(500).json({
             success: false,
-            message: "Subsrciption couldn't saved!"
+            message: "Subscription couldn't be saved!"
         });
     }
 });
 exports.Subscribe = Subscribe;
-const NotifyCustomer = (orderId, status, subscription) => __awaiter(void 0, void 0, void 0, function* () {
+const NotifyCustomer = (subscription, status, orderCode) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const notificationMessages = {
+            "Confirmed": {
+                title: "Order Confirmed!",
+                body: `Your order ${orderCode} has been confirmed and is being prepared.`
+            },
+            "Preparing": {
+                title: "Preparing your food!",
+                body: "Our chefs are working their magic on your order."
+            },
+            "Ready": {
+                title: "Order Ready!",
+                body: "Your order is ready for pickup! Please head to the counter."
+            },
+            "Cancelled": {
+                title: "Order Cancelled",
+                body: "We're sorry, but your order has been cancelled. Please contact the counter for details."
+            },
+            "Completed": {
+                title: "Enjoy your meal!",
+                body: "Thank you for dining with us. We hope to see you again soon!"
+            }
+        };
+        const message = notificationMessages[status];
+        if (message && subscription) {
+            const subObject = typeof subscription === 'string' ? JSON.parse(subscription) : subscription;
+            yield (0, notificationSender_1.sendPushNotification)(subObject, message);
+        }
+    }
+    catch (error) {
+        console.error("Error in NotifyCustomer utility:", error);
+    }
 });
 exports.NotifyCustomer = NotifyCustomer;

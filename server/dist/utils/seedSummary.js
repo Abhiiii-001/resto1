@@ -54,7 +54,7 @@ function seedSaleSummary(restaurantId) {
             }
             // Insert into DB
             yield prisma.saleSummary.createMany({ data: saleData });
-            console.log('✅ Seeded SaleSummary data successfully!');
+            //console.log('✅ Seeded SaleSummary data successfully!');
         }
         catch (error) {
             console.error('❌ Failed to seed SaleSummary:', error);

@@ -12,7 +12,9 @@ const NotificationComponent = ({ orderId }: { orderId: string}) => {
 
   useEffect(() => {
     if (subscription) {
-      subscribeUser({ orderId, subscription }).catch((error) => {
+      // Industry Standard: Convert PushSubscription to a plain JSON object
+      const subJson = (subscription as any).toJSON ? (subscription as any).toJSON() : subscription;
+      subscribeUser({ orderId, subscription: subJson }).catch((error) => {
         console.error("Failed to send subscription:", error);
       });
     }
