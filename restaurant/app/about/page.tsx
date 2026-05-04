@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import Navbar from "../_components/landing/Navbar";
 import Footer from "../_components/landing/Footer";
 import { Zap, Users, ShieldCheck, QrCode } from "lucide-react";
+import Link from "next/link";
 
 const values = [
   {
@@ -66,7 +67,7 @@ export default function About() {
             transition={{ delay: 0.1 }}
             className="text-5xl md:text-7xl font-black text-gray-900 tracking-tight leading-tight mb-6"
           >
-            We're rethinking <br />
+            We&apos;re rethinking <br />
             <span className="text-rRed">how you order food.</span>
           </motion.h1>
           <motion.p
@@ -200,12 +201,12 @@ export default function About() {
           <p className="text-red-100 font-medium mb-10 text-lg">
             Find a restaurant near you and experience the easiest way to order food.
           </p>
-          <a
+          <Link
             href="/restaurants"
             className="inline-block bg-white text-rRed font-bold text-lg px-8 py-4 rounded-2xl hover:bg-gray-50 transition-all transform hover:scale-105 active:scale-95 shadow-lg"
           >
             Explore Restaurants →
-          </a>
+          </Link>
         </motion.div>
       </section>
 

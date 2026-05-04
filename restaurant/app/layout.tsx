@@ -7,11 +7,13 @@ import StoreProvider from "@/redux/redux";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],

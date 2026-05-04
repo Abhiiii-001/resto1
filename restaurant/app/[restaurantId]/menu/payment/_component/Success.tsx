@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useRef } from 'react'
 import {AnimatePresence, motion} from 'motion/react'
-import { Check, Download, Home, ReceiptText } from 'lucide-react'
+import { Check, Download, Home } from 'lucide-react'
 import ReactConfetti from 'react-confetti'
 import {useWindowSize} from 'react-use';
 import QRCodeStyling from 'qr-code-styling'
@@ -31,7 +31,7 @@ function Success({ data, restaurantDetails }: SuccessProps) {
     const qrRef = useRef<HTMLDivElement>(null);
     const ticketRef = useRef<HTMLDivElement>(null);
     
-    const qrCode = new QRCodeStyling({
+    const qrCode = React.useMemo(() => new QRCodeStyling({
         width: 300,
         height: 300,
         dotsOptions: {
@@ -45,13 +45,13 @@ function Success({ data, restaurantDetails }: SuccessProps) {
           crossOrigin: "anonymous",
           margin: 10
         },
-    });
+    }), []);
 
     useEffect(() => {
         if (qrRef.current) {
           qrCode.append(qrRef.current);
         }
-    }, [])
+    }, [qrCode])
 
     const [qrDataUrl, setQrDataUrl] = React.useState<string>('');
 
@@ -77,7 +77,7 @@ function Success({ data, restaurantDetails }: SuccessProps) {
             const timer = setTimeout(generateQrDataUrl, 500);
             return () => clearTimeout(timer);
         }
-    }, [data])
+    }, [data, qrCode])
 
     const downloadTicketHandler = async () => {
         if (ticketRef.current) {
@@ -200,6 +200,7 @@ function Success({ data, restaurantDetails }: SuccessProps) {
                 {/* Header */}
                 <div className="text-center mb-6">
                     {restaurantDetails?.thumbnail && (
+                        /* eslint-disable-next-line @next/next/no-img-element */
                         <img 
                             src={restaurantDetails.thumbnail} 
                             alt="Logo" 
@@ -252,6 +253,7 @@ function Success({ data, restaurantDetails }: SuccessProps) {
                 <div className="flex flex-col items-center gap-2 bg-white border-2 border-gray-100 p-4 rounded-3xl">
                     <p className="text-[10px] font-bold text-gray-400 mb-1 tracking-widest">SCAN TO VERIFY</p>
                     {qrDataUrl ? (
+                        /* eslint-disable-next-line @next/next/no-img-element */
                         <img src={qrDataUrl} alt="QR Code" className="w-48 h-48" />
                     ) : (
                         <div className="w-48 h-48 bg-gray-100 flex items-center justify-center text-gray-300">Loading QR...</div>

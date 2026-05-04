@@ -5,7 +5,7 @@ import { useGetAllRestaurantIdQuery } from "@/redux/api/restaurant";
 import { AnimatePresence, motion } from "motion/react";
 import RestaurantCard from "../_components/RestaurantCard";
 import RestaurantModal from "../_components/RestaurantModal";
-import { ArrowLeft, Search, SlidersHorizontal } from "lucide-react";
+import { ArrowLeft, Search } from "lucide-react";
 import { Restaurant } from "@/types";
 
 export default function RestaurantsDirectory() {
@@ -102,7 +102,7 @@ export default function RestaurantsDirectory() {
         {searchQuery && (
           <p className="text-sm text-gray-500 font-medium mb-6">
             {filteredRestaurants.length} result{filteredRestaurants.length !== 1 ? "s" : ""} for{" "}
-            <span className="text-gray-900 font-bold">"{searchQuery}"</span>
+            <span className="text-gray-900 font-bold">&quot;{searchQuery}&quot;</span>
           </p>
         )}
 
@@ -153,7 +153,7 @@ export default function RestaurantsDirectory() {
               No restaurants found
             </h3>
             <p className="text-gray-500 font-medium mb-8">
-              We couldn't find anything matching "{searchQuery}"
+              We couldn&apos;t find anything matching &quot;{searchQuery}&quot;
             </p>
             <button
               onClick={() => setSearchQuery("")}

@@ -3,7 +3,6 @@ import {
   CreateOrderInterface,
   CreateSubOrderInterface,
   useCreateOrderMutation,
-  useSubscribeMutation,
 } from "@/redux/api/order";
 import { useAppDispatch, useAppSelector } from "@/redux/redux";
 import {
@@ -11,25 +10,22 @@ import {
   setPayementOption,
   SubOrderInterface,
 } from "@/redux/states/cartSlice";
-import { requestNotificationPermission } from "@/utils/webPushConfiguration";
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import React, { use, useEffect, useState, useTransition } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import { toast } from "react-toastify";
 import { motion } from "motion/react";
 import Success from "./_component/Success";
 import { RestaurantDetailsInterface, useGetRestaurantDetailsQuery } from "@/redux/api/restaurant";
 import NotificationComponent from "./_component/Notification";
 
-type Props = {};
-
-function Payment({}: Props) {
+function Payment() {
   const router = useRouter();
   const { restaurantId } = useParams();
   const [restaurantDetails, setRestaurantDetails] = useState<RestaurantDetailsInterface | undefined>();
 
-  const { data: restaurantData, isLoading: restaurantDetailsLoader } =
+  const { data: restaurantData } =
     useGetRestaurantDetailsQuery(restaurantId as string);
   useEffect(() => {
     if (restaurantData) {
@@ -38,11 +34,12 @@ function Payment({}: Props) {
   }, [restaurantData]);
   //console.log("Restaurant Details", restaurantDetails);
 
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   const cartData = useAppSelector((state) => state.cart);
   const dispatch = useAppDispatch();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [invoiceModal, setInvoiceModal] = useState<any>(null);
 
   //subscription send to backend
@@ -57,7 +54,7 @@ function Payment({}: Props) {
       if (restaurantId) {
         const toastId = toast.loading("Loading..");
 
-        let orders: CreateSubOrderInterface[] = [];
+        const orders: CreateSubOrderInterface[] = [];
         cartData?.orders.forEach((ord: SubOrderInterface) => {
           orders.push({
             name: ord.product.name,
@@ -92,10 +89,9 @@ function Payment({}: Props) {
           setInvoiceModal(response.data.data);
         }
       }
-    } catch (error: any) {
-      // toast.dismiss(toastId);
-      //console.log(error);
-      toast.error(error?.message || "Something went wrong");
+    } catch (error: unknown) {
+      const err = error as { message?: string };
+      toast.error(err?.message || "Something went wrong");
     }
   };
 

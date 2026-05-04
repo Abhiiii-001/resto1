@@ -28,7 +28,10 @@ import { registerSocketHandlers } from "./socket";
 dotenv.config();
 const app = express();
 
-const allowedOrigins = ['http://localhost:3000', 'http://localhost:3001'];
+const allowedOrigins = [
+    process.env.CLIENT_URL || 'http://localhost:3000', 
+    process.env.RESTAURANT_CLIENT_URL || 'http://localhost:3001'
+];
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin)) {
