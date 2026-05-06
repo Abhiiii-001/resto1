@@ -21,7 +21,6 @@ import {
   useGetRestaurantDetailsQuery,
   useUpdateRestuarantDetailsMutation,
 } from '@/redux/api/restaurant';
-import Loader from '@/components/common/Loader';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -36,7 +35,7 @@ function Navbar() {
     (state) => state.auth,
   );
 
-  const { data: RestaurantDetails } = useGetRestaurantDetailsQuery(
+  const { data: restaurantDetails, isLoading: isLoadingRestaurantDetails } = useGetRestaurantDetailsQuery(
     restaurantId && token ? restaurantId : skipToken,
   );
 
@@ -44,23 +43,23 @@ function Navbar() {
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(
-    RestaurantDetails?.data?.isOpen || false,
+    restaurantDetails?.isOpen || false,
   );
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (RestaurantDetails?.data !== undefined) {
-      setIsOpen(RestaurantDetails.data.isOpen);
+    if (restaurantDetails) {
+      setIsOpen(restaurantDetails.isOpen);
     }
-  }, [RestaurantDetails]);
+  }, [restaurantDetails]);
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const [logout, { isLoading: logoutLoader }] = useLogoutMutation();
-  const [updateRestaurantStatus, { isLoading: updateRestaurantStatusLoader }] =
+  const [logout] = useLogoutMutation();
+  const [updateRestaurantStatus] =
     useUpdateRestuarantDetailsMutation();
 
   // Close dropdown on outside click
@@ -158,7 +157,7 @@ function Navbar() {
       )}
 
       {/* RIGHT */}
-      {mounted && (
+      {mounted && !isLoadingRestaurantDetails && (
         isAuthenticated ? (
           <div className="flex h-full items-center gap-3 py-2">
             {/* Open / Close Sign Board */}

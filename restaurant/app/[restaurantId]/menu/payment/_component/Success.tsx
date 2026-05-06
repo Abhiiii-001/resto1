@@ -112,7 +112,7 @@ function Success({ data, restaurantDetails }: SuccessProps) {
     initial={{opacity: 0, scale:0.8}}
     animate={{opacity:1, scale:1}}
     transition={{ease:"easeInOut", duration:0.4}}
-    className='bg-rGray absolute inset-0 flex items-center justify-center w-screen min-h-screen px-4 z-50'
+    className='bg-rGray absolute inset-0 flex items-center justify-center w-screen min-h-screen px-4 z-50 pt-20 pb-4'
     >
         <ReactConfetti
         width={width}
@@ -196,7 +196,7 @@ function Success({ data, restaurantDetails }: SuccessProps) {
                 fontFamily: 'sans-serif'
             }}
         >
-            <div className="p-8 border-4 border-gray-100">
+            <div className="p-8 border-4 border-gray-100 mt-4 mb-4">
                 {/* Header */}
                 <div className="text-center mb-6">
                     {restaurantDetails?.thumbnail && (
