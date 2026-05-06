@@ -25,8 +25,10 @@ import ShareModal from '@/app/_component/ShareLinkModal';
 import Loader from '@/components/common/Loader';
 import { toast } from 'react-toastify';
 import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
 export default function QRDisplayPage() {
+  const router = useRouter();
   const { restaurantId } = useAppSelector((state) => state.auth);
   const { data: restaurantData, isLoading } = useGetRestaurantDetailsQuery(
     restaurantId ?? skipToken,
@@ -91,14 +93,15 @@ export default function QRDisplayPage() {
               {/* Restaurant Header */}
               <div className="relative z-10 mb-6 text-center">
                 <div className="relative mx-auto mb-4 h-24 w-24">
-                  <Image
-                    src={restaurantData?.thumbnail || '/placeholder.svg'}
-                    alt={`${restaurantData?.name} Logo`}
-                    width={160}
-                    height={160}
-                    className="rounded-full object-cover"
-                  />
-                  <div className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-green-500 shadow-md border-2 border-white">
+                  <div className="h-full w-full rounded-full overflow-hidden border border-gray-100 shadow-sm relative">
+                    <Image
+                      src={restaurantData?.thumbnail || '/placeholder.svg'}
+                      alt={`${restaurantData?.name} Logo`}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-green-500 shadow-md border-2 border-white z-20">
                     <div className="h-2.5 w-2.5 rounded-full bg-white"></div>
                   </div>
                 </div>
@@ -135,14 +138,15 @@ export default function QRDisplayPage() {
                     bgColor="#ffffff"
                     fgColor="#1f2937"
                   />
-                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-border bg-white p-1.5 shadow-md">
-                    <Image
-                      src={restaurantData?.thumbnail || '/placeholder.svg'}
-                      alt={`${restaurantData?.name} Logo`}
-                      width={36}
-                      height={36}
-                      className="rounded-full object-cover"
-                    />
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-11 w-11 rounded-full border-2 border-border bg-white p-1 shadow-md">
+                    <div className="relative h-full w-full rounded-full overflow-hidden">
+                      <Image
+                        src={restaurantData?.thumbnail || '/placeholder.svg'}
+                        alt={`${restaurantData?.name} Logo`}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -264,7 +268,7 @@ export default function QRDisplayPage() {
               <Button
                 variant="outline"
                 className="w-full"
-                onClick={() => (window.location.href = `tel:${restaurantData?.number}`)}
+                onClick={() => router.push('/contact')}
               >
                 Contact Support
               </Button>

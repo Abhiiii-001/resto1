@@ -63,7 +63,7 @@ function Stats(props: Props) {
   const { data } = props;
   return (
     <div className="col-span-3 row-span-2 xl:row-span-2 2xl:col-span-2">
-      <div className="grid w-full grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="grid w-full grid-cols-1 md:grid-cols-2 gap-4 lg:grid-cols-4">
         <StatsCard
           title="Total Earning"
           content={data.totalEarning}

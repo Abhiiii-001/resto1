@@ -75,7 +75,7 @@ const Sidebar = () => {
   };
 
   const sidebarClassNames = cn(
-    'flex h-full w-full flex-col bg-white border-r border-border transition-all duration-300 overflow-hidden shadow-sm z-40',
+    'flex h-full w-full z-5 flex-col bg-white border-r border-border transition-all duration-300 overflow-hidden shadow-sm z-40',
     isSidebarCollapsed ? 'w-0 lg:w-[60px] -translate-x-full lg:translate-x-0' : 'w-64 translate-x-0',
   );
 
@@ -84,7 +84,7 @@ const Sidebar = () => {
       {/* Mobile Overlay */}
       {!isSidebarCollapsed && (
         <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden" 
+          className="fixed inset-0 bg-black/50 z-0 lg:hidden" 
           onClick={toggleSidebar}
         />
       )}
