@@ -20,7 +20,7 @@ export const subscriptionApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["Subscription", "Payments"],
+  tagTypes: ["Subscription", "Payments", "RestaurantDetails"],
   endpoints: (builder) => ({
     getPlans: builder.query({
       query: () => "/plans",
@@ -43,7 +43,7 @@ export const subscriptionApi = createApi({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["Subscription", "Payments"],
+      invalidatesTags: ["Subscription", "Payments", "RestaurantDetails"],
     }),
     getPaymentHistory: builder.query({
       query: () => "/history",
@@ -54,7 +54,7 @@ export const subscriptionApi = createApi({
         url: "/cancel",
         method: "POST",
       }),
-      invalidatesTags: ["Subscription"],
+      invalidatesTags: ["Subscription", "RestaurantDetails"],
     }),
   }),
 });
