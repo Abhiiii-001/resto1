@@ -12,8 +12,6 @@ import {
 } from "@/redux/api/subscription";
 import { toast } from "react-toastify";
 import { cn } from "@/lib/utils";
-import { PLAN_TYPE, SUBSCRIPTION_STATUS } from "@/constants/SubscriptionConstant";
-import { Plan, Payment } from "@/types/Subscription";
 
 // --- Plan Overview Component ---
 const PlanOverview = () => {
@@ -88,9 +86,6 @@ const PlanOverview = () => {
               </div>
             </div>
           </div>
-          <button className="px-6 py-3 rounded-xl bg-primary text-primary-foreground font-bold hover:opacity-90 transition-all flex items-center gap-2 text-sm shadow-lg shadow-primary/20">
-            Billing Settings <ArrowUpRight className="w-4 h-4" />
-          </button>
         </div>
       </div>
 
@@ -285,8 +280,21 @@ export default function SubscriptionPage() {
     <div className="space-y-10">
       {/* Page Header */}
       <div className="mb-6 flex flex-col items-start justify-between gap-1">
-        <div className="flex w-full items-center justify-between py-2">
-          <h2 className="text-3xl font-bold tracking-tight text-foreground">Subscription</h2>
+        <div className="flex w-full flex-col items-start md:flex-row gap-8 md:gap-4 md:items-center md:justify-between py-2">
+          <div className="flex flex-col gap-2">
+            <h2 className="text-3xl font-bold tracking-tight text-foreground">Subscription</h2>
+            <div className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
+            <Link href={'/'} className="transition-colors hover:text-foreground">Home</Link>
+            <span>&gt;</span>
+            <Link href={'/dashboard'} className="transition-colors hover:text-foreground">Dashboard</Link>
+            <span>&gt;</span>
+            <span className="text-foreground">Subscription</span>
+            </div>
+              
+          <p className="text-muted-foreground text-sm max-w-lg mt-1">
+            Manage your business tier, track service transactions, and view historical invoices.
+          </p>
+          </div>
           
           {/* Tab Control */}
           <div className="flex p-1 bg-white border border-border rounded-xl shadow-sm self-start">
@@ -311,18 +319,6 @@ export default function SubscriptionPage() {
               History
             </button>
           </div>
-        </div>
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
-            <Link href={'/'} className="transition-colors hover:text-foreground">Home</Link>
-            <span>/</span>
-            <Link href={'/dashboard'} className="transition-colors hover:text-foreground">Dashboard</Link>
-            <span>/</span>
-            <span className="text-foreground">Subscription</span>
-          </div>
-          <p className="text-muted-foreground text-sm max-w-lg mt-1">
-            Manage your business tier, track service transactions, and view historical invoices.
-          </p>
         </div>
       </div>
 

@@ -71,7 +71,7 @@ export default function QRDisplayPage() {
   if (isLoading) return <Loader />;
 
   return (
-    <div className="flex h-full w-full flex-col px-4 py-6 md:px-10 bg-gray-50/50 min-h-screen">
+    <div className="flex h-full w-full flex-col px-4 py-6 md:px-10 bg-gray-50/50 min-h-screen overflow-x-hidden">
       {/* Header */}
       <div className="mb-10">
         <h2 className="text-3xl font-bold tracking-tight text-foreground">QR Code</h2>
@@ -89,7 +89,7 @@ export default function QRDisplayPage() {
 
           {/* QR Code Display Card */}
           <div className="lg:col-span-4" ref={qrRef} style={{ fontFamily: 'sans-serif' }}>
-            <div className="relative overflow-hidden rounded-3xl border border-border bg-white p-8 shadow-lg">
+            <div className="relative overflow-hidden rounded-3xl border border-border bg-white p-2 lg:p-8 shadow-lg">
               {/* Restaurant Header */}
               <div className="relative z-10 mb-6 text-center">
                 <div className="relative mx-auto mb-4 h-24 w-24">
@@ -173,7 +173,7 @@ export default function QRDisplayPage() {
 
             {/* Action Buttons */}
             <div className="flex flex-col gap-3 mt-2">
-              <Button asChild size="lg" className="w-full gap-3 text-base h-14">
+              <Button asChild size="lg" className="w-full gap-3 text-base lg:h-14">
                 <a href={getQRCodeDataUrl()} target="_blank" rel="noopener noreferrer">
                   <Eye className="h-5 w-5" />
                   Live Preview
@@ -183,7 +183,7 @@ export default function QRDisplayPage() {
               <Button
                 variant="outline"
                 size="lg"
-                className="w-full gap-3 text-base h-14"
+                className="w-full gap-3 text-base lg:h-14"
                 onClick={() => setIsOpenShareModal(true)}
               >
                 <Share2 className="h-5 w-5" />
@@ -193,7 +193,7 @@ export default function QRDisplayPage() {
               <Button
                 variant="outline"
                 size="lg"
-                className="w-full gap-3 text-base h-14 border-primary/30 text-primary hover:bg-primary/5"
+                className="w-full gap-3 text-base lg:h-14 border-primary/30 text-primary hover:bg-primary/5"
                 disabled={isDownloading}
                 onClick={handleDownload}
               >
