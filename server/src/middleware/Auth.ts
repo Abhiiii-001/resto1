@@ -1,3 +1,4 @@
+/// <reference path="../types/express.d.ts" />
 import { Request , Response , NextFunction } from "express";
 import jwt from 'jsonwebtoken'
 
@@ -22,8 +23,7 @@ export const Auth = async(req: Request,res: Response,next: NextFunction): Promis
         const decoded =  jwt.verify(token,secret);
 
         //console.log(decoded);    //id email role restaurantId
-        //@ts-ignore
-        req.user = decoded;   
+        req.user = decoded as Express.Request['user'];   
         next();
     } catch (error) {
         //console.log(error);
@@ -34,9 +34,9 @@ export const Auth = async(req: Request,res: Response,next: NextFunction): Promis
 
 export const IsRestaurant = async(req: Request,res: Response,next: NextFunction):Promise<any> => {
     try {
+        if (!req.user?.email) return res.status(401).json({message: "Unauthorized Access!"});
         const user = await prisma.restaurant.findUnique({
-            // @ts-ignore
-            where:{email: req.user.email,isActive: true}      
+            where:{email: req.user.email, isActive: true}      
         });
         if(!user)
             return res.status(404).json({message: "Unautorized Access!"});
@@ -50,8 +50,8 @@ export const IsRestaurant = async(req: Request,res: Response,next: NextFunction)
 
 export const IsUser = async(req: Request,res: Response,next: NextFunction) => {
     try {
+        if (!req.user?.email) return res.status(401).json({message: "Unauthorized Access!"});
         const user = await prisma.user.findUnique({
-            //@ts-ignore
             where:{email: req.user.email}
         });
 
@@ -67,8 +67,8 @@ export const IsUser = async(req: Request,res: Response,next: NextFunction) => {
 
 export const IsAdmin = async(req: Request,res: Response,next: NextFunction) => {
     try {
+        if (!req.user?.email) return res.status(401).json({message: "Unauthorized Access!"});
         const user = await prisma.user.findUnique({
-            //@ts-ignore
             where:{email: req.user.email}
         });
 
@@ -84,10 +84,9 @@ export const IsAdmin = async(req: Request,res: Response,next: NextFunction) => {
 
 export const IsModifier = async(req: Request,res: Response,next: NextFunction):Promise<any> => {
     try {
-        //@ts-ignore
-        if(req.user.role == "User"){
+        if(req.user?.role == "User"){
+            if (!req.user?.email) return res.status(401).json({message: "Unauthorized Access!"});
             const user = await prisma.user.findUnique({
-                //@ts-ignore
                 where:{email: req.user.email}
             })
 

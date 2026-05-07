@@ -9,6 +9,8 @@ import uploadToCloudinary from "../utils/cloudinaryUploader"
 
 import dotenv from "dotenv"
 import { generateRandomNumber } from "../utils/randomCode"
+import { PLAN_TYPE, SUBSCRIPTION_STATUS } from "../constants";
+import crypto from "crypto";
 dotenv.config();
 
 //  ********************   INTERFACES   ************************
@@ -191,6 +193,26 @@ export const RestaurantSignup = async(req: Request,res: Response): Promise<any> 
     //console.log(restaurant)
     if(!restaurant)
         return res.status(500).json({success: false,message:"Something wrong while user creation!"});
+
+    // Create a trial subscription for the restaurant
+    const demoPlan = await prisma.plan.findFirst({
+       where: { type: PLAN_TYPE.DEMO }
+    });
+
+    if (demoPlan) {
+       const now = new Date();
+       const trialEndsAt = new Date(now.getTime() + demoPlan.trialDays * 24 * 60 * 60 * 1000);
+       await prisma.subscription.create({
+          data: {
+             restaurantId: restaurant.id,
+             planId: demoPlan.id,
+             status: SUBSCRIPTION_STATUS.ACTIVE,
+             currentPeriodStart: now,
+             currentPeriodEnd: trialEndsAt, // trial period
+             trialEndsAt: trialEndsAt,
+          }
+       });
+    }
 
       const verificationLink = `${process.env.CLIET_URL}/verify/${verificationToken}`;
       

@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { CreateProduct, CreateProductVaraint, DeleteProduct, DeleteProductVaraint, GetAllProducts, GetAllProductsByCategory, GetAllProductVaraint, GetProductByQuery, UpdateProduct, UpdateProductVaraint } from "../controllers/Product";
 import { Auth, IsModifier } from "../middleware/Auth";
+import { SubscriptionGuard } from "../middleware/SubscriptionGuard";
+import { checkLimit } from "../middleware/FeatureLimit";
 
 const router = Router();
 // Product variants routes
@@ -10,7 +12,7 @@ router.put("/variant/:id",Auth,IsModifier,UpdateProductVaraint);
 router.delete("/variant/:id",Auth,IsModifier,DeleteProductVaraint);
 
 //Product routes
-router.post('/',Auth,IsModifier,CreateProduct);
+router.post('/', Auth, IsModifier, SubscriptionGuard, checkLimit('products'), CreateProduct);
 router.put('/:productId',Auth,IsModifier,UpdateProduct);
 router.delete('/:productId',Auth,IsModifier,DeleteProduct);
 router.get("/category/:restaurantId",Auth,GetAllProductsByCategory)

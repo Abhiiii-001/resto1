@@ -13,6 +13,9 @@ async function main() {
   await prisma.productVariant.deleteMany();
   await prisma.product.deleteMany();
   await prisma.category.deleteMany();
+  await prisma.payment.deleteMany();
+  await prisma.subscription.deleteMany();
+  await prisma.plan.deleteMany();
   await prisma.user.deleteMany();
   await prisma.restaurant.deleteMany();
 
@@ -20,7 +23,55 @@ async function main() {
   const hashedResPassword = await bcrypt.hash('restro123', saltRounds);
   const hashedUserPassword = await bcrypt.hash('user123', saltRounds);
 
-  // 2. Create Restaurant with initial stats
+  // 2. Create Plans
+  const plans = await Promise.all([
+    prisma.plan.create({
+      data: {
+        name: 'Demo Plan',
+        type: 1, // DEMO
+        price: 0,
+        trialDays: 14,
+        maxProducts: 15,
+        maxCategories: 3,
+        maxEmployees: 1,
+        maxQRCodes: 1,
+        orderHistory: 7,
+        features: ['Basic Dashboard', 'QR Ordering', 'Digital Menu (Up to 15 products)', '7 Days Order History'],
+      }
+    }),
+    prisma.plan.create({
+      data: {
+        name: 'Pro Plan',
+        type: 2, // PRO
+        price: 999,
+        trialDays: 0,
+        maxProducts: 50,
+        maxCategories: 10,
+        maxEmployees: 3,
+        maxQRCodes: 5,
+        orderHistory: 30,
+        features: ['Advanced Analytics', 'Staff Management (3 Users)', 'QR Ordering (5 Tables)', '30 Days Order History'],
+      }
+    }),
+    prisma.plan.create({
+      data: {
+        name: 'Premium Plan',
+        type: 3, // PREMIUM
+        price: 1999,
+        trialDays: 0,
+        maxProducts: -1,
+        maxCategories: -1,
+        maxEmployees: -1,
+        maxQRCodes: -1,
+        orderHistory: -1,
+        features: ['Unlimited Products & Orders', 'Unlimited Staff & QR Codes', 'Priority Support', 'Custom Branding & Advanced Export'],
+      }
+    })
+  ]);
+
+  //console.log('✅ Plans created');
+
+  // 3. Create Restaurant with initial stats
   const restaurant = await prisma.restaurant.create({
     data: {
       name: 'The Royal Indian Bistro',
@@ -40,6 +91,19 @@ async function main() {
       totalOrders: 342,
       totalQRScan: 1250,
     },
+  });
+
+  // Create initial subscription for the seeded restaurant
+  const now = new Date();
+  await prisma.subscription.create({
+    data: {
+      restaurantId: restaurant.id,
+      planId: plans[0].id, // Demo Plan
+      status: 1, // ACTIVE
+      currentPeriodStart: now,
+      currentPeriodEnd: new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000),
+      trialEndsAt: new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000),
+    }
   });
 
   //console.log('✅ Restaurant & Stats created');
