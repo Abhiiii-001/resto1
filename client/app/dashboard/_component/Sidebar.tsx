@@ -13,6 +13,7 @@ import {
   User,
   ChevronLeft,
   ChevronRight,
+  CreditCard,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -20,6 +21,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { USER_ROLE_TYPE } from '@/constants/CommonConstant';
+import { useGetRestaurantDetailsQuery } from '@/redux/api/restaurant';
 
 interface SidebarLinkProps {
   href: string;
@@ -67,7 +69,14 @@ const Sidebar = () => {
   const isSidebarCollapsed = useAppSelector(
     (state) => state.global.isSidebarCollapsed,
   );
-  const {canManage, role} = useAppSelector((state)=>state.auth)
+  const {canManage, role, restaurantId} = useAppSelector((state)=>state.auth)
+
+  const { data: restaurantDetails } = useGetRestaurantDetailsQuery(restaurantId, { 
+    skip: !restaurantId 
+  });
+
+  const plan = restaurantDetails?.subscription?.plan;
+  const planType = plan?.type; // 1=DEMO, 2=PRO, 3=PREMIUM
 
 
   const toggleSidebar = () => {
@@ -130,6 +139,24 @@ const Sidebar = () => {
           label="QR Code"
           isCollapsed={isSidebarCollapsed}
         />
+        {canManage || role === USER_ROLE_TYPE.RESTAURANT && (
+          <div className="relative">
+            <SidebarLink
+              href="/dashboard/subscription"
+              icon={CreditCard}
+              label="Subscription"
+              isCollapsed={isSidebarCollapsed}
+            />
+            {planType && planType > 1 && !isSidebarCollapsed && (
+              <span className={cn(
+                "absolute right-3 top-1/2 -translate-y-1/2 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase",
+                planType === 3 ? "bg-amber-100 text-amber-700" : "bg-indigo-100 text-indigo-700"
+              )}>
+                {planType === 3 ? "PREMIUM" : "PRO"}
+              </span>
+            )}
+          </div>
+        )}
         <SidebarLink
           href="/dashboard/settings"
           icon={SlidersHorizontal}

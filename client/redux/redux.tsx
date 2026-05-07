@@ -10,6 +10,7 @@ import {
 import globalReducer from '@/redux/states/globalSlice';
 import authReducer from '@/redux/states/authSlice';
 import orderReducer from '@/redux/states/orderSlice';
+import modalReducer from '@/redux/states/modalSlice';
 import { authApi } from '@/redux/api/auth';
 import { restaurantApi } from './api/restaurant';
 import { categoryApi } from './api/category';
@@ -17,6 +18,7 @@ import { productApi } from './api/products';
 import { employeeApi } from './api/employee';
 import { orderApi } from './api/order';
 import { dashboardApi } from './api/dashboard';
+import { subscriptionApi } from './api/subscription';
 import { setupListeners } from '@reduxjs/toolkit/query';
 
 import {
@@ -61,6 +63,7 @@ const rootReducer = combineReducers({
   global: globalReducer,
   auth: authReducer,
   order: orderReducer,
+  modal: modalReducer,
   [authApi.reducerPath]: authApi.reducer,
   [restaurantApi.reducerPath]: restaurantApi.reducer,
   [categoryApi.reducerPath]: categoryApi.reducer,
@@ -68,6 +71,7 @@ const rootReducer = combineReducers({
   [employeeApi.reducerPath]: employeeApi.reducer,
   [orderApi.reducerPath]: orderApi.reducer,
   [dashboardApi.reducerPath]: dashboardApi.reducer,
+  [subscriptionApi.reducerPath]: subscriptionApi.reducer,
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
@@ -88,7 +92,8 @@ export const makeStore = () => {
         .concat(productApi.middleware)
         .concat(employeeApi.middleware)
         .concat(orderApi.middleware)
-        .concat(dashboardApi.middleware),
+        .concat(dashboardApi.middleware)
+        .concat(subscriptionApi.middleware),
   });
 };
 

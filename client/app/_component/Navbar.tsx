@@ -112,6 +112,39 @@ function Navbar() {
     : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=f97316&color=fff&size=80`;
 
   const isDashboard = pathname.includes('/dashboard');
+  const plan = restaurantDetails?.subscription?.plan;
+  const planType = plan?.type; // 1=DEMO, 2=PRO, 3=PREMIUM
+
+  const getPlanStyles = () => {
+    switch (planType) {
+      case 2: // PRO
+        return {
+          border: "border-indigo-500",
+          ring: "ring-indigo-500/20",
+          bg: "bg-indigo-100 text-indigo-700",
+          name: "Pro Plan",
+          gradient: "from-indigo-500 via-purple-500 to-pink-500"
+        };
+      case 3: // PREMIUM
+        return {
+          border: "border-amber-500",
+          ring: "ring-amber-500/20",
+          bg: "bg-amber-100 text-amber-700",
+          name: "Premium Plan",
+          gradient: "from-amber-400 via-orange-500 to-yellow-600"
+        };
+      default:
+        return {
+          border: "border-border",
+          ring: "ring-transparent",
+          bg: "bg-primary/10 text-primary",
+          name: "Free Plan",
+          gradient: "from-gray-400 to-gray-500"
+        };
+    }
+  };
+
+  const planStyles = getPlanStyles();
 
   return (
     <nav
@@ -191,7 +224,10 @@ function Navbar() {
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
-                <div className="h-8 w-8 shrink-0 overflow-hidden rounded-full border border-border">
+                <div className={cn(
+                  "h-8 w-8 shrink-0 overflow-hidden rounded-full border-2 transition-all duration-300",
+                  planType && planType > 1 ? planStyles.border : "border-border"
+                )}>
                   <img src={avatarUrl} alt={user?.name || 'User'} className="h-full w-full object-cover" />
                 </div>
                 <div className="hidden flex-col items-start sm:flex">
@@ -211,14 +247,22 @@ function Navbar() {
                 <div className="absolute right-0 top-[calc(100%+8px)] w-64 rounded-xl border border-border bg-white shadow-lg">
                   {/* Profile info */}
                   <div className="flex items-center gap-3 border-b border-border px-4 py-4">
-                    <div className="h-11 w-11 shrink-0 overflow-hidden rounded-full border-2 border-primary/20">
-                      <img src={avatarUrl} alt={user?.name || 'User'} className="h-full w-full object-cover" />
+                    <div className={cn(
+                      "relative h-11 w-11 shrink-0 overflow-hidden rounded-full p-0.5",
+                      planType && planType > 1 ? `bg-gradient-to-tr ${planStyles.gradient}` : "bg-border"
+                    )}>
+                      <div className="h-full w-full overflow-hidden rounded-full bg-white p-0.5">
+                        <img src={avatarUrl} alt={user?.name || 'User'} className="h-full w-full rounded-full object-cover" />
+                      </div>
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-semibold text-foreground">{user?.name || 'User'}</p>
                       <p className="truncate text-xs text-muted-foreground">{user?.email || ''}</p>
-                      <span className="mt-1 inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
-                        {user?.role || 'Restaurant'}
+                      <span className={cn(
+                        "mt-1 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+                        planStyles.bg
+                      )}>
+                        {planStyles.name}
                       </span>
                     </div>
                   </div>

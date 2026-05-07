@@ -33,6 +33,7 @@ enum PaymentOption {
   Cash
 }
 
+
 // MODELS
 
 model Restaurant {
@@ -58,6 +59,8 @@ model Restaurant {
   categories        Category[]
   orders            Order[]
   saleSummary       SaleSummary[]
+  subscription      Subscription?
+  payments          Payment[]
 }
 
 model User {
@@ -123,6 +126,7 @@ model Order {
   createdAt     String
   restaurantId  String
   restaurant    Restaurant    @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  payments      Payment[]
 }
 
 model subOrder {
@@ -147,12 +151,57 @@ model SaleSummary {
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
 }
 
-// model OrderSummary {
-//   id           String     @id @default(uuid())
-//   orders       Int
-//   increasedBy  Decimal
-//   duration     Duration
-//   createdAt    String
-//   restaurantId String
-//   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
-// }
+model Plan {
+  id            String         @id @default(uuid())
+  name          String         @unique
+  type          Int                            // 1=DEMO, 2=PRO, 3=PREMIUM
+  price         Int            @default(0)
+  trialDays     Int            @default(0)
+  maxProducts   Int            @default(-1)
+  maxCategories Int            @default(-1)
+  maxEmployees  Int            @default(-1)
+  maxQRCodes    Int            @default(-1)
+  orderHistory  Int            @default(-1)
+  features      String[]
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id                 String             @id @default(uuid())
+  restaurantId       String             @unique
+  planId             String
+  status             Int                @default(1)    // 1=ACTIVE, 2=EXPIRED, 3=CANCELLED, 4=PAST_DUE
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  trialEndsAt        DateTime?
+  cancelledAt        DateTime?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  restaurant         Restaurant         @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  plan               Plan               @relation(fields: [planId], references: [id])
+  payments           Payment[]
+}
+
+model Payment {
+  id               String        @id @default(uuid())
+  amount           Int
+  currency         String        @default("INR")
+  paymentType      Int                                  // 1=SUBSCRIPTION, 2=ORDER
+  status           Int           @default(1)             // 1=PENDING, 2=CAPTURED, 3=FAILED, 4=REFUNDED
+  gateway          String        @default("phonepe")   // "phonepe", "razorpay", "stripe" etc.
+  gatewayPaymentId String?                              // Gateway transaction ID
+  gatewayOrderId   String?                              // Gateway order/merchant txn ID
+  invoiceUrl       String?
+  metadata         Json?                                // Any extra gateway-specific data
+  subscriptionId   String?                              // Linked if paymentType = SUBSCRIPTION
+  orderId          String?                              // Linked if paymentType = ORDER
+  restaurantId     String
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  subscription     Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+  order            Order?        @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  restaurant       Restaurant    @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+}

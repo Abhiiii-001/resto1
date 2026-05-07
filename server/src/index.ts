@@ -20,6 +20,7 @@ import cloudinaryConnect from "./config/cloudinary";
 import RestaurantRouter from "./routes/Restaurant"
 import OrderRouter from "./routes/Order"
 import DashboardRouter from './routes/Dashboard'
+import SubscriptionRouter from './routes/Subscription'
 
 import { registerSocketHandlers } from "./socket";
 
@@ -89,6 +90,7 @@ app.use("/api/restaurant",RestaurantRouter);
 app.use("/api/order",OrderRouter);
 app.use("/api/user",EmployeeRouter);
 app.use("/api/dashboard",DashboardRouter);
+app.use('/api/subscription', SubscriptionRouter)
 
 app.get("/",(req: Request,res: Response) => {
       res.status(200).json({
@@ -101,7 +103,7 @@ app.get("/",(req: Request,res: Response) => {
 //    SERVER
 const PORT = process.env.PORT || 8000
 server.listen(PORT,() => {
-    //console.log(`Server start running on port ${PORT}`)
+    console.log(`Server start running on port ${PORT}`)
 })
 
 export default app;

@@ -28,6 +28,13 @@ export const GetRestaurantDetails = async(req: Request, res: Response):Promise<a
         const restaurant = await prisma.restaurant.findUnique({
             where:{
                 id: restaurantId
+            },
+            include: {
+                subscription: {
+                    include: {
+                        plan: true
+                    }
+                }
             }
         });
         if(!restaurant){
