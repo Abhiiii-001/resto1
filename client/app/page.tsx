@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { 
@@ -18,13 +18,20 @@ import {
   Timer,
   ShoppingBag,
   UserCheck,
-  Building
+  Building,
+  Shield,
+  Crown,
+  Zap,
+  Loader2
 } from 'lucide-react';
 import Footer from './_component/Footer';
 import { Button } from './_component/ui/button';
 
 import statsData from '@/data/stats.json';
 import landingData from '@/data/landing.json';
+import DemoModal from './_component/DemoModal';
+import { useGetPlansQuery } from '@/redux/api/subscription';
+import { useAppSelector } from '@/redux/redux';
 
 // --- Components ---
 
@@ -89,9 +96,11 @@ const FAQItem = ({ question, answer }: { question: string; answer: string }) => 
 
 // --- Sections ---
 
-const Hero = () => {
+const Hero = ({ onOpenDemo }: { onOpenDemo: () => void }) => {
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
   return (
-    <section className="relative pt-32 pb-20 overflow-hidden bg-white">
+    <section className="relative pt-16 pb-20 overflow-hidden bg-white">
       {/* Background Decor */}
       <div className="absolute top-0 right-0 -translate-y-1/4 translate-x-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl opacity-50" />
       <div className="absolute bottom-0 left-0 translate-y-1/4 -translate-x-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-3xl opacity-50" />
@@ -114,15 +123,26 @@ const Hero = () => {
               {landingData.hero.subtitle}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/signup">
-                <Button size="lg" className="h-14 px-10 text-lg font-bold group bg-primary hover:bg-primary/90">
-                  Start for Free
-                  <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
-                </Button>
-              </Link>
-              <Button size="lg" variant="outline" className="h-14 px-10 text-lg font-bold">
-                See How It Works
+              {isAuthenticated ? (
+                <Link href="/dashboard">
+                  <Button size="lg" className="h-14 px-10 text-lg font-bold group bg-primary hover:bg-primary/90">
+                    Go to Dashboard
+                    <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                </Link>
+              ) : (
+                <Link href="/signup">
+                  <Button size="lg" className="h-14 px-10 text-lg font-bold group bg-primary hover:bg-primary/90">
+                    Start for Free
+                    <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                </Link>
+              )}
+              {!isAuthenticated && (
+              <Button size="lg" variant="outline" className="h-14 px-10 text-lg font-bold" onClick={onOpenDemo}>
+                See a Demo
               </Button>
+              )}
             </div>
             <div className="mt-10 flex items-center gap-4 text-sm text-muted-foreground">
               <div className="flex -space-x-2">
@@ -275,68 +295,118 @@ const FeatureDeepDive = () => (
   </section>
 );
 
-const Pricing = () => (
-  <section id="pricing" className="py-24 bg-gray-50/50">
-    <div className="container mx-auto px-6">
-      <SectionTitle 
-        title="Simple, Transparent Pricing" 
-        subtitle="We're currently in early access. Get started for free today!"
-      />
-      <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-        {/* Basic */}
-        <div className="p-8 rounded-2xl border border-border bg-white flex flex-col">
-          <h3 className="text-xl font-bold mb-2">Starter</h3>
-          <p className="text-muted-foreground mb-6 text-sm">Perfect for small outlets</p>
-          <div className="mb-8">
-            <span className="text-4xl font-bold">Free</span>
-          </div>
-          <ul className="space-y-4 mb-10 flex-1">
-            {['QR Menu', 'No-Login Ordering', 'Up to 50 items', 'Daily Sales Report'].map(item => (
-              <li key={item} className="flex items-center gap-3 text-sm">
-                <CheckCircle2 className="w-4 h-4 text-green-500" />
-                {item}
-              </li>
-            ))}
-          </ul>
-          <Button variant="outline" className="w-full" asChild><Link href="/signup">Get Started</Link></Button>
-        </div>
+const PricingSection = () => {
+  const { data: plansData, isLoading: isLoadingPlans, isError } = useGetPlansQuery({});
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
 
-        {/* Pro */}
-        <div className="p-8 rounded-2xl border-2 border-primary bg-white shadow-xl flex flex-col relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-12 bg-primary/10 rotate-45 translate-x-12 -translate-y-12 w-32 h-32" />
-          <h3 className="text-xl font-bold mb-2">Pro</h3>
-          <p className="text-muted-foreground mb-6 text-sm">Coming Soon</p>
-          <div className="mb-8">
-            <span className="text-4xl font-bold text-muted-foreground">--</span>
-          </div>
-          <div className="flex-1 flex flex-col items-center justify-center text-center p-4">
-            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-              <Clock className="w-6 h-6 text-primary" />
-            </div>
-            <p className="font-bold text-primary uppercase tracking-widest text-xs">Launching Soon</p>
-            <p className="text-xs text-muted-foreground mt-2">Advanced analytics, priority support, and multi-staff access.</p>
-          </div>
-        </div>
+  if (isLoadingPlans) {
+    return (
+      <section id="pricing" className="py-24 bg-gray-50/50 flex flex-col items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <p className="text-sm text-muted-foreground mt-2 font-medium">Loading pricing options...</p>
+      </section>
+    );
+  }
 
-        {/* Enterprise */}
-        <div className="p-8 rounded-2xl border border-border bg-white flex flex-col">
-          <h3 className="text-xl font-bold mb-2">Chains</h3>
-          <p className="text-muted-foreground mb-6 text-sm">Coming Soon</p>
-          <div className="mb-8">
-            <span className="text-4xl font-bold text-muted-foreground">--</span>
-          </div>
-          <div className="flex-1 flex flex-col items-center justify-center text-center p-4">
-            <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-              <Building className="w-6 h-6 text-gray-400" />
-            </div>
-            <p className="font-bold text-gray-400 uppercase tracking-widest text-xs">Under Development</p>
-            <p className="text-xs text-muted-foreground mt-2">Centralized management for multiple locations and franchises.</p>
-          </div>
+  const plans = plansData?.plans || [];
+
+  // Hide completely if no plans are available
+  if (isError || plans.length === 0) {
+    return null;
+  }
+
+  return (
+    <section id="pricing" className="py-24 bg-gray-50/50">
+      <div className="container mx-auto px-6">
+        <SectionTitle 
+          title="Simple, Transparent Pricing" 
+          subtitle="Empower your outlet with robust operational controls."
+        />
+        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          {plans.map((plan: any) => {
+            const isPro = plan.type === 2;
+            const isPremium = plan.type === 3;
+
+            return (
+              <div 
+                key={plan.id}
+                className={`p-8 rounded-3xl bg-white border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col relative ${
+                  isPro ? 'border-2 border-primary shadow-lg shadow-primary/5' : 'border-border shadow-sm'
+                }`}
+              >
+                {isPro && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full shadow-md">
+                    Most Popular
+                  </div>
+                )}
+
+                <div className="mb-6 flex justify-between items-start">
+                  <div className={`p-3 rounded-2xl ${
+                    plan.type === 1 ? 'bg-blue-50 text-blue-600' : plan.type === 2 ? 'bg-primary/10 text-primary' : 'bg-amber-50 text-amber-600'
+                  }`}>
+                    {plan.type === 1 && <Zap className="w-8 h-8" />}
+                    {plan.type === 2 && <Shield className="w-8 h-8" />}
+                    {plan.type === 3 && <Crown className="w-8 h-8" />}
+                  </div>
+                </div>
+
+                <h3 className="text-2xl font-bold text-foreground mb-1">{plan.name}</h3>
+                <p className="text-xs text-muted-foreground mb-6">
+                  {plan.type === 1 ? 'Perfect for trying out our features' : 
+                   plan.type === 2 ? 'Ideal for growing restaurants' : 
+                   'Unleash the full power of your business'}
+                </p>
+
+                <div className="flex items-baseline gap-1 mb-8">
+                  <span className="text-4xl font-black text-foreground">
+                    {plan.price === 0 ? 'Free' : `₹${plan.price}`}
+                  </span>
+                  {plan.price > 0 && <span className="text-muted-foreground font-medium text-sm">/ month</span>}
+                </div>
+
+                {/* Features List */}
+                <ul className="space-y-4 mb-8 flex-grow">
+                  {plan.features?.map((feat: string, index: number) => (
+                    <li key={index} className="flex items-start gap-3 text-foreground/80 font-medium text-sm">
+                      <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                      <span>{feat}</span>
+                    </li>
+                  ))}
+                  
+                  {/* Dynamic Capacity Indicators */}
+                  <li className="flex items-start gap-3 text-slate-500 text-xs mt-4 pt-4 border-t border-slate-100">
+                    <span>Products: {plan.maxProducts === -1 ? 'Unlimited' : plan.maxProducts}</span>
+                  </li>
+                  <li className="flex items-start gap-3 text-slate-500 text-xs">
+                    <span>Staff: {plan.maxEmployees === -1 ? 'Unlimited' : `${plan.maxEmployees} users`}</span>
+                  </li>
+                  <li className="flex items-start gap-3 text-slate-500 text-xs">
+                    <span>Tables/QRs: {plan.maxQRCodes === -1 ? 'Unlimited' : `${plan.maxQRCodes} tables`}</span>
+                  </li>
+                </ul>
+
+                {/* Action button */}
+                {isAuthenticated ? (
+                  <Button className="w-full mt-auto" asChild>
+                    <Link href="/dashboard/subscription">
+                      {plan.price === 0 ? 'Activate Plan' : 'Upgrade Plan'}
+                    </Link>
+                  </Button>
+                ) : (
+                  <Button className="w-full mt-auto bg-foreground text-background hover:bg-foreground/90" asChild>
+                    <Link href="/signup">
+                      Get Started
+                    </Link>
+                  </Button>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 const Testimonials = () => (
   <section className="py-24 bg-white overflow-hidden">
@@ -419,17 +489,25 @@ const CTA = () => (
 // --- Main Page ---
 
 export default function Home() {
+  const [isDemoModalOpen, setIsDemoModalOpen] = React.useState(false);
+
   return (
     <div className="min-h-screen bg-white">
-      <Hero />
+      <Hero onOpenDemo={() => setIsDemoModalOpen(true)} />
       <TrustBar />
       <ProblemSolution />
       <FeatureDeepDive />
-      <Pricing />
+      <PricingSection />
       <Testimonials />
       <FAQ />
       <CTA />
       <Footer />
+
+      {/* Interactive role-based demo selection modal */}
+      <DemoModal 
+        isOpen={isDemoModalOpen} 
+        onClose={() => setIsDemoModalOpen(false)} 
+      />
     </div>
   );
 }

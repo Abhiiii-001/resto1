@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export type ModalType = "UPGRADE_PLAN" | "PAYMENT_CONFIRMATION" | "DELETE_CONFIRMATION";
+export type ModalType = "UPGRADE_PLAN" | "PAYMENT_CONFIRMATION" | "DELETE_CONFIRMATION" | "DEMO_LOGIN";
 
 interface ModalState {
   isOpen: boolean;
