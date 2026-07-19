@@ -169,7 +169,9 @@ function SignupForm1({ setSignupData, setStep, signupData }: any) {
           )}
 
           {errors.password && (
-            <p className="text-xs text-destructive">{errors.password.message}</p>
+            <p className="text-xs text-destructive">
+              {errors.password.message}
+            </p>
           )}
         </div>
 
@@ -215,7 +217,9 @@ function SignupForm1({ setSignupData, setStep, signupData }: any) {
             </button>
           </div>
           {errors.confirmPassword && (
-            <p className="text-xs text-destructive">{errors.confirmPassword.message}</p>
+            <p className="text-xs text-destructive">
+              {errors.confirmPassword.message}
+            </p>
           )}
         </div>
 

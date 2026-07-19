@@ -18,7 +18,7 @@ function Signup() {
           <div className="mb-2 flex items-center justify-center gap-2">
             <ChefHat className="h-6 w-6 text-primary" />
             <span className="text-2xl font-bold tracking-tight text-foreground">
-             Restro
+              Restro
             </span>
           </div>
           <h2 className="text-2xl font-bold text-foreground">
@@ -31,8 +31,8 @@ function Signup() {
           <div className="mt-6 flex w-full items-center justify-center">
             <div
               className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-2 text-sm font-bold transition-all ${
-                step === 1 
-                  ? 'border-primary bg-primary text-white' 
+                step === 1
+                  ? 'border-primary bg-primary text-white'
                   : 'border-primary bg-primary text-white shadow-sm'
               }`}
               onClick={() => setStep(1)}
@@ -46,8 +46,8 @@ function Signup() {
             ></div>
             <div
               className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-2 text-sm font-bold transition-all ${
-                step === 2 
-                  ? 'border-primary bg-primary text-white shadow-sm' 
+                step === 2
+                  ? 'border-primary bg-primary text-white shadow-sm'
                   : 'border-border bg-white text-muted-foreground hover:border-muted-foreground/30'
               }`}
             >

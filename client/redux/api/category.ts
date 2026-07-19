@@ -29,7 +29,8 @@ export const categoryApi = createApi({
     getAllCategories: build.query<Category[], void>({
       query: () => '/',
       providesTags: ['GetAllCategories'],
-      transformResponse: (response: {categories: Category[]}) => response.categories
+      transformResponse: (response: { categories: Category[] }) =>
+        response.categories,
     }),
     addCategory: build.mutation<ApiResponse<string>, AddCategoryInterface>({
       query: (data) => ({
@@ -39,7 +40,10 @@ export const categoryApi = createApi({
       }),
       invalidatesTags: ['GetAllCategories'],
     }),
-    updateCategory: build.mutation<ApiResponse<string>, { id: string; data: FormData }>({
+    updateCategory: build.mutation<
+      ApiResponse<string>,
+      { id: string; data: FormData }
+    >({
       query: ({ id, data }) => ({
         url: `/${id}`,
         method: 'PUT',

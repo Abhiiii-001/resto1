@@ -10,7 +10,7 @@ import {
   Clock,
   UtensilsCrossed,
   ShoppingBag,
-  FileText
+  FileText,
 } from 'lucide-react';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Order } from '@/types/order';
 
 type Props = {
-  data: Order
+  data: Order;
 };
 
 function OrderCard({ data }: Props) {
@@ -66,9 +66,9 @@ function OrderCard({ data }: Props) {
             <span className="text-xl font-bold tracking-tight text-foreground">
               #{data.orderCode}
             </span>
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               className={`h-6 w-6 rounded-md ${isCopied ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
               onClick={CopyHandler}
               title="Copy Order ID"
@@ -76,9 +76,9 @@ function OrderCard({ data }: Props) {
               {isCopied ? <Check size={14} /> : <CopyIcon size={14} />}
             </Button>
             {data.invoice && (
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 className="h-6 w-6 rounded-md text-muted-foreground hover:text-primary"
                 onClick={() => window.open(data.invoice, '_blank')}
                 title="View Invoice"
@@ -89,7 +89,9 @@ function OrderCard({ data }: Props) {
           </div>
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <Clock size={12} />
-            <span>{time} &middot; {day}</span>
+            <span>
+              {time} &middot; {day}
+            </span>
           </div>
         </div>
 
@@ -107,7 +109,11 @@ function OrderCard({ data }: Props) {
           >
             {data.status}
           </span>
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-muted-foreground hover:text-foreground"
+          >
             <EllipsisVertical size={16} />
           </Button>
         </div>
@@ -120,10 +126,18 @@ function OrderCard({ data }: Props) {
             {data.name ? data.name : 'Anonymous Customer'}
           </h3>
           <div className="mt-2 flex flex-wrap gap-2">
-            <span className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium ${
-              data.isPack ? 'bg-blue-50 text-blue-700' : 'bg-purple-50 text-purple-700'
-            }`}>
-              {data.isPack ? <ShoppingBag size={12}/> : <UtensilsCrossed size={12}/>}
+            <span
+              className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium ${
+                data.isPack
+                  ? 'bg-blue-50 text-blue-700'
+                  : 'bg-purple-50 text-purple-700'
+              }`}
+            >
+              {data.isPack ? (
+                <ShoppingBag size={12} />
+              ) : (
+                <UtensilsCrossed size={12} />
+              )}
               {data.isPack ? 'Take Out' : 'Eat In'}
             </span>
             <span className="inline-flex items-center gap-1 rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700">
@@ -135,9 +149,13 @@ function OrderCard({ data }: Props) {
         {/* Suborders */}
         <div className="flex flex-col gap-2 mt-2">
           {data.orders?.length > 0 ? (
-            data.orders?.map((ord: any) => <SubOrderCard data={ord} key={ord.id} />)
+            data.orders?.map((ord: any) => (
+              <SubOrderCard data={ord} key={ord.id} />
+            ))
           ) : (
-            <div className="text-sm text-muted-foreground italic">No items found</div>
+            <div className="text-sm text-muted-foreground italic">
+              No items found
+            </div>
           )}
         </div>
       </div>
@@ -145,10 +163,12 @@ function OrderCard({ data }: Props) {
       {/* Footer - Total and Actions */}
       <div className="mt-auto flex items-center justify-between border-t border-gray-100 bg-gray-50/50 p-5 rounded-b-xl">
         <div className="flex flex-col">
-          <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Total Amount</span>
+          <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            Total Amount
+          </span>
           <span className="text-xl font-bold text-primary">₹{data.amount}</span>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
@@ -160,7 +180,7 @@ function OrderCard({ data }: Props) {
           >
             <X size={18} />
           </Button>
-          
+
           {data.status == 'Pending' ? (
             <Button
               variant="default"
@@ -206,8 +226,12 @@ const SubOrderCard = ({ data }: any) => {
           {data.quantity}x
         </div>
         <div className="flex flex-col">
-          <span className="text-sm font-semibold text-gray-900 leading-tight">{data.name}</span>
-          <span className="text-xs text-muted-foreground mt-0.5">{data.variant}</span>
+          <span className="text-sm font-semibold text-gray-900 leading-tight">
+            {data.name}
+          </span>
+          <span className="text-xs text-muted-foreground mt-0.5">
+            {data.variant}
+          </span>
         </div>
       </div>
       <div className="font-semibold text-gray-700">

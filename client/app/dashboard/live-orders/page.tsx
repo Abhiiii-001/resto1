@@ -16,10 +16,13 @@ function LiveOrders() {
   const [query, setQuery] = useState('');
   const [filteredOrders, setFilteredOrders] = useState(orders);
 
-  const { data: restaurantDetails } = useGetRestaurantDetailsQuery(restaurantId, { 
-    skip: !restaurantId 
-  });
-  
+  const { data: restaurantDetails } = useGetRestaurantDetailsQuery(
+    restaurantId,
+    {
+      skip: !restaurantId,
+    },
+  );
+
   const isShopOpen = restaurantDetails?.isOpen ?? false;
 
   useGetAllOrdersQuery(restaurantId && token ? restaurantId : skipToken);
@@ -31,7 +34,9 @@ function LiveOrders() {
   useEffect(() => {
     const data = orders.filter(
       (ord: any) =>
-        !query || query === '' || ord.orderCode.toLowerCase().includes(query.toLowerCase()),
+        !query ||
+        query === '' ||
+        ord.orderCode.toLowerCase().includes(query.toLowerCase()),
     );
     setFilteredOrders(data);
   }, [query, orders]);
@@ -42,26 +47,45 @@ function LiveOrders() {
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-3xl font-bold tracking-tight text-foreground">Live Orders</h2>
+            <h2 className="text-3xl font-bold tracking-tight text-foreground">
+              Live Orders
+            </h2>
             <div className="flex items-center gap-2">
               <div className="relative flex h-3 w-3">
-                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${socketConnected && isShopOpen ? 'bg-green-500' : 'bg-red-500'}`}></span>
-                <span className={`relative inline-flex rounded-full h-3 w-3 ${socketConnected && isShopOpen ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                <span
+                  className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${socketConnected && isShopOpen ? 'bg-green-500' : 'bg-red-500'}`}
+                ></span>
+                <span
+                  className={`relative inline-flex rounded-full h-3 w-3 ${socketConnected && isShopOpen ? 'bg-green-500' : 'bg-red-500'}`}
+                ></span>
               </div>
-              <span className={`text-xs font-medium uppercase tracking-wider ${socketConnected && isShopOpen ? 'text-green-600' : 'text-red-600'}`}>
-                {!isShopOpen ? 'Shop Closed' : socketConnected ? 'Live' : 'Offline'}
+              <span
+                className={`text-xs font-medium uppercase tracking-wider ${socketConnected && isShopOpen ? 'text-green-600' : 'text-red-600'}`}
+              >
+                {!isShopOpen
+                  ? 'Shop Closed'
+                  : socketConnected
+                    ? 'Live'
+                    : 'Offline'}
               </span>
             </div>
           </div>
           <div className="mt-2 flex items-center text-sm font-medium text-muted-foreground">
-            <Link href="/" className="transition-colors hover:text-foreground">Home</Link>
+            <Link href="/" className="transition-colors hover:text-foreground">
+              Home
+            </Link>
             <ChevronRight className="mx-1 h-4 w-4" />
-            <Link href="/dashboard" className="transition-colors hover:text-foreground">Dashboard</Link>
+            <Link
+              href="/dashboard"
+              className="transition-colors hover:text-foreground"
+            >
+              Dashboard
+            </Link>
             <ChevronRight className="mx-1 h-4 w-4" />
             <span className="text-foreground">Live Orders</span>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-4">
           <SearchForm query={query} setQuery={setQuery} />
         </div>
@@ -77,8 +101,12 @@ function LiveOrders() {
             <div className="rounded-full bg-gray-50 p-4 text-muted-foreground">
               <Activity className="h-8 w-8 opacity-50" />
             </div>
-            <p className="text-lg font-medium text-muted-foreground">No active live orders</p>
-            <p className="text-sm text-gray-400">New incoming orders will appear here instantly.</p>
+            <p className="text-lg font-medium text-muted-foreground">
+              No active live orders
+            </p>
+            <p className="text-sm text-gray-400">
+              New incoming orders will appear here instantly.
+            </p>
           </div>
         )}
       </div>

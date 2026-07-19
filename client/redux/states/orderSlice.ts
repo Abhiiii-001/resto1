@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-  import { Order } from '@/types/order';
+import { Order } from '@/types/order';
 
 const initialState = {
   count: 0,

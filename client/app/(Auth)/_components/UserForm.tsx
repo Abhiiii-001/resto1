@@ -1,9 +1,7 @@
 import { UserSignupInterface } from '@/app/Interfaces/Auth';
 import Loader from '@/components/common/Loader';
 import { UserSignupPayload, useUserSignupMutation } from '@/redux/api/auth';
-import {
-  useGetAllRestaurantIdQuery,
-} from '@/redux/api/restaurant';
+import { useGetAllRestaurantIdQuery } from '@/redux/api/restaurant';
 import { Phone, Store, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
@@ -20,7 +18,11 @@ type Props = {
 function UserForm({ prevFormData }: Props) {
   const router = useRouter();
 
-  const { data: restaurants, isLoading, isSuccess } = useGetAllRestaurantIdQuery();
+  const {
+    data: restaurants,
+    isLoading,
+    isSuccess,
+  } = useGetAllRestaurantIdQuery();
   const [signup, { isLoading: userSignupLoader, isSuccess: isSucc }] =
     useUserSignupMutation();
 
@@ -56,14 +58,10 @@ function UserForm({ prevFormData }: Props) {
     toast.dismiss(toastId);
   };
 
-
   return (
     <form className="w-full space-y-4" onSubmit={handleSubmit(onSubmitHandler)}>
       <div className="space-y-1.5">
-        <label
-          htmlFor="name"
-          className="text-sm font-medium text-foreground"
-        >
+        <label htmlFor="name" className="text-sm font-medium text-foreground">
           Name
           <sup className="ml-0.5 text-destructive">*</sup>
         </label>
@@ -91,10 +89,7 @@ function UserForm({ prevFormData }: Props) {
       </div>
 
       <div className="space-y-1.5">
-        <label
-          htmlFor="number"
-          className="text-sm font-medium text-foreground"
-        >
+        <label htmlFor="number" className="text-sm font-medium text-foreground">
           Number
           <sup className="ml-0.5 text-destructive">*</sup>
         </label>
@@ -159,13 +154,25 @@ function UserForm({ prevFormData }: Props) {
               })}
           </select>
           <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-            <svg className="h-4 w-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+            <svg
+              className="h-4 w-4 text-muted-foreground"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M19 9l-7 7-7-7"
+              />
             </svg>
           </div>
         </div>
         {errors.restaurantId && (
-          <p className="text-xs text-destructive">{errors.restaurantId.message}</p>
+          <p className="text-xs text-destructive">
+            {errors.restaurantId.message}
+          </p>
         )}
       </div>
 

@@ -4,21 +4,21 @@ import { useAppDispatch, useAppSelector } from '@/redux/redux';
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Camera, 
-  BadgeCheck, 
-  User, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Lock, 
+import {
+  Camera,
+  BadgeCheck,
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Lock,
   AlertTriangle,
   Edit2,
   X,
   Save,
   Trash2,
   Building2,
-  FileText
+  FileText,
 } from 'lucide-react';
 
 import { useChangePasswordMutation } from '@/redux/api/auth';
@@ -180,19 +180,26 @@ export default function EmployeeSettings() {
 
   return (
     <div className="min-h-screen bg-gray-50/50 px-4 py-6 md:px-10">
-      <motion.div 
+      <motion.div
         className="mx-auto max-w-4xl"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
         <motion.div variants={itemVariants} className="mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">Account Settings</h1>
-          <p className="mt-2 text-gray-500">Manage your profile, preferences, and security.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+            Account Settings
+          </h1>
+          <p className="mt-2 text-gray-500">
+            Manage your profile, preferences, and security.
+          </p>
         </motion.div>
 
         {/* Profile Header Card */}
-        <motion.div variants={itemVariants} className="mb-6 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all hover:shadow-md">
+        <motion.div
+          variants={itemVariants}
+          className="mb-6 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all hover:shadow-md"
+        >
           <div className="relative h-32 bg-gradient-to-r from-primary to-orange-400 sm:h-40">
             {/* Background Cover */}
           </div>
@@ -207,9 +214,17 @@ export default function EmployeeSettings() {
                     onChange={handleImageChange}
                     disabled={role !== USER_ROLE_TYPE.RESTAURANT || !isEditing}
                   />
-                  <div className={`relative h-32 w-32 sm:h-40 sm:w-40 overflow-hidden rounded-full border-4 border-white bg-white shadow-lg ${isEditing && role === USER_ROLE_TYPE.RESTAURANT ? 'transition-transform duration-300 group-hover:scale-105' : ''}`}>
+                  <div
+                    className={`relative h-32 w-32 sm:h-40 sm:w-40 overflow-hidden rounded-full border-4 border-white bg-white shadow-lg ${isEditing && role === USER_ROLE_TYPE.RESTAURANT ? 'transition-transform duration-300 group-hover:scale-105' : ''}`}
+                  >
                     {role === USER_ROLE_TYPE.RESTAURANT && profileImage ? (
-                      <Image src={profileImage} alt="Profile" width={160} height={160} className="h-full w-full object-cover" />
+                      <Image
+                        src={profileImage}
+                        alt="Profile"
+                        width={160}
+                        height={160}
+                        className="h-full w-full object-cover"
+                      />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center bg-gray-100 text-gray-400">
                         <User size={48} />
@@ -259,31 +274,53 @@ export default function EmployeeSettings() {
 
         {/* Settings Sections */}
         <div className="space-y-6">
-          
           {/* Information Section */}
-          <motion.div variants={itemVariants} className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all hover:shadow-md">
+          <motion.div
+            variants={itemVariants}
+            className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all hover:shadow-md"
+          >
             <button
               onClick={() => toggleExpand('info')}
               className="flex w-full items-center justify-between p-6 text-left"
             >
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
-                  {role === USER_ROLE_TYPE.RESTAURANT ? <Building2 size={20} /> : <User size={20} />}
+                  {role === USER_ROLE_TYPE.RESTAURANT ? (
+                    <Building2 size={20} />
+                  ) : (
+                    <User size={20} />
+                  )}
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900">
-                    {role === USER_ROLE_TYPE.RESTAURANT ? 'Restaurant Information' : 'Personal Information'}
+                    {role === USER_ROLE_TYPE.RESTAURANT
+                      ? 'Restaurant Information'
+                      : 'Personal Information'}
                   </h3>
-                  <p className="text-sm text-gray-500">Update your basic profile details.</p>
+                  <p className="text-sm text-gray-500">
+                    Update your basic profile details.
+                  </p>
                 </div>
               </div>
-              <div className={`transform transition-transform duration-300 ${expanded === 'info' ? 'rotate-180' : ''}`}>
-                <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              <div
+                className={`transform transition-transform duration-300 ${expanded === 'info' ? 'rotate-180' : ''}`}
+              >
+                <svg
+                  className="h-5 w-5 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </div>
             </button>
-            
+
             <AnimatePresence>
               {expanded === 'info' && (
                 <motion.div
@@ -296,20 +333,32 @@ export default function EmployeeSettings() {
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <div className="space-y-1">
                       <label className="text-sm font-semibold text-foreground flex items-center gap-2">
-                        {role === 'Restaurant' ? <Building2 size={16} className="text-muted-foreground"/> : <User size={16} className="text-muted-foreground"/>}
+                        {role === 'Restaurant' ? (
+                          <Building2
+                            size={16}
+                            className="text-muted-foreground"
+                          />
+                        ) : (
+                          <User size={16} className="text-muted-foreground" />
+                        )}
                         Name
                       </label>
                       <Input
                         type="text"
                         value={personalDetails?.name || ''}
-                        onChange={(e) => setPersonalDetails({ ...personalDetails, name: e.target.value })}
+                        onChange={(e) =>
+                          setPersonalDetails({
+                            ...personalDetails,
+                            name: e.target.value,
+                          })
+                        }
                         disabled={!isEditing}
                       />
                     </div>
 
                     <div className="space-y-1">
                       <label className="text-sm font-semibold text-foreground flex items-center gap-2">
-                        <Mail size={16} className="text-muted-foreground"/>
+                        <Mail size={16} className="text-muted-foreground" />
                         Email Address
                       </label>
                       <Input
@@ -321,13 +370,18 @@ export default function EmployeeSettings() {
 
                     <div className="space-y-1">
                       <label className="text-sm font-semibold text-foreground flex items-center gap-2">
-                        <Phone size={16} className="text-muted-foreground"/>
+                        <Phone size={16} className="text-muted-foreground" />
                         Phone Number
                       </label>
                       <Input
                         type="text"
                         value={personalDetails?.number || ''}
-                        onChange={(e) => setPersonalDetails({ ...personalDetails, number: e.target.value })}
+                        onChange={(e) =>
+                          setPersonalDetails({
+                            ...personalDetails,
+                            number: e.target.value,
+                          })
+                        }
                         disabled={!isEditing}
                       />
                     </div>
@@ -336,25 +390,41 @@ export default function EmployeeSettings() {
                       <>
                         <div className="space-y-1">
                           <label className="text-sm font-semibold text-foreground flex items-center gap-2">
-                            <FileText size={16} className="text-muted-foreground"/>
+                            <FileText
+                              size={16}
+                              className="text-muted-foreground"
+                            />
                             Slogan
                           </label>
                           <Input
                             type="text"
                             value={personalDetails?.slogan || ''}
-                            onChange={(e) => setPersonalDetails({ ...personalDetails, slogan: e.target.value })}
+                            onChange={(e) =>
+                              setPersonalDetails({
+                                ...personalDetails,
+                                slogan: e.target.value,
+                              })
+                            }
                             disabled={!isEditing}
                           />
                         </div>
                         <div className="col-span-1 sm:col-span-2 space-y-1">
                           <label className="text-sm font-semibold text-foreground flex items-center gap-2">
-                            <MapPin size={16} className="text-muted-foreground"/>
+                            <MapPin
+                              size={16}
+                              className="text-muted-foreground"
+                            />
                             Address
                           </label>
                           <Input
                             type="text"
                             value={personalDetails?.address || ''}
-                            onChange={(e) => setPersonalDetails({ ...personalDetails, address: e.target.value })}
+                            onChange={(e) =>
+                              setPersonalDetails({
+                                ...personalDetails,
+                                address: e.target.value,
+                              })
+                            }
                             disabled={!isEditing}
                           />
                         </div>
@@ -363,20 +433,23 @@ export default function EmployeeSettings() {
                   </div>
 
                   {isEditing && (
-                      <div className="mt-6 flex justify-end gap-3">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => { setIsEditing(false); setPersonalDetails(user); }}
-                        >
-                          <X size={16} />
-                          Cancel
-                        </Button>
-                        <Button onClick={UpdateUserHandler} className="gap-2">
-                          <Save size={16} />
-                          Save Changes
-                        </Button>
-                      </div>
+                    <div className="mt-6 flex justify-end gap-3">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          setIsEditing(false);
+                          setPersonalDetails(user);
+                        }}
+                      >
+                        <X size={16} />
+                        Cancel
+                      </Button>
+                      <Button onClick={UpdateUserHandler} className="gap-2">
+                        <Save size={16} />
+                        Save Changes
+                      </Button>
+                    </div>
                   )}
                 </motion.div>
               )}
@@ -384,7 +457,10 @@ export default function EmployeeSettings() {
           </motion.div>
 
           {/* Change Password Section */}
-          <motion.div variants={itemVariants} className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all hover:shadow-md">
+          <motion.div
+            variants={itemVariants}
+            className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all hover:shadow-md"
+          >
             <button
               onClick={() => toggleExpand('password')}
               className="flex w-full items-center justify-between p-6 text-left"
@@ -394,13 +470,29 @@ export default function EmployeeSettings() {
                   <Lock size={20} />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Security</h3>
-                  <p className="text-sm text-gray-500">Update your password to keep your account secure.</p>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Security
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Update your password to keep your account secure.
+                  </p>
                 </div>
               </div>
-              <div className={`transform transition-transform duration-300 ${expanded === 'password' ? 'rotate-180' : ''}`}>
-                <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              <div
+                className={`transform transition-transform duration-300 ${expanded === 'password' ? 'rotate-180' : ''}`}
+              >
+                <svg
+                  className="h-5 w-5 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </div>
             </button>
@@ -414,39 +506,49 @@ export default function EmployeeSettings() {
                   transition={{ duration: 0.3 }}
                   className="border-t border-gray-100 px-6 pb-6 pt-4"
                 >
-                  <form onSubmit={handleSubmit(ChangePasswordHandler)} className="mx-auto max-w-2xl space-y-5">
-                    {['currentPassword', 'newPassword', 'confirmPassword'].map((field) => (
-                      <div key={field} className="space-y-1">
-                        <label className="text-sm font-medium text-gray-700 capitalize flex items-center justify-between">
-                          {field.replace(/([A-Z])/g, ' $1')}
-                        </label>
-                        <Input
-                          type="password"
-                          placeholder={`Enter ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`}
-                          {...register(field, {
-                            required: `${field.replace(/([A-Z])/g, ' $1')} is required`,
-                          })}
-                          className={errors[field] ? 'border-destructive focus-visible:ring-destructive' : ''}
-                        />
-                        {errors[field] && (
-                          <p className="text-xs text-red-500 flex items-center gap-1 mt-1">
-                            <AlertTriangle size={12} />
-                            {errors[field]?.message as string}
-                          </p>
-                        )}
-                      </div>
-                    ))}
+                  <form
+                    onSubmit={handleSubmit(ChangePasswordHandler)}
+                    className="mx-auto max-w-2xl space-y-5"
+                  >
+                    {['currentPassword', 'newPassword', 'confirmPassword'].map(
+                      (field) => (
+                        <div key={field} className="space-y-1">
+                          <label className="text-sm font-medium text-gray-700 capitalize flex items-center justify-between">
+                            {field.replace(/([A-Z])/g, ' $1')}
+                          </label>
+                          <Input
+                            type="password"
+                            placeholder={`Enter ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`}
+                            {...register(field, {
+                              required: `${field.replace(/([A-Z])/g, ' $1')} is required`,
+                            })}
+                            className={
+                              errors[field]
+                                ? 'border-destructive focus-visible:ring-destructive'
+                                : ''
+                            }
+                          />
+                          {errors[field] && (
+                            <p className="text-xs text-red-500 flex items-center gap-1 mt-1">
+                              <AlertTriangle size={12} />
+                              {errors[field]?.message as string}
+                            </p>
+                          )}
+                        </div>
+                      ),
+                    )}
                     <div className="pt-4 flex justify-end gap-3">
                       <Button
                         type="button"
                         variant="outline"
-                        onClick={() => { reset(); toggleExpand('password'); }}
+                        onClick={() => {
+                          reset();
+                          toggleExpand('password');
+                        }}
                       >
                         Cancel
                       </Button>
-                      <Button type="submit">
-                        Update Password
-                      </Button>
+                      <Button type="submit">Update Password</Button>
                     </div>
                   </form>
                 </motion.div>
@@ -455,7 +557,10 @@ export default function EmployeeSettings() {
           </motion.div>
 
           {/* Delete Account Section */}
-          <motion.div variants={itemVariants} className="overflow-hidden rounded-2xl border border-red-100 bg-red-50/30 shadow-sm transition-all hover:shadow-md hover:bg-red-50/50">
+          <motion.div
+            variants={itemVariants}
+            className="overflow-hidden rounded-2xl border border-red-100 bg-red-50/30 shadow-sm transition-all hover:shadow-md hover:bg-red-50/50"
+          >
             <button
               onClick={() => toggleExpand('delete')}
               className="flex w-full items-center justify-between p-6 text-left"
@@ -465,13 +570,29 @@ export default function EmployeeSettings() {
                   <AlertTriangle size={20} />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-red-700">Danger Zone</h3>
-                  <p className="text-sm text-red-600/80">Permanently delete your account and all data.</p>
+                  <h3 className="text-lg font-semibold text-red-700">
+                    Danger Zone
+                  </h3>
+                  <p className="text-sm text-red-600/80">
+                    Permanently delete your account and all data.
+                  </p>
                 </div>
               </div>
-              <div className={`transform transition-transform duration-300 text-red-400 ${expanded === 'delete' ? 'rotate-180' : ''}`}>
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              <div
+                className={`transform transition-transform duration-300 text-red-400 ${expanded === 'delete' ? 'rotate-180' : ''}`}
+              >
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </div>
             </button>
@@ -486,7 +607,8 @@ export default function EmployeeSettings() {
                   className="border-t border-red-100 px-6 pb-6 pt-4"
                 >
                   <p className="text-sm text-red-700 mb-4">
-                    Once you delete your account, there is no going back. Please be certain.
+                    Once you delete your account, there is no going back. Please
+                    be certain.
                   </p>
                   <Button
                     variant="destructive"
@@ -500,7 +622,6 @@ export default function EmployeeSettings() {
               )}
             </AnimatePresence>
           </motion.div>
-
         </div>
       </motion.div>
 
@@ -526,9 +647,13 @@ export default function EmployeeSettings() {
                   <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-600 mx-auto">
                     <AlertTriangle size={24} />
                   </div>
-                  <h3 className="text-center text-xl font-bold text-gray-900">Delete Account?</h3>
+                  <h3 className="text-center text-xl font-bold text-gray-900">
+                    Delete Account?
+                  </h3>
                   <p className="mt-2 text-center text-sm text-gray-500">
-                    Are you absolutely sure you want to delete your account? This action cannot be undone and will permanently remove all your data from our servers.
+                    Are you absolutely sure you want to delete your account?
+                    This action cannot be undone and will permanently remove all
+                    your data from our servers.
                   </p>
                 </div>
                 <div className="flex items-center gap-3 bg-gray-50 px-6 py-4">

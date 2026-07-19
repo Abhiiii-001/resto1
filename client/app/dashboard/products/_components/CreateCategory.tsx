@@ -13,7 +13,13 @@ interface Props {
   disableSubmitButton?: boolean;
 }
 
-const CreateCategory = ({ setIsOpen, onSubmitHandler, isEdit, category, disableSubmitButton }: Props) => {
+const CreateCategory = ({
+  setIsOpen,
+  onSubmitHandler,
+  isEdit,
+  category,
+  disableSubmitButton,
+}: Props) => {
   const {
     register,
     handleSubmit,
@@ -23,7 +29,7 @@ const CreateCategory = ({ setIsOpen, onSubmitHandler, isEdit, category, disableS
   } = useForm<AddCategoryInterface>({
     defaultValues: {
       name: category?.name || '',
-    }
+    },
   });
   const thumbnail = watch('thumbnail');
 
@@ -32,7 +38,7 @@ const CreateCategory = ({ setIsOpen, onSubmitHandler, isEdit, category, disableS
       setValue('thumbnail', category.thumbnail as any);
     }
   }, [isEdit, category, setValue]);
-  
+
   return (
     <div className="w-full">
       <div className="mb-6">
@@ -45,7 +51,7 @@ const CreateCategory = ({ setIsOpen, onSubmitHandler, isEdit, category, disableS
             : 'Create a category to better organize your products.'}
         </p>
       </div>
-      
+
       <form
         className="flex w-full flex-col items-start gap-6"
         onSubmit={handleSubmit(onSubmitHandler)}
@@ -61,10 +67,16 @@ const CreateCategory = ({ setIsOpen, onSubmitHandler, isEdit, category, disableS
             id="name"
             type="text"
             {...register('name', { required: 'Name is required' })}
-            className={errors.name ? 'border-destructive focus-visible:ring-destructive' : ''}
+            className={
+              errors.name
+                ? 'border-destructive focus-visible:ring-destructive'
+                : ''
+            }
             placeholder="Enter category name"
           />
-          {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+          {errors.name && (
+            <p className="text-sm text-destructive">{errors.name.message}</p>
+          )}
         </div>
 
         <div className="w-full space-y-2">
@@ -80,7 +92,8 @@ const CreateCategory = ({ setIsOpen, onSubmitHandler, isEdit, category, disableS
             previewUrl={isEdit ? category?.thumbnail : null}
           />
           <p className="text-xs text-muted-foreground">
-            Please upload a transparent background image for better user experience
+            Please upload a transparent background image for better user
+            experience
           </p>
         </div>
 
@@ -92,10 +105,7 @@ const CreateCategory = ({ setIsOpen, onSubmitHandler, isEdit, category, disableS
           >
             Cancel
           </Button>
-          <Button
-            type="submit"
-            disabled={disableSubmitButton}
-          >
+          <Button type="submit" disabled={disableSubmitButton}>
             Save Category
           </Button>
         </div>

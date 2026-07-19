@@ -11,8 +11,8 @@ function SignupForm2({ signupData }: any) {
       <div className="mb-6 flex w-fit items-center gap-1 rounded-lg bg-secondary p-1 text-xs font-semibold">
         <button
           className={`rounded-md px-4 py-1.5 transition-all ${
-            isUser 
-              ? 'bg-white text-foreground shadow-sm' 
+            isUser
+              ? 'bg-white text-foreground shadow-sm'
               : 'text-muted-foreground hover:text-foreground'
           }`}
           onClick={() => setIsUser(true)}
@@ -21,8 +21,8 @@ function SignupForm2({ signupData }: any) {
         </button>
         <button
           className={`rounded-md px-4 py-1.5 transition-all ${
-            !isUser 
-              ? 'bg-white text-foreground shadow-sm' 
+            !isUser
+              ? 'bg-white text-foreground shadow-sm'
               : 'text-muted-foreground hover:text-foreground'
           }`}
           onClick={() => setIsUser(false)}

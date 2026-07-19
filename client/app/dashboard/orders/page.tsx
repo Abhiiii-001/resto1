@@ -94,7 +94,7 @@ const OrderList = () => {
     isLoading,
     isError,
   } = useGetAllOrdersQuery(restaurantId && token ? restaurantId : skipToken);
-  
+
   useEffect(() => {
     if (OrderApiResponse?.success) {
       setOrderRes(OrderApiResponse?.data);
@@ -180,18 +180,27 @@ const OrderList = () => {
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-3xl font-bold tracking-tight text-foreground">Order History</h2>
+            <h2 className="text-3xl font-bold tracking-tight text-foreground">
+              Order History
+            </h2>
             <History className="h-6 w-6 text-primary" />
           </div>
           <div className="mt-2 flex items-center text-sm font-medium text-muted-foreground">
-            <Link href="/" className="transition-colors hover:text-foreground">Home</Link>
+            <Link href="/" className="transition-colors hover:text-foreground">
+              Home
+            </Link>
             <ChevronRight className="mx-1 h-4 w-4" />
-            <Link href="/dashboard" className="transition-colors hover:text-foreground">Dashboard</Link>
+            <Link
+              href="/dashboard"
+              className="transition-colors hover:text-foreground"
+            >
+              Dashboard
+            </Link>
             <ChevronRight className="mx-1 h-4 w-4" />
             <span className="text-foreground">Orders History</span>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-4">
           <SearchForm query={query} setQuery={setQuery} />
         </div>
@@ -222,7 +231,11 @@ const OrderList = () => {
                   ? 'Date'
                   : formatDate(filters.createdAt)}
               </p>
-              <ChevronDown height={16} width={16} className="text-muted-foreground" />
+              <ChevronDown
+                height={16}
+                width={16}
+                className="text-muted-foreground"
+              />
             </div>
             <input
               ref={dateInputRef}
@@ -257,7 +270,11 @@ const OrderList = () => {
                 >
                   {data.title}
                 </p>
-                <ChevronDown height={16} width={16} className="text-muted-foreground" />
+                <ChevronDown
+                  height={16}
+                  width={16}
+                  className="text-muted-foreground"
+                />
 
                 {/* filter indicator */}
                 {filters[data.name].length > 0 && (
@@ -266,7 +283,10 @@ const OrderList = () => {
 
                 {/* Modal trigger */}
                 {filterModal === data.name && (
-                  <div className="absolute top-[110%] z-10 -left-[50%]" onClick={(e) => e.stopPropagation()}>
+                  <div
+                    className="absolute top-[110%] z-10 -left-[50%]"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <FilterModal
                       title={data.modalTitle}
                       name={data.name}
@@ -313,7 +333,10 @@ const OrderList = () => {
                 <div className="col-span-2 flex h-full flex-row items-center gap-4">
                   <input
                     type="checkbox"
-                    checked={orders.length > 0 && orders.length === selectedOrders.length}
+                    checked={
+                      orders.length > 0 &&
+                      orders.length === selectedOrders.length
+                    }
                     onChange={() => selectOrderHandler('all')}
                     className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
                   />
@@ -341,31 +364,35 @@ const OrderList = () => {
                         onChange={() => selectOrderHandler(order.orderCode)}
                         className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
                       />
-                      <span className="font-medium text-foreground">#{order.orderCode}</span>
+                      <span className="font-medium text-foreground">
+                        #{order.orderCode}
+                      </span>
                     </div>
-                    
+
                     <div className="col-span-2 flex items-center font-medium text-gray-700">
                       {order.name === '' ? 'Anonymous' : order.name}
                     </div>
-                    
+
                     <div className="col-span-1 flex items-center justify-center text-muted-foreground">
                       {formatDate(order.createdAt)}
                     </div>
-                    
+
                     <div className="col-span-2 flex items-center justify-center">
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        order.isPack 
-                          ? 'bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-600/20' 
-                          : 'bg-purple-50 text-purple-700 ring-1 ring-inset ring-purple-600/20'
-                      }`}>
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                          order.isPack
+                            ? 'bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-600/20'
+                            : 'bg-purple-50 text-purple-700 ring-1 ring-inset ring-purple-600/20'
+                        }`}
+                      >
                         {order.isPack ? 'Take Out' : 'Eat In'}
                       </span>
                     </div>
-                    
+
                     <div className="col-span-1 flex items-center justify-center font-medium text-gray-700">
                       {order.paymentOption}
                     </div>
-                    
+
                     <div className="col-span-2 flex items-center justify-center">
                       <span
                         className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset ${
@@ -381,7 +408,7 @@ const OrderList = () => {
                         {order.status}
                       </span>
                     </div>
-                    
+
                     <div className="col-span-1 flex items-center justify-end gap-1">
                       <Button
                         variant="ghost"
@@ -416,8 +443,12 @@ const OrderList = () => {
               <div className="rounded-full bg-red-50 p-4 text-red-500">
                 <AlertTriangle className="h-8 w-8" />
               </div>
-              <p className="text-lg font-medium text-muted-foreground">No orders found</p>
-              <p className="text-sm text-muted-foreground">Try adjusting your filters or search query.</p>
+              <p className="text-lg font-medium text-muted-foreground">
+                No orders found
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Try adjusting your filters or search query.
+              </p>
             </div>
           )}
         </div>
@@ -457,7 +488,10 @@ const FilterModal = ({
   };
 
   return (
-    <div className="flex w-[350px] flex-col items-start rounded-xl border border-border bg-white py-4 shadow-lg cursor-default" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="flex w-[350px] flex-col items-start rounded-xl border border-border bg-white py-4 shadow-lg cursor-default"
+      onClick={(e) => e.stopPropagation()}
+    >
       <div className="px-5 text-lg font-semibold text-foreground">{title}</div>
 
       <div className="my-5 grid grid-cols-2 gap-3 px-5 w-full">

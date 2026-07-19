@@ -29,7 +29,7 @@ const useSocket = (restaurantId: string | null, url: string) => {
     socketRef.current.on('connect', () => {
       console.log('Socket.IO Connected:', socketRef.current?.id);
       dispatch(setSocketConnected(true));
-      
+
       if (restaurantId) {
         console.log('Joining room:', restaurantId);
         socketRef.current?.emit('joinRoom', restaurantId);
@@ -61,7 +61,7 @@ const useSocket = (restaurantId: string | null, url: string) => {
   const isConnected = useSelector(
     (state: RootState) => state.order?.socketConnected,
   );
-  
+
   return { isConnected };
 };
 

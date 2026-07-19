@@ -1,5 +1,8 @@
 import FileUploader from '@/components/common/FileUploader';
-import { RestaurantSignupPayload, useRestaurantSignupMutation } from '@/redux/api/auth';
+import {
+  RestaurantSignupPayload,
+  useRestaurantSignupMutation,
+} from '@/redux/api/auth';
 import { MapPin, Phone, SquareMenu, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
@@ -51,7 +54,9 @@ function RestaurantForm({ prevFormData }: Props) {
       form.append('password', prevFormData.password);
       form.append('address', data.address);
 
-      const response = await signup(form as unknown as RestaurantSignupPayload).unwrap();
+      const response = await signup(
+        form as unknown as RestaurantSignupPayload,
+      ).unwrap();
       if (!response || !response?.success) {
         throw new Error(response?.message || 'Something went wrong!');
       }
@@ -75,10 +80,7 @@ function RestaurantForm({ prevFormData }: Props) {
     <form className="w-full space-y-4" onSubmit={handleSubmit(onSubmitHandler)}>
       {/* Name */}
       <div className="space-y-1.5">
-        <label
-          htmlFor="name"
-          className="text-sm font-medium text-foreground"
-        >
+        <label htmlFor="name" className="text-sm font-medium text-foreground">
           Restaurant Name
           <sup className="ml-0.5 text-destructive">*</sup>
         </label>
@@ -107,10 +109,7 @@ function RestaurantForm({ prevFormData }: Props) {
 
       {/* Number */}
       <div className="space-y-1.5">
-        <label
-          htmlFor="number"
-          className="text-sm font-medium text-foreground"
-        >
+        <label htmlFor="number" className="text-sm font-medium text-foreground">
           Contact Number
           <sup className="ml-0.5 text-destructive">*</sup>
         </label>
@@ -139,10 +138,7 @@ function RestaurantForm({ prevFormData }: Props) {
 
       {/* Slogan */}
       <div className="space-y-1.5">
-        <label
-          htmlFor="slogan"
-          className="text-sm font-medium text-foreground"
-        >
+        <label htmlFor="slogan" className="text-sm font-medium text-foreground">
           Slogan
           <sup className="ml-0.5 text-destructive">*</sup>
         </label>
@@ -203,9 +199,7 @@ function RestaurantForm({ prevFormData }: Props) {
 
       {/* Thumbnail */}
       <div className="space-y-1.5">
-        <label
-          className="text-sm font-medium text-foreground"
-        >
+        <label className="text-sm font-medium text-foreground">
           Thumbnail
           <sup className="ml-0.5 text-destructive">*</sup>
         </label>

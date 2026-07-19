@@ -31,7 +31,7 @@ export default function ForgotPasswordPage() {
       const response = await resetPassword({
         email: data?.email,
       }).unwrap();
-      
+
       if (response?.success) {
         toast.success('Reset link sent to your email!');
         setIsSubmitted(true);
@@ -63,9 +63,7 @@ export default function ForgotPasswordPage() {
               password.
             </p>
             <Link href="/signin" className="block w-full">
-              <Button className="w-full py-6">
-                Back to Sign In
-              </Button>
+              <Button className="w-full py-6">Back to Sign In</Button>
             </Link>
           </div>
         </div>
@@ -81,7 +79,7 @@ export default function ForgotPasswordPage() {
           <div className="mb-2 flex items-center justify-center gap-2">
             <ChefHat className="h-6 w-6 text-primary" />
             <span className="text-2xl font-bold tracking-tight text-foreground">
-             Restro
+              Restro
             </span>
           </div>
           <h1 className="text-2xl font-bold text-foreground">
@@ -127,7 +125,9 @@ export default function ForgotPasswordPage() {
                 />
               </div>
               {errors.email && (
-                <p className="text-xs text-destructive">{errors.email.message}</p>
+                <p className="text-xs text-destructive">
+                  {errors.email.message}
+                </p>
               )}
             </div>
 

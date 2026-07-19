@@ -85,9 +85,7 @@ function EmployeeCard({ emp }: Props) {
       <div className="col-span-1 flex items-center">
         <div className="h-12 w-12 overflow-hidden rounded-full border border-gray-100 bg-gray-50 shadow-sm">
           <img
-            src={
-              `https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=random`
-            }
+            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(emp.name)}&background=random`}
             alt={emp.name}
             className="h-full w-full object-cover"
           />
@@ -98,8 +96,12 @@ function EmployeeCard({ emp }: Props) {
       <div className="col-span-3 pr-4">
         <h2 className="font-semibold text-gray-900 truncate">{emp.name}</h2>
         <div className="mt-0.5 flex flex-col gap-0.5 text-xs text-muted-foreground">
-          <p className="truncate hover:text-primary cursor-pointer transition-colors">{emp.email}</p>
-          <p className="hover:text-primary cursor-pointer transition-colors">{emp.number}</p>
+          <p className="truncate hover:text-primary cursor-pointer transition-colors">
+            {emp.email}
+          </p>
+          <p className="hover:text-primary cursor-pointer transition-colors">
+            {emp.number}
+          </p>
         </div>
       </div>
 

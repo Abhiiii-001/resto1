@@ -2,8 +2,8 @@
 import { useState } from 'react';
 type props = {
   isOpen: boolean;
-  onClose: () => void
-}
+  onClose: () => void;
+};
 const EditProfileModal = ({ isOpen, onClose }: props) => {
   const [user] = useState({
     name: 'Aman Singh',

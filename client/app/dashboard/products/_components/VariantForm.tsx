@@ -27,7 +27,10 @@ const VariantForm = ({
 }: VariantFormProps) => {
   const [variantAddOption, setVariantAddOption] = useState(!isEdit);
   const [editableVariant, setEditableVariant] = useState('');
-  const [createVariantData, setCreateVaraintData] = useState<{ size: string; price: number }>({
+  const [createVariantData, setCreateVaraintData] = useState<{
+    size: string;
+    price: number;
+  }>({
     size: '',
     price: 0,
   });
@@ -70,7 +73,8 @@ const VariantForm = ({
       return;
     }
     const alreadyPresent = variants.filter(
-      (variant: any) => variant.size.toLowerCase() === createVariantData.size.toLowerCase(),
+      (variant: any) =>
+        variant.size.toLowerCase() === createVariantData.size.toLowerCase(),
     );
 
     if (alreadyPresent.length !== 0) {
@@ -124,27 +128,40 @@ const VariantForm = ({
   };
 
   return (
-    <div className={`w-full mt-8 ${standalone ? '' : 'rounded-xl border border-border bg-gray-50/50 p-4'}`}>
+    <div
+      className={`w-full mt-8 ${standalone ? '' : 'rounded-xl border border-border bg-gray-50/50 p-4'}`}
+    >
       <div className="flex w-full items-center justify-between mb-4">
         <div>
-          <h2 className="text-lg font-semibold text-foreground">Variants & Pricing</h2>
-          <p className="text-xs text-muted-foreground mt-0.5">Manage sizes and pricing for this product</p>
+          <h2 className="text-lg font-semibold text-foreground">
+            Variants & Pricing
+          </h2>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Manage sizes and pricing for this product
+          </p>
         </div>
 
         <Button
           type="button"
-          variant={variantAddOption ? "outline" : "default"}
+          variant={variantAddOption ? 'outline' : 'default'}
           size="sm"
           className="gap-2"
           onClick={() => setVariantAddOption(!variantAddOption)}
         >
-          {variantAddOption ? <X className="h-4 w-4" /> : <PlusIcon className="h-4 w-4" />}
-          {variantAddOption ? "Cancel" : "Add Variant"}
+          {variantAddOption ? (
+            <X className="h-4 w-4" />
+          ) : (
+            <PlusIcon className="h-4 w-4" />
+          )}
+          {variantAddOption ? 'Cancel' : 'Add Variant'}
         </Button>
       </div>
 
       {updateVariantLoading || createVariantLoading || deleteVariantLoading ? (
-        <div className="my-4 text-sm text-muted-foreground flex items-center justify-center py-4"> Loading variant data...</div>
+        <div className="my-4 text-sm text-muted-foreground flex items-center justify-center py-4">
+          {' '}
+          Loading variant data...
+        </div>
       ) : (
         <div className="space-y-4">
           {/* Variants list */}
@@ -161,7 +178,10 @@ const VariantForm = ({
                     <div className="w-full rounded-lg border border-border bg-white p-3 shadow-sm">
                       <div className="flex w-full items-start gap-3">
                         <div className="w-full">
-                          <label htmlFor="size" className="mb-1 block text-xs font-semibold text-foreground">
+                          <label
+                            htmlFor="size"
+                            className="mb-1 block text-xs font-semibold text-foreground"
+                          >
                             Size <span className="text-destructive">*</span>
                           </label>
                           <Input
@@ -176,7 +196,10 @@ const VariantForm = ({
                         </div>
 
                         <div className="w-full">
-                          <label htmlFor="price" className="mb-1 block text-xs font-semibold text-foreground">
+                          <label
+                            htmlFor="price"
+                            className="mb-1 block text-xs font-semibold text-foreground"
+                          >
                             Price <span className="text-destructive">*</span>
                           </label>
                           <Input
@@ -185,7 +208,9 @@ const VariantForm = ({
                             required
                             placeholder="Ex: 123"
                             defaultValue={v.price}
-                            onChange={(e: ChangeEvent<HTMLInputElement>) => (v.price = Number(e.target.value))}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                              (v.price = Number(e.target.value))
+                            }
                             className="h-9"
                           />
                         </div>
@@ -204,7 +229,11 @@ const VariantForm = ({
                             type="button"
                             size="icon"
                             className="h-9 w-9 bg-green-600 hover:bg-green-700 text-white"
-                            disabled={updateVariantLoading || createVariantLoading || deleteVariantLoading}
+                            disabled={
+                              updateVariantLoading ||
+                              createVariantLoading ||
+                              deleteVariantLoading
+                            }
                             onClick={() => updateVariantHandler(v)}
                           >
                             <Check className="h-4 w-4" />
@@ -217,12 +246,20 @@ const VariantForm = ({
                     <div className="flex w-full items-center justify-between rounded-lg border border-border bg-white px-4 py-3 shadow-sm transition-colors hover:bg-gray-50/50">
                       <div className="flex items-center gap-6">
                         <div className="flex flex-col">
-                          <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Size</span>
-                          <span className="font-semibold text-foreground">{v.size}</span>
+                          <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                            Size
+                          </span>
+                          <span className="font-semibold text-foreground">
+                            {v.size}
+                          </span>
                         </div>
                         <div className="flex flex-col">
-                          <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Price</span>
-                          <span className="font-semibold text-foreground">₹{v.price}</span>
+                          <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                            Price
+                          </span>
+                          <span className="font-semibold text-foreground">
+                            ₹{v.price}
+                          </span>
                         </div>
                         {isEdit && v.isOutOfStock && (
                           <span className="inline-flex items-center rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
@@ -235,7 +272,9 @@ const VariantForm = ({
                         {isEdit && (
                           <>
                             <div className="flex items-center gap-2 mr-2">
-                              <span className="text-xs font-medium text-muted-foreground">In Stock</span>
+                              <span className="text-xs font-medium text-muted-foreground">
+                                In Stock
+                              </span>
                               <button
                                 type="button"
                                 onClick={() => {
@@ -244,14 +283,22 @@ const VariantForm = ({
                                     isOutOfStock: !v.isOutOfStock,
                                   });
                                 }}
-                                disabled={updateVariantLoading || createVariantLoading || deleteVariantLoading}
+                                disabled={
+                                  updateVariantLoading ||
+                                  createVariantLoading ||
+                                  deleteVariantLoading
+                                }
                                 className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
                                   !v.isOutOfStock ? 'bg-primary' : 'bg-gray-300'
                                 }`}
                               >
-                                <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                                  !v.isOutOfStock ? 'translate-x-2' : '-translate-x-2'
-                                }`} />
+                                <span
+                                  className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                                    !v.isOutOfStock
+                                      ? 'translate-x-2'
+                                      : '-translate-x-2'
+                                  }`}
+                                />
                               </button>
                             </div>
                             <Button
@@ -271,7 +318,11 @@ const VariantForm = ({
                           size="icon"
                           className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
                           onClick={() => deleteVariantHandler(v)}
-                          disabled={updateVariantLoading || createVariantLoading || deleteVariantLoading}
+                          disabled={
+                            updateVariantLoading ||
+                            createVariantLoading ||
+                            deleteVariantLoading
+                          }
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -286,10 +337,15 @@ const VariantForm = ({
           {/* Add Form */}
           {variantAddOption && (
             <div className="w-full rounded-lg border border-primary/20 bg-primary/5 p-4 mt-2">
-              <h3 className="mb-3 text-sm font-semibold text-primary">Add New Variant</h3>
+              <h3 className="mb-3 text-sm font-semibold text-primary">
+                Add New Variant
+              </h3>
               <div className="flex w-full items-start gap-3">
                 <div className="w-full">
-                  <label htmlFor="new-size" className="mb-1 block text-xs font-semibold text-foreground">
+                  <label
+                    htmlFor="new-size"
+                    className="mb-1 block text-xs font-semibold text-foreground"
+                  >
                     Size <span className="text-destructive">*</span>
                   </label>
                   <Input
@@ -299,14 +355,20 @@ const VariantForm = ({
                     placeholder="Ex: Medium"
                     value={createVariantData.size}
                     onChange={(e) =>
-                      setCreateVaraintData({ ...createVariantData, size: e.target.value })
+                      setCreateVaraintData({
+                        ...createVariantData,
+                        size: e.target.value,
+                      })
                     }
                     className="h-9 bg-white"
                   />
                 </div>
 
                 <div className="w-full">
-                  <label htmlFor="new-price" className="mb-1 block text-xs font-semibold text-foreground">
+                  <label
+                    htmlFor="new-price"
+                    className="mb-1 block text-xs font-semibold text-foreground"
+                  >
                     Price <span className="text-destructive">*</span>
                   </label>
                   <Input
@@ -316,7 +378,10 @@ const VariantForm = ({
                     placeholder="Ex: 299"
                     value={createVariantData.price || ''}
                     onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      setCreateVaraintData({ ...createVariantData, price: parseInt(e.target.value) || 0 })
+                      setCreateVaraintData({
+                        ...createVariantData,
+                        price: parseInt(e.target.value) || 0,
+                      })
                     }
                     className="h-9 bg-white"
                   />
@@ -326,7 +391,11 @@ const VariantForm = ({
                   <Button
                     type="button"
                     className="h-9 px-4 bg-primary text-primary-foreground hover:bg-primary/90"
-                    disabled={createVariantLoading || updateVariantLoading || deleteVariantLoading}
+                    disabled={
+                      createVariantLoading ||
+                      updateVariantLoading ||
+                      deleteVariantLoading
+                    }
                     onClick={createVariantHandler}
                   >
                     Add

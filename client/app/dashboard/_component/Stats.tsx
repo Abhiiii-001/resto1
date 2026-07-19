@@ -24,14 +24,23 @@ type StatsCardProps = {
   iconColor: string;
 };
 
-function StatsCard({ title, content, gain, description, icon: Icon, iconBg, iconColor }: StatsCardProps) {
+function StatsCard({
+  title,
+  content,
+  gain,
+  description,
+  icon: Icon,
+  iconBg,
+  iconColor,
+}: StatsCardProps) {
   return (
     <div className="flex w-full flex-col items-start justify-between gap-6 rounded-xl border border-border bg-white px-5 py-4 shadow-sm transition-all hover:shadow-md">
       <div className="flex w-full flex-row items-center justify-between">
         <div className="flex flex-col gap-1">
           <p className="text-sm font-medium text-muted-foreground">{title}</p>
           <p className="text-2xl font-bold text-foreground">
-            {title === 'Total Earning' ? '₹' : ''}{content}
+            {title === 'Total Earning' ? '₹' : ''}
+            {content}
           </p>
         </div>
 
@@ -45,10 +54,16 @@ function StatsCard({ title, content, gain, description, icon: Icon, iconBg, icon
           <div
             className={`flex items-center gap-1 font-semibold ${gain > 0 ? 'text-green-600' : 'text-red-500'}`}
           >
-            {gain > 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
+            {gain > 0 ? (
+              <TrendingUp className="h-4 w-4" />
+            ) : (
+              <TrendingDown className="h-4 w-4" />
+            )}
             {Math.abs(gain)}%
           </div>
-          <span className="text-muted-foreground">{gain > 0 ? 'up' : 'down'} from yesterday</span>
+          <span className="text-muted-foreground">
+            {gain > 0 ? 'up' : 'down'} from yesterday
+          </span>
         </div>
       ) : description ? (
         <div className="text-xs font-medium text-muted-foreground/80">

@@ -68,7 +68,8 @@ export default function OrderSummary({
 
   const currentLabels = selectedDuration === 'Day' ? dayLabel : monthLabel;
   const currentData = selectedDuration === 'Day' ? dayData : monthData;
-  const hasData = currentLabels && currentLabels.length > 0 && currentData.some(v => v > 0);
+  const hasData =
+    currentLabels && currentLabels.length > 0 && currentData.some((v) => v > 0);
 
   const dayChartData = {
     labels: currentLabels,
@@ -86,7 +87,9 @@ export default function OrderSummary({
     <div className="col-span-3 row-span-2 w-full rounded-xl border border-border bg-white shadow-sm xl:col-span-1 xl:row-span-3">
       {/* heading */}
       <div className="flex w-full flex-row items-center justify-between border-b border-border px-5 py-4">
-        <div className="text-base font-semibold text-foreground">Order Details</div>
+        <div className="text-base font-semibold text-foreground">
+          Order Details
+        </div>
         <div className="flex overflow-hidden rounded-lg border border-border">
           <div
             className={`cursor-pointer px-4 py-1.5 text-sm font-medium transition-colors ${
@@ -113,10 +116,7 @@ export default function OrderSummary({
 
       <div className="relative flex h-[200px] w-full items-center justify-center px-2 py-4">
         {hasData ? (
-          <Bar
-            data={dayChartData}
-            options={options}
-          />
+          <Bar data={dayChartData} options={options} />
         ) : (
           <div className="flex flex-col items-center gap-2 text-muted-foreground">
             <ShoppingBag className="h-8 w-8 opacity-20" />

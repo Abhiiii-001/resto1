@@ -14,7 +14,7 @@ import { USER_ROLE_TYPE } from '@/constants/CommonConstant';
 const SignIn: React.FC = () => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const {role} = useAppSelector((state) => state.auth)
+  const { role } = useAppSelector((state) => state.auth);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -61,9 +61,7 @@ const SignIn: React.FC = () => {
               Restro
             </span>
           </div>
-          <h2 className="text-2xl font-bold text-foreground">
-            Welcome Back
-          </h2>
+          <h2 className="text-2xl font-bold text-foreground">Welcome Back</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Sign in to your account to continue
           </p>
@@ -104,7 +102,9 @@ const SignIn: React.FC = () => {
                 />
               </div>
               {errors.email && (
-                <p className="text-xs text-destructive">{errors.email.message}</p>
+                <p className="text-xs text-destructive">
+                  {errors.email.message}
+                </p>
               )}
             </div>
 
@@ -155,7 +155,9 @@ const SignIn: React.FC = () => {
                 </button>
               </div>
               {errors.password && (
-                <p className="text-xs text-destructive">{errors.password.message}</p>
+                <p className="text-xs text-destructive">
+                  {errors.password.message}
+                </p>
               )}
             </div>
 

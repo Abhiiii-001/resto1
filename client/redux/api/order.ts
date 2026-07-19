@@ -2,11 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { addOrdersBulk } from '../states/orderSlice';
 import { RootState } from '../redux';
 import { ApiResponse } from '@/types/common';
-import {
-  CreateOrderPayload,
-  Order,
-  UpdateOrderPayload,
-} from '@/types/order';
+import { CreateOrderPayload, Order, UpdateOrderPayload } from '@/types/order';
 import { API_URLS } from '@/constants/Urls';
 
 export const orderApi = createApi({
@@ -37,8 +33,7 @@ export const orderApi = createApi({
             (ord) => ord.status == 'Pending' || ord.status == 'Ready',
           );
           dispatch(addOrdersBulk(filteredOrder));
-        } catch (_) {
-        }
+        } catch (_) {}
       },
       providesTags: ['getOrders'],
     }),
@@ -50,7 +45,10 @@ export const orderApi = createApi({
       }),
       invalidatesTags: ['getOrders'],
     }),
-    updateOrderStatus: builder.mutation<ApiResponse<string>, UpdateOrderPayload>({
+    updateOrderStatus: builder.mutation<
+      ApiResponse<string>,
+      UpdateOrderPayload
+    >({
       query: ({ id, data }) => ({
         url: `/${id}`,
         method: 'PUT',

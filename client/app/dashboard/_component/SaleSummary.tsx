@@ -33,7 +33,8 @@ function SaleSummary({ dayData, dayLabel, monthData, monthLabel }: Props) {
 
   const currentLabels = selectedChart === 'Day' ? dayLabel : monthLabel;
   const currentData = selectedChart === 'Day' ? dayData : monthData;
-  const hasData = currentLabels && currentLabels.length > 0 && currentData.some(v => v > 0);
+  const hasData =
+    currentLabels && currentLabels.length > 0 && currentData.some((v) => v > 0);
 
   const chartData: ChartData<'line'> = {
     labels: currentLabels,
@@ -57,7 +58,9 @@ function SaleSummary({ dayData, dayLabel, monthData, monthLabel }: Props) {
     <div className="col-span-3 row-span-2 rounded-xl border border-border bg-white shadow-sm xl:col-span-2 xl:row-span-4">
       {/* heading */}
       <div className="flex w-full flex-row items-center justify-between border-b border-border px-5 py-4">
-        <div className="text-base font-semibold text-foreground">Sales Details</div>
+        <div className="text-base font-semibold text-foreground">
+          Sales Details
+        </div>
         <div className="flex overflow-hidden rounded-lg border border-border">
           <div
             className={`cursor-pointer px-4 py-1.5 text-sm font-medium transition-colors ${

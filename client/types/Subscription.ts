@@ -1,4 +1,4 @@
-import { PlanType, SubscriptionStatus } from "@/constants/SubscriptionConstant";
+import { PlanType, SubscriptionStatus } from '@/constants/SubscriptionConstant';
 
 export interface Plan {
   id: string;

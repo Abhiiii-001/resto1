@@ -47,9 +47,7 @@ const Dialog: React.FC<DialogProps> = ({ component, isOpen, setIsOpen }) => {
         >
           <X className="h-4 w-4" />
         </Button>
-        <div className="p-6 md:p-8">
-          {component}
-        </div>
+        <div className="p-6 md:p-8">{component}</div>
       </div>
     </div>
   );

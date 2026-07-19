@@ -23,9 +23,13 @@ function ProductCard({ data }: { data: Products }) {
         <div className="flex flex-col gap-0.5">
           <div className="text-sm font-semibold text-foreground">
             {data.product.name}{' '}
-            <span className="font-normal text-muted-foreground">({data.size})</span>
+            <span className="font-normal text-muted-foreground">
+              ({data.size})
+            </span>
           </div>
-          <div className="text-sm font-semibold text-primary">₹{data.price}</div>
+          <div className="text-sm font-semibold text-primary">
+            ₹{data.price}
+          </div>
         </div>
       </div>
 
@@ -54,7 +58,9 @@ function TrendingProduct({ data }: Props) {
     <div className="col-span-3 row-span-3 flex h-full flex-col overflow-hidden rounded-xl border border-border bg-white shadow-sm xl:col-span-1 xl:row-span-7 2xl:row-span-9">
       <div className="flex w-full items-center gap-2.5 border-b border-border px-5 py-4">
         <TrendingUp className="h-5 w-5 text-primary" />
-        <h3 className="text-base font-semibold text-foreground">Trending Products</h3>
+        <h3 className="text-base font-semibold text-foreground">
+          Trending Products
+        </h3>
       </div>
       <div className="flex-1 overflow-y-auto">
         {hasProducts ? (
@@ -66,7 +72,9 @@ function TrendingProduct({ data }: Props) {
             <PackageSearch className="h-10 w-10 opacity-20" />
             <div className="space-y-1">
               <p className="text-sm font-semibold">No trending products</p>
-              <p className="text-xs">Sales data will appear here once orders are placed.</p>
+              <p className="text-xs">
+                Sales data will appear here once orders are placed.
+              </p>
             </div>
           </div>
         )}

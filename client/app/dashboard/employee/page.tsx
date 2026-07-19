@@ -33,7 +33,7 @@ function EmployeesPage() {
     const toastId = toast.loading('Adding employee...');
     try {
       const response = await addEmployee({
-         ...employeeData,
+        ...employeeData,
         restaurantId,
       }).unwrap();
       if (!response.success) {
@@ -58,16 +58,25 @@ function EmployeesPage() {
       {/* Header section */}
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight text-foreground">Teams</h2>
+          <h2 className="text-3xl font-bold tracking-tight text-foreground">
+            Teams
+          </h2>
           <div className="mt-2 flex items-center text-sm font-medium text-muted-foreground">
-            <Link href="/" className="transition-colors hover:text-foreground">Home</Link>
+            <Link href="/" className="transition-colors hover:text-foreground">
+              Home
+            </Link>
             <ChevronRight className="mx-1 h-4 w-4" />
-            <Link href="/dashboard" className="transition-colors hover:text-foreground">Dashboard</Link>
+            <Link
+              href="/dashboard"
+              className="transition-colors hover:text-foreground"
+            >
+              Dashboard
+            </Link>
             <ChevronRight className="mx-1 h-4 w-4" />
             <span className="text-foreground">Employees</span>
           </div>
         </div>
-        
+
         <div>
           <Button onClick={() => setIsModalOpen(true)} className="gap-2">
             <Plus className="h-4 w-4" />
@@ -103,8 +112,12 @@ function EmployeesPage() {
                 ))
               ) : (
                 <div className="flex h-[400px] w-full flex-col items-center justify-center gap-2">
-                  <p className="text-lg font-medium text-muted-foreground">No team members added yet</p>
-                  <p className="text-sm text-gray-400">Click "Add Employee" to invite a new team member.</p>
+                  <p className="text-lg font-medium text-muted-foreground">
+                    No team members added yet
+                  </p>
+                  <p className="text-sm text-gray-400">
+                    Click "Add Employee" to invite a new team member.
+                  </p>
                 </div>
               )}
             </div>

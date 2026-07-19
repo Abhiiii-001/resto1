@@ -22,23 +22,27 @@ import { ProductInterface } from '@/types/products';
 import { USER_ROLE_TYPE } from '@/constants/CommonConstant';
 
 function Products() {
-  const { user, token, role, canManage, restaurantId } = useAppSelector((state) => state.auth);
+  const { user, token, role, canManage, restaurantId } = useAppSelector(
+    (state) => state.auth,
+  );
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategroy] = useState<string>('all');
   const [createProductModal, setCreateProductModal] = useState<boolean>(false);
   const [isEditCategory, setIsEditCategory] = useState<boolean>(false);
 
   //Category Data Query
-  const { data: category, isSuccess: isCategoriesFetched, isLoading: isFetchingCategory } = useGetAllCategoriesQuery();
+  const {
+    data: category,
+    isSuccess: isCategoriesFetched,
+    isLoading: isFetchingCategory,
+  } = useGetAllCategoriesQuery();
 
   //Product Data Query
   const {
     data: getProductQueryData,
     isSuccess: isProductFetched,
     isLoading: isFetchingProducts,
-  } = useGetProductsQuery(
-    user && token ? restaurantId : skipToken
-  );
+  } = useGetProductsQuery(user && token ? restaurantId : skipToken);
   const [products, setProducts] = useState<ProductInterface[]>(
     getProductQueryData?.products || [],
   );
@@ -46,14 +50,17 @@ function Products() {
   //Add category mutation
   const [createCategoryApi, { isLoading: isCreatingCategory }] =
     useAddCategoryMutation();
-  const [updateCategoryApi, { isLoading: isUpdatingCategory }] = useUpdateCategoryMutation();
+  const [updateCategoryApi, { isLoading: isUpdatingCategory }] =
+    useUpdateCategoryMutation();
 
   useEffect(() => {
-    if (getProductQueryData?.products) setProducts(getProductQueryData.products);
+    if (getProductQueryData?.products)
+      setProducts(getProductQueryData.products);
   }, [isProductFetched, getProductQueryData]);
 
   useEffect(() => {
-    if (selectedCategory == 'all') setProducts(getProductQueryData?.products || []);
+    if (selectedCategory == 'all')
+      setProducts(getProductQueryData?.products || []);
     else
       setProducts(
         getProductQueryData?.products?.filter(
@@ -69,7 +76,9 @@ function Products() {
       form.append('name', data.name);
       form.append('thumbnail', data.thumbnail);
 
-      const response = await createCategoryApi(form as unknown as AddCategoryInterface).unwrap();
+      const response = await createCategoryApi(
+        form as unknown as AddCategoryInterface,
+      ).unwrap();
       toast.success('Category created!');
       setIsOpen(false);
     } catch (error) {
@@ -105,30 +114,47 @@ function Products() {
       {/* Header section */}
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900">Products</h2>
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900">
+            Products
+          </h2>
           <div className="mt-2 flex items-center text-sm font-medium text-gray-500">
-            <Link href="/" className="transition-colors hover:text-gray-900">Home</Link>
+            <Link href="/" className="transition-colors hover:text-gray-900">
+              Home
+            </Link>
             <ChevronRight className="mx-1 h-4 w-4" />
-            <Link href="/dashboard" className="transition-colors hover:text-gray-900">Dashboard</Link>
+            <Link
+              href="/dashboard"
+              className="transition-colors hover:text-gray-900"
+            >
+              Dashboard
+            </Link>
             <ChevronRight className="mx-1 h-4 w-4" />
             <span className="text-gray-900">Products</span>
           </div>
         </div>
-        
-       {(role === USER_ROLE_TYPE.RESTAURANT || canManage) && 
-        <div className="flex flex-wrap items-center gap-3">
-          <Button onClick={() => {
-            setIsEditCategory(false);
-            setIsOpen(true);
-          }} variant="outline" className="gap-2 bg-white">
-            <FolderPlus className="h-4 w-4" />
-            Create Category
-          </Button>
-          <Button onClick={() => setCreateProductModal(true)} className="gap-2">
-            <Plus className="h-4 w-4" />
-            Create Product
-          </Button>
-        </div>}
+
+        {(role === USER_ROLE_TYPE.RESTAURANT || canManage) && (
+          <div className="flex flex-wrap items-center gap-3">
+            <Button
+              onClick={() => {
+                setIsEditCategory(false);
+                setIsOpen(true);
+              }}
+              variant="outline"
+              className="gap-2 bg-white"
+            >
+              <FolderPlus className="h-4 w-4" />
+              Create Category
+            </Button>
+            <Button
+              onClick={() => setCreateProductModal(true)}
+              className="gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Create Product
+            </Button>
+          </div>
+        )}
       </div>
 
       <Dialog
@@ -137,7 +163,9 @@ function Products() {
         component={
           <CreateCategory
             setIsOpen={setIsOpen}
-            onSubmitHandler={isEditCategory ? updateCategoryHandler : createCategoryHandler}
+            onSubmitHandler={
+              isEditCategory ? updateCategoryHandler : createCategoryHandler
+            }
             isEdit={isEditCategory}
             category={category?.find((c) => c.id === selectedCategory)}
             disableSubmitButton={isUpdatingCategory || isCreatingCategory}
@@ -158,7 +186,7 @@ function Products() {
           >
             All Products
           </button>
-          
+
           {isCategoriesFetched &&
             category?.map((cat) => (
               <button
@@ -195,8 +223,12 @@ function Products() {
           <ProductGrid products={products} />
         ) : (
           <div className="flex h-64 flex-col items-center justify-center gap-2">
-            <p className="text-lg font-medium text-gray-500">No products found</p>
-            <p className="text-sm text-gray-400">Create a product to get started.</p>
+            <p className="text-lg font-medium text-gray-500">
+              No products found
+            </p>
+            <p className="text-sm text-gray-400">
+              Create a product to get started.
+            </p>
           </div>
         )}
       </div>

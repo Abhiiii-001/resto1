@@ -74,11 +74,20 @@ export default function QRDisplayPage() {
     <div className="flex h-full w-full flex-col px-4 py-6 md:px-10 bg-gray-50/50 min-h-screen overflow-x-hidden">
       {/* Header */}
       <div className="mb-10">
-        <h2 className="text-3xl font-bold tracking-tight text-foreground">QR Code</h2>
+        <h2 className="text-3xl font-bold tracking-tight text-foreground">
+          QR Code
+        </h2>
         <div className="mt-2 flex items-center text-sm font-medium text-muted-foreground">
-          <Link href="/" className="transition-colors hover:text-foreground">Home</Link>
+          <Link href="/" className="transition-colors hover:text-foreground">
+            Home
+          </Link>
           <ChevronRight className="mx-1 h-4 w-4" />
-          <Link href="/dashboard" className="transition-colors hover:text-foreground">Dashboard</Link>
+          <Link
+            href="/dashboard"
+            className="transition-colors hover:text-foreground"
+          >
+            Dashboard
+          </Link>
           <ChevronRight className="mx-1 h-4 w-4" />
           <span className="text-foreground">QR Code</span>
         </div>
@@ -86,9 +95,12 @@ export default function QRDisplayPage() {
 
       <div className="mx-auto w-full max-w-6xl">
         <div className="grid gap-10 lg:grid-cols-7">
-
           {/* QR Code Display Card */}
-          <div className="lg:col-span-4" ref={qrRef} style={{ fontFamily: 'sans-serif' }}>
+          <div
+            className="lg:col-span-4"
+            ref={qrRef}
+            style={{ fontFamily: 'sans-serif' }}
+          >
             <div className="relative overflow-hidden rounded-3xl border border-border bg-white p-2 lg:p-8 shadow-lg">
               {/* Restaurant Header */}
               <div className="relative z-10 mb-6 text-center">
@@ -167,14 +179,26 @@ export default function QRDisplayPage() {
           {/* Actions Sidebar */}
           <div className="lg:col-span-3 flex flex-col gap-4">
             <div>
-              <h3 className="text-xl font-bold text-foreground">QR Code Actions</h3>
-              <p className="mt-1 text-sm text-muted-foreground">Share or download your restaurant QR code.</p>
+              <h3 className="text-xl font-bold text-foreground">
+                QR Code Actions
+              </h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Share or download your restaurant QR code.
+              </p>
             </div>
 
             {/* Action Buttons */}
             <div className="flex flex-col gap-3 mt-2">
-              <Button asChild size="lg" className="w-full gap-3 text-base lg:h-14">
-                <a href={getQRCodeDataUrl()} target="_blank" rel="noopener noreferrer">
+              <Button
+                asChild
+                size="lg"
+                className="w-full gap-3 text-base lg:h-14"
+              >
+                <a
+                  href={getQRCodeDataUrl()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <Eye className="h-5 w-5" />
                   Live Preview
                 </a>
@@ -223,9 +247,14 @@ export default function QRDisplayPage() {
                   { label: 'Size', value: '1024×1024 px' },
                   { label: 'Type', value: 'Menu Link' },
                 ].map((item) => (
-                  <div key={item.label} className="flex items-center justify-between">
+                  <div
+                    key={item.label}
+                    className="flex items-center justify-between"
+                  >
                     <span className="text-muted-foreground">{item.label}</span>
-                    <span className="font-medium text-foreground">{item.value}</span>
+                    <span className="font-medium text-foreground">
+                      {item.value}
+                    </span>
                   </div>
                 ))}
                 <div className="flex items-center justify-between">
@@ -240,7 +269,9 @@ export default function QRDisplayPage() {
 
             {/* Usage Tips */}
             <div className="rounded-xl border border-border bg-white p-5 shadow-sm">
-              <h4 className="mb-4 font-semibold text-foreground">💡 Usage Tips</h4>
+              <h4 className="mb-4 font-semibold text-foreground">
+                💡 Usage Tips
+              </h4>
               <ul className="space-y-3 text-sm text-muted-foreground">
                 {[
                   'Place QR codes on every table for easy access',
@@ -263,7 +294,8 @@ export default function QRDisplayPage() {
                 Need Help?
               </h4>
               <p className="mb-4 text-sm text-muted-foreground">
-                Our support team is here to help you with QR code setup and customization.
+                Our support team is here to help you with QR code setup and
+                customization.
               </p>
               <Button
                 variant="outline"

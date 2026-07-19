@@ -4,7 +4,6 @@ export type RestaurantDropdownChoics = {
   resCode: string;
 };
 
-
 export type Restaurant = {
   id: string;
   restaurantId: string;
@@ -23,4 +22,4 @@ export type Restaurant = {
   totalEarnings: number;
   totalOrders: number;
   totalQRScan: number;
-}
+};

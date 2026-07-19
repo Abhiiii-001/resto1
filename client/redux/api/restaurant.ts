@@ -27,14 +27,14 @@ export const restaurantApi = createApi({
   reducerPath: 'restaurant',
 
   endpoints: (build) => ({
-    getAllRestaurantId: build.query<
-      RestaurantDropdownChoics[],
-      void
-    >({
+    getAllRestaurantId: build.query<RestaurantDropdownChoics[], void>({
       query: () => ({
         url: '/all',
       }),
-      transformResponse: (response: { message: string, restaurant: RestaurantDropdownChoics[] }) => response.restaurant,
+      transformResponse: (response: {
+        message: string;
+        restaurant: RestaurantDropdownChoics[];
+      }) => response.restaurant,
     }),
 
     updateRestuarantDetails: build.mutation<
@@ -60,7 +60,8 @@ export const restaurantApi = createApi({
       query: (id) => ({
         url: `/${id}`,
       }),
-      transformResponse: (response: { success: boolean; data: any }) => response.data,
+      transformResponse: (response: { success: boolean; data: any }) =>
+        response.data,
       providesTags: ['RestaurantDetails'],
     }),
   }),

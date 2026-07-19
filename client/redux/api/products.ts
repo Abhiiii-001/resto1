@@ -26,7 +26,10 @@ export const productApi = createApi({
   reducerPath: 'product',
   tagTypes: ['Products', 'ProductVariants'],
   endpoints: (build) => ({
-    getProducts: build.query<{ products: ProductInterface[]; message: string }, string>({
+    getProducts: build.query<
+      { products: ProductInterface[]; message: string },
+      string
+    >({
       query: (id) => `/${id}`,
       providesTags: ['Products', 'ProductVariants'],
     }),

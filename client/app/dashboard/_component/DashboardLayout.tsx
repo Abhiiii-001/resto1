@@ -17,14 +17,19 @@ export const DashboardLayout = ({
   const { isSidebarCollapsed } = useAppSelector((state) => state.global);
   const { restaurantId } = useAppSelector((state) => state.auth);
 
-  const { data: restaurantDetails } = useGetRestaurantDetailsQuery(restaurantId, { 
-    skip: !restaurantId 
-  });
-  
+  const { data: restaurantDetails } = useGetRestaurantDetailsQuery(
+    restaurantId,
+    {
+      skip: !restaurantId,
+    },
+  );
+
   const isShopOpen = restaurantDetails?.isOpen ?? false;
 
   // Only connect to socket if restaurantId is available AND shop is open
-  const socketUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.replace('/api', '') || 'http://localhost:8000';
+  const socketUrl =
+    process.env.NEXT_PUBLIC_API_BASE_URL?.replace('/api', '') ||
+    'http://localhost:8000';
   useSocket(restaurantId && isShopOpen ? restaurantId : null, socketUrl);
 
   // Auto-collapse sidebar on mobile
@@ -34,7 +39,7 @@ export const DashboardLayout = ({
         dispatch(setIsSidebarCollapsed(true));
       }
     };
-    
+
     handleResize();
 
     window.addEventListener('resize', handleResize);
@@ -47,7 +52,7 @@ export const DashboardLayout = ({
         <div
           className={cn(
             'fixed top-16 h-[calc(100vh-64px)] transition-all duration-300 z-40',
-            isSidebarCollapsed ? 'w-0 lg:w-[60px]' : 'w-64'
+            isSidebarCollapsed ? 'w-0 lg:w-[60px]' : 'w-64',
           )}
         >
           <Sidebar />
@@ -62,12 +67,10 @@ export const DashboardLayout = ({
               // On desktop, add padding based on sidebar
               isSidebarCollapsed ? 'lg:pl-[60px]' : 'lg:pl-64',
               // On mobile, no padding
-              'pl-0'
+              'pl-0',
             )}
           >
-            <div className="p-4 md:p-8 max-w-[1600px] mx-auto">
-              {children}
-            </div>
+            <div className="p-4 md:p-8 max-w-[1600px] mx-auto">{children}</div>
           </main>
         </div>
       </div>

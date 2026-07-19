@@ -1,8 +1,6 @@
 'use client';
 import Dialog from '@/components/common/Dialog';
-import {
-  useDeleteProductMutation,
-} from '@/redux/api/products';
+import { useDeleteProductMutation } from '@/redux/api/products';
 import { AlertCircle, Edit2, Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import CreateProduct from './CreateProductDialog';
@@ -16,7 +14,7 @@ import { USER_ROLE_TYPE } from '@/constants/CommonConstant';
 import Image from 'next/image';
 
 const ProductCard = ({ data }: { data: ProductInterface }) => {
-  const {role, canManage} = useAppSelector(state => state.auth)
+  const { role, canManage } = useAppSelector((state) => state.auth);
 
   const [isEditModal, setIsEditModal] = useState(false);
   const [isDeleteModal, setIsDeleteModal] = useState<boolean>(false);
@@ -50,7 +48,9 @@ const ProductCard = ({ data }: { data: ProductInterface }) => {
   };
 
   return (
-    <div className={`grid ${shouldShowActions ? 'grid-cols-12': 'grid-cols-10'} items-center gap-4 bg-white px-6 py-4 transition-colors hover:bg-gray-50/50`}>
+    <div
+      className={`grid ${shouldShowActions ? 'grid-cols-12' : 'grid-cols-10'} items-center gap-4 bg-white px-6 py-4 transition-colors hover:bg-gray-50/50`}
+    >
       {/* Image */}
       <div className="col-span-1">
         <div className="h-12 w-12 overflow-hidden rounded-lg border border-gray-100 bg-gray-50">
@@ -70,7 +70,9 @@ const ProductCard = ({ data }: { data: ProductInterface }) => {
       {/* Product Details */}
       <div className="col-span-3 pr-4">
         <p className="font-semibold text-gray-900 truncate">{data?.name}</p>
-        <p className="text-sm text-gray-500 line-clamp-1 mt-0.5">{data?.description}</p>
+        <p className="text-sm text-gray-500 line-clamp-1 mt-0.5">
+          {data?.description}
+        </p>
       </div>
 
       {/* Category */}
@@ -86,20 +88,24 @@ const ProductCard = ({ data }: { data: ProductInterface }) => {
           <span className="text-sm text-gray-400">No variants</span>
         ) : (
           <>
-            {data?.productVariants?.slice(0, 3).map((variant: ProductVariantInterface) => (
-              <div 
-                key={variant.id} 
-                className={`flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
-                  variant?.isOutOfStock 
-                    ? 'bg-red-50 text-red-700 ring-red-600/10' 
-                    : 'bg-gray-50 text-gray-700 ring-gray-500/10'
-                }`}
-              >
-                <span className="font-bold">{variant?.size?.charAt(0).toUpperCase()}</span>
-                <span className="text-gray-400">|</span>
-                <span>₹{variant.price}</span>
-              </div>
-            ))}
+            {data?.productVariants
+              ?.slice(0, 3)
+              .map((variant: ProductVariantInterface) => (
+                <div
+                  key={variant.id}
+                  className={`flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
+                    variant?.isOutOfStock
+                      ? 'bg-red-50 text-red-700 ring-red-600/10'
+                      : 'bg-gray-50 text-gray-700 ring-gray-500/10'
+                  }`}
+                >
+                  <span className="font-bold">
+                    {variant?.size?.charAt(0).toUpperCase()}
+                  </span>
+                  <span className="text-gray-400">|</span>
+                  <span>₹{variant.price}</span>
+                </div>
+              ))}
             {data.productVariants.length > 3 && (
               <div className="flex items-center justify-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-500 ring-1 ring-inset ring-gray-500/10">
                 +{data.productVariants.length - 3}
@@ -110,36 +116,37 @@ const ProductCard = ({ data }: { data: ProductInterface }) => {
       </div>
 
       {/* Actions */}
-      {shouldShowActions && 
-      <div className="col-span-2 flex justify-end gap-1">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
-          onClick={() => setIsEditModal(true)}
-          title="Edit Product"
-        >
-          <Edit2 className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 text-amber-600 hover:bg-amber-50 hover:text-amber-700"
-          onClick={() => setIsVariantModal(true)}
-          title="Manage Variants"
-        >
-          <AlertCircle className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
-          onClick={() => setIsDeleteModal(true)}
-          title="Delete Product"
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
-      </div>}
+      {shouldShowActions && (
+        <div className="col-span-2 flex justify-end gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+            onClick={() => setIsEditModal(true)}
+            title="Edit Product"
+          >
+            <Edit2 className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-amber-600 hover:bg-amber-50 hover:text-amber-700"
+            onClick={() => setIsVariantModal(true)}
+            title="Manage Variants"
+          >
+            <AlertCircle className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
+            onClick={() => setIsDeleteModal(true)}
+            title="Delete Product"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
 
       {/* Modals */}
       {isEditModal && (

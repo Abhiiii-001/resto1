@@ -12,7 +12,10 @@ import VariantForm from './VariantForm';
 import Dialog from '@/components/common/Dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { CreateProductInterface, ProductVariantInterface } from '@/types/products';
+import {
+  CreateProductInterface,
+  ProductVariantInterface,
+} from '@/types/products';
 
 interface variantInterface {
   id?: string;
@@ -27,13 +30,17 @@ interface CreateProductDialogProps {
 }
 
 interface CreateProductFormData {
-    name: string;
-    description: string;
-    thumbnail: File;
-    categoryId: string;
-  }
+  name: string;
+  description: string;
+  thumbnail: File;
+  categoryId: string;
+}
 
-const CreateProductDialog = ({ isEdit, product, setModal }: CreateProductDialogProps) => {
+const CreateProductDialog = ({
+  isEdit,
+  product,
+  setModal,
+}: CreateProductDialogProps) => {
   const [variants, setVariants] = useState<ProductVariantInterface[]>([]);
 
   const { data: categories, isLoading, isSuccess } = useGetAllCategoriesQuery();
@@ -93,7 +100,9 @@ const CreateProductDialog = ({ isEdit, product, setModal }: CreateProductDialogP
         formData.append('categoryId', data.categoryId);
         formData.append('variants', JSON.stringify(variants));
 
-        const response = await createProduct(formData as unknown as CreateProductInterface);
+        const response = await createProduct(
+          formData as unknown as CreateProductInterface,
+        );
         if (!response.error) {
           toast.success('Product Created!');
           setModal(false);
@@ -129,7 +138,9 @@ const CreateProductDialog = ({ isEdit, product, setModal }: CreateProductDialogP
           {isEdit ? 'Edit Product' : 'Create Product'}
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          {isEdit ? 'Update your product details below.' : 'Fill in the details to add a new product.'}
+          {isEdit
+            ? 'Update your product details below.'
+            : 'Fill in the details to add a new product.'}
         </p>
       </div>
 
@@ -149,9 +160,17 @@ const CreateProductDialog = ({ isEdit, product, setModal }: CreateProductDialogP
             type="text"
             placeholder="Enter product name"
             {...register('name', { required: 'Name is required' })}
-            className={errors.name ? 'border-destructive focus-visible:ring-destructive' : ''}
+            className={
+              errors.name
+                ? 'border-destructive focus-visible:ring-destructive'
+                : ''
+            }
           />
-          {errors.name && <p className="text-sm text-destructive">{errors.name.message as string}</p>}
+          {errors.name && (
+            <p className="text-sm text-destructive">
+              {errors.name.message as string}
+            </p>
+          )}
         </div>
 
         <div className="w-full space-y-2">
@@ -168,9 +187,17 @@ const CreateProductDialog = ({ isEdit, product, setModal }: CreateProductDialogP
             {...register('description', {
               required: 'Description is required',
             })}
-            className={errors.description ? 'border-destructive focus-visible:ring-destructive' : ''}
+            className={
+              errors.description
+                ? 'border-destructive focus-visible:ring-destructive'
+                : ''
+            }
           />
-          {errors.description && <p className="text-sm text-destructive">{errors.description.message as string}</p>}
+          {errors.description && (
+            <p className="text-sm text-destructive">
+              {errors.description.message as string}
+            </p>
+          )}
         </div>
 
         <div className="w-full space-y-2">
@@ -185,7 +212,11 @@ const CreateProductDialog = ({ isEdit, product, setModal }: CreateProductDialogP
             setValue={setValue}
             previewUrl={isEdit ? product?.thumbnail : null}
           />
-          {errors.thumbnail && <p className="text-sm text-destructive">{errors.thumbnail.message as string}</p>}
+          {errors.thumbnail && (
+            <p className="text-sm text-destructive">
+              {errors.thumbnail.message as string}
+            </p>
+          )}
         </div>
 
         {!isEdit && (
@@ -202,7 +233,9 @@ const CreateProductDialog = ({ isEdit, product, setModal }: CreateProductDialogP
                   required: 'Category is required',
                 })}
                 className={`flex h-10 w-full appearance-none rounded-md border bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
-                  errors.categoryId ? 'border-destructive focus-visible:ring-destructive' : 'border-input'
+                  errors.categoryId
+                    ? 'border-destructive focus-visible:ring-destructive'
+                    : 'border-input'
                 }`}
               >
                 <option value="" disabled hidden>
@@ -217,10 +250,27 @@ const CreateProductDialog = ({ isEdit, product, setModal }: CreateProductDialogP
                   ))}
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground">
-                <svg className="h-4 w-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                <svg
+                  className="h-4 w-4 opacity-50"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
+                  ></path>
+                </svg>
               </div>
             </div>
-            {errors.categoryId && <p className="text-sm text-destructive">{errors.categoryId.message as string}</p>}
+            {errors.categoryId && (
+              <p className="text-sm text-destructive">
+                {errors.categoryId.message as string}
+              </p>
+            )}
           </div>
         )}
 
@@ -254,9 +304,7 @@ const CreateProductDialog = ({ isEdit, product, setModal }: CreateProductDialogP
     </div>
   );
 
-  return (
-    <Dialog isOpen={true} setIsOpen={setModal} component={ModalContent} />
-  );
+  return <Dialog isOpen={true} setIsOpen={setModal} component={ModalContent} />;
 };
 
 export default CreateProductDialog;

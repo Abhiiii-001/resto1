@@ -24,7 +24,7 @@ export const employeeApi = createApi({
     getAllEmployees: builder.query<User[], string>({
       query: (restaurantId) => ({ url: `/${restaurantId}` }),
       providesTags: ['getallEmployees'],
-      transformResponse: (response: {users: User[]}) => response.users,
+      transformResponse: (response: { users: User[] }) => response.users,
     }),
 
     // post call
@@ -37,7 +37,10 @@ export const employeeApi = createApi({
       invalidatesTags: ['getallEmployees'],
     }),
     // update call
-    updateEmployee: builder.mutation<ApiResponse<string>, Partial<AddUpdateUserPayload>>({
+    updateEmployee: builder.mutation<
+      ApiResponse<string>,
+      Partial<AddUpdateUserPayload>
+    >({
       query: ({ id, ...data }) => ({
         url: `/${id}`,
         method: 'PUT',
@@ -48,7 +51,7 @@ export const employeeApi = createApi({
 
     //delete call
     deleteEmployee: builder.mutation<ApiResponse<string>, string>({
-      query: ( id ) => ({
+      query: (id) => ({
         url: `/${id}`,
         method: 'DELETE',
       }),

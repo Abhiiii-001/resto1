@@ -1,6 +1,10 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export type ModalType = "UPGRADE_PLAN" | "PAYMENT_CONFIRMATION" | "DELETE_CONFIRMATION" | "DEMO_LOGIN";
+export type ModalType =
+  | 'UPGRADE_PLAN'
+  | 'PAYMENT_CONFIRMATION'
+  | 'DELETE_CONFIRMATION'
+  | 'DEMO_LOGIN';
 
 interface ModalState {
   isOpen: boolean;
@@ -15,10 +19,13 @@ const initialState: ModalState = {
 };
 
 const modalSlice = createSlice({
-  name: "modal",
+  name: 'modal',
   initialState,
   reducers: {
-    openModal: (state, action: PayloadAction<{ type: ModalType; data?: any }>) => {
+    openModal: (
+      state,
+      action: PayloadAction<{ type: ModalType; data?: any }>,
+    ) => {
       state.isOpen = true;
       state.type = action.payload.type;
       state.data = action.payload.data;

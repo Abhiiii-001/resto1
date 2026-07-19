@@ -4,11 +4,11 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import { 
-  QrCode, 
-  LayoutDashboard, 
-  ArrowRight, 
-  CheckCircle2, 
+import {
+  QrCode,
+  LayoutDashboard,
+  ArrowRight,
+  CheckCircle2,
   Star,
   Quote,
   Plus,
@@ -22,7 +22,7 @@ import {
   Shield,
   Crown,
   Zap,
-  Loader2
+  Loader2,
 } from 'lucide-react';
 import Footer from './_component/Footer';
 import { Button } from './_component/ui/button';
@@ -35,9 +35,17 @@ import { useAppSelector } from '@/redux/redux';
 
 // --- Components ---
 
-const SectionTitle = ({ title, subtitle, center = true }: { title: string; subtitle?: string; center?: boolean }) => (
+const SectionTitle = ({
+  title,
+  subtitle,
+  center = true,
+}: {
+  title: string;
+  subtitle?: string;
+  center?: boolean;
+}) => (
   <div className={`mb-16 ${center ? 'text-center' : 'text-left'}`}>
-    <motion.h2 
+    <motion.h2
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -46,7 +54,7 @@ const SectionTitle = ({ title, subtitle, center = true }: { title: string; subti
       {title}
     </motion.h2>
     {subtitle && (
-      <motion.p 
+      <motion.p
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -59,8 +67,16 @@ const SectionTitle = ({ title, subtitle, center = true }: { title: string; subti
   </div>
 );
 
-const FeatureCard = ({ icon: Icon, title, description }: { icon: any; title: string; description: string }) => (
-  <motion.div 
+const FeatureCard = ({
+  icon: Icon,
+  title,
+  description,
+}: {
+  icon: any;
+  title: string;
+  description: string;
+}) => (
+  <motion.div
     whileHover={{ y: -8 }}
     className="p-8 rounded-2xl border border-border bg-white shadow-sm hover:shadow-xl transition-all duration-300"
   >
@@ -72,11 +88,17 @@ const FeatureCard = ({ icon: Icon, title, description }: { icon: any; title: str
   </motion.div>
 );
 
-const FAQItem = ({ question, answer }: { question: string; answer: string }) => {
+const FAQItem = ({
+  question,
+  answer,
+}: {
+  question: string;
+  answer: string;
+}) => {
   const [isOpen, setIsOpen] = React.useState(false);
   return (
     <div className="border-b border-border py-4">
-      <button 
+      <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between text-left py-2 hover:text-primary transition-colors"
       >
@@ -117,7 +139,8 @@ const Hero = ({ onOpenDemo }: { onOpenDemo: () => void }) => {
               <span>Zero Wait Time for Customers</span>
             </div>
             <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-foreground mb-8 leading-[1.1]">
-              Smart Ordering for Your <span className="text-primary">Cafe & Outlet</span>.
+              Smart Ordering for Your{' '}
+              <span className="text-primary">Cafe & Outlet</span>.
             </h1>
             <p className="text-xl text-muted-foreground mb-10 leading-relaxed max-w-lg">
               {landingData.hero.subtitle}
@@ -125,34 +148,57 @@ const Hero = ({ onOpenDemo }: { onOpenDemo: () => void }) => {
             <div className="flex flex-col sm:flex-row gap-4">
               {isAuthenticated ? (
                 <Link href="/dashboard">
-                  <Button size="lg" className="h-14 px-10 text-lg font-bold group bg-primary hover:bg-primary/90">
+                  <Button
+                    size="lg"
+                    className="h-14 px-10 text-lg font-bold group bg-primary hover:bg-primary/90"
+                  >
                     Go to Dashboard
                     <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
                   </Button>
                 </Link>
               ) : (
                 <Link href="/signup">
-                  <Button size="lg" className="h-14 px-10 text-lg font-bold group bg-primary hover:bg-primary/90">
+                  <Button
+                    size="lg"
+                    className="h-14 px-10 text-lg font-bold group bg-primary hover:bg-primary/90"
+                  >
                     Start for Free
                     <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
                   </Button>
                 </Link>
               )}
               {!isAuthenticated && (
-              <Button size="lg" variant="outline" className="h-14 px-10 text-lg font-bold" onClick={onOpenDemo}>
-                See a Demo
-              </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="h-14 px-10 text-lg font-bold"
+                  onClick={onOpenDemo}
+                >
+                  See a Demo
+                </Button>
               )}
             </div>
             <div className="mt-10 flex items-center gap-4 text-sm text-muted-foreground">
               <div className="flex -space-x-2">
-                {[1,2,3,4].map(i => (
-                  <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gray-200 overflow-hidden">
-                    <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="user" />
+                {[1, 2, 3, 4].map((i) => (
+                  <div
+                    key={i}
+                    className="w-8 h-8 rounded-full border-2 border-white bg-gray-200 overflow-hidden"
+                  >
+                    <img
+                      src={`https://i.pravatar.cc/100?img=${i + 10}`}
+                      alt="user"
+                    />
                   </div>
                 ))}
               </div>
-              <p>Join <span className="font-bold text-foreground">{statsData.usersJoined}</span> small outlets growing with us</p>
+              <p>
+                Join{' '}
+                <span className="font-bold text-foreground">
+                  {statsData.usersJoined}
+                </span>{' '}
+                small outlets growing with us
+              </p>
             </div>
           </motion.div>
 
@@ -163,25 +209,27 @@ const Hero = ({ onOpenDemo }: { onOpenDemo: () => void }) => {
             className="relative"
           >
             <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-border">
-              <Image 
-                src="/assets/hero.png" 
-                alt="Restro Dashboard" 
-                width={1200} 
+              <Image
+                src="/assets/hero.png"
+                alt="Restro Dashboard"
+                width={1200}
                 height={800}
                 className="w-full h-auto"
               />
             </div>
             {/* Floating UI Element */}
-            <motion.div 
+            <motion.div
               animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
               className="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-xl border border-border flex items-center gap-4"
             >
               <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
                 <UserCheck className="w-6 h-6 text-green-600" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">Frictionless Order</p>
+                <p className="text-xs text-muted-foreground">
+                  Frictionless Order
+                </p>
                 <p className="font-bold">No Login Required</p>
               </div>
             </motion.div>
@@ -195,7 +243,9 @@ const Hero = ({ onOpenDemo }: { onOpenDemo: () => void }) => {
 const TrustBar = () => (
   <section className="py-12 border-y border-border bg-gray-50/50">
     <div className="container mx-auto px-6">
-      <p className="text-center text-sm font-bold uppercase tracking-widest text-muted-foreground mb-8">Trusted by local favorites</p>
+      <p className="text-center text-sm font-bold uppercase tracking-widest text-muted-foreground mb-8">
+        Trusted by local favorites
+      </p>
       <div className="flex flex-wrap justify-center items-center gap-8 md:gap-20 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
         <h2 className="text-2xl font-bold">THE LOCAL CAFE</h2>
         <h2 className="text-2xl font-bold">CHAI POINT</h2>
@@ -210,24 +260,24 @@ const TrustBar = () => (
 const ProblemSolution = () => (
   <section id="features" className="py-24 bg-white">
     <div className="container mx-auto px-6">
-      <SectionTitle 
-        title="Built for Speed, Made for Small Business" 
+      <SectionTitle
+        title="Built for Speed, Made for Small Business"
         subtitle="Don't let queues slow you down. Give your customers the digital experience they deserve."
       />
       <div className="grid md:grid-cols-3 gap-8">
-        <FeatureCard 
-          icon={UserCheck} 
-          title="No Login, No Friction" 
+        <FeatureCard
+          icon={UserCheck}
+          title="No Login, No Friction"
           description="Customers just scan and order. No annoying signup forms or app downloads to slow them down."
         />
-        <FeatureCard 
-          icon={ShoppingBag} 
-          title="Beat the Queue" 
+        <FeatureCard
+          icon={ShoppingBag}
+          title="Beat the Queue"
           description="Reduce counter pressure. Customers can order from their table or while waiting in line."
         />
-        <FeatureCard 
-          icon={LayoutDashboard} 
-          title="Simple Owner Control" 
+        <FeatureCard
+          icon={LayoutDashboard}
+          title="Simple Owner Control"
           description="Track every order, update your menu instantly, and see your sales from any device."
         />
       </div>
@@ -242,7 +292,13 @@ const FeatureDeepDive = () => (
       <div className="grid lg:grid-cols-2 gap-16 items-center">
         <div className="order-2 lg:order-1">
           <div className="relative rounded-2xl overflow-hidden shadow-xl border border-border">
-            <Image src="/assets/menu.png" alt="Digital Menu" width={800} height={600} className="w-full h-auto" />
+            <Image
+              src="/assets/menu.png"
+              alt="Digital Menu"
+              width={800}
+              height={600}
+              className="w-full h-auto"
+            />
           </div>
         </div>
         <div className="order-1 lg:order-2">
@@ -251,10 +307,17 @@ const FeatureDeepDive = () => (
           </div>
           <h2 className="text-4xl font-bold mb-6">QR Menus That Just Work</h2>
           <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-            Generate QR codes for every table. Your customers get a beautiful, mobile-optimized menu instantly. They can add to cart and place orders in seconds.
+            Generate QR codes for every table. Your customers get a beautiful,
+            mobile-optimized menu instantly. They can add to cart and place
+            orders in seconds.
           </p>
           <ul className="space-y-4">
-            {['Zero signup ordering', 'Instant menu updates', 'Mobile-first experience', 'Multi-item cart management'].map(item => (
+            {[
+              'Zero signup ordering',
+              'Instant menu updates',
+              'Mobile-first experience',
+              'Multi-item cart management',
+            ].map((item) => (
               <li key={item} className="flex items-center gap-3">
                 <CheckCircle2 className="w-5 h-5 text-primary" />
                 <span className="font-medium">{item}</span>
@@ -274,10 +337,17 @@ const FeatureDeepDive = () => (
           </div>
           <h2 className="text-4xl font-bold mb-6">Manage Orders with Ease</h2>
           <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-            Your own digital command center. See new orders as they come in, manage status, and track your daily earnings without any complex hardware.
+            Your own digital command center. See new orders as they come in,
+            manage status, and track your daily earnings without any complex
+            hardware.
           </p>
           <ul className="space-y-4">
-            {['Real-time order alerts', 'Daily sales tracking', 'Staff-friendly interface', 'Simple menu management'].map(item => (
+            {[
+              'Real-time order alerts',
+              'Daily sales tracking',
+              'Staff-friendly interface',
+              'Simple menu management',
+            ].map((item) => (
               <li key={item} className="flex items-center gap-3">
                 <CheckCircle2 className="w-5 h-5 text-primary" />
                 <span className="font-medium">{item}</span>
@@ -287,7 +357,13 @@ const FeatureDeepDive = () => (
         </div>
         <div>
           <div className="relative rounded-2xl overflow-hidden shadow-xl border border-border">
-            <Image src="/assets/order.png" alt="Order Management" width={800} height={600} className="w-full h-auto" />
+            <Image
+              src="/assets/order.png"
+              alt="Order Management"
+              width={800}
+              height={600}
+              className="w-full h-auto"
+            />
           </div>
         </div>
       </div>
@@ -296,14 +372,23 @@ const FeatureDeepDive = () => (
 );
 
 const PricingSection = () => {
-  const { data: plansData, isLoading: isLoadingPlans, isError } = useGetPlansQuery({});
+  const {
+    data: plansData,
+    isLoading: isLoadingPlans,
+    isError,
+  } = useGetPlansQuery({});
   const { isAuthenticated } = useAppSelector((state) => state.auth);
 
   if (isLoadingPlans) {
     return (
-      <section id="pricing" className="py-24 bg-gray-50/50 flex flex-col items-center justify-center">
+      <section
+        id="pricing"
+        className="py-24 bg-gray-50/50 flex flex-col items-center justify-center"
+      >
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        <p className="text-sm text-muted-foreground mt-2 font-medium">Loading pricing options...</p>
+        <p className="text-sm text-muted-foreground mt-2 font-medium">
+          Loading pricing options...
+        </p>
       </section>
     );
   }
@@ -318,8 +403,8 @@ const PricingSection = () => {
   return (
     <section id="pricing" className="py-24 bg-gray-50/50">
       <div className="container mx-auto px-6">
-        <SectionTitle 
-          title="Simple, Transparent Pricing" 
+        <SectionTitle
+          title="Simple, Transparent Pricing"
           subtitle="Empower your outlet with robust operational controls."
         />
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -328,10 +413,12 @@ const PricingSection = () => {
             const isPremium = plan.type === 3;
 
             return (
-              <div 
+              <div
                 key={plan.id}
                 className={`p-8 rounded-3xl bg-white border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col relative ${
-                  isPro ? 'border-2 border-primary shadow-lg shadow-primary/5' : 'border-border shadow-sm'
+                  isPro
+                    ? 'border-2 border-primary shadow-lg shadow-primary/5'
+                    : 'border-border shadow-sm'
                 }`}
               >
                 {isPro && (
@@ -341,47 +428,77 @@ const PricingSection = () => {
                 )}
 
                 <div className="mb-6 flex justify-between items-start">
-                  <div className={`p-3 rounded-2xl ${
-                    plan.type === 1 ? 'bg-blue-50 text-blue-600' : plan.type === 2 ? 'bg-primary/10 text-primary' : 'bg-amber-50 text-amber-600'
-                  }`}>
+                  <div
+                    className={`p-3 rounded-2xl ${
+                      plan.type === 1
+                        ? 'bg-blue-50 text-blue-600'
+                        : plan.type === 2
+                          ? 'bg-primary/10 text-primary'
+                          : 'bg-amber-50 text-amber-600'
+                    }`}
+                  >
                     {plan.type === 1 && <Zap className="w-8 h-8" />}
                     {plan.type === 2 && <Shield className="w-8 h-8" />}
                     {plan.type === 3 && <Crown className="w-8 h-8" />}
                   </div>
                 </div>
 
-                <h3 className="text-2xl font-bold text-foreground mb-1">{plan.name}</h3>
+                <h3 className="text-2xl font-bold text-foreground mb-1">
+                  {plan.name}
+                </h3>
                 <p className="text-xs text-muted-foreground mb-6">
-                  {plan.type === 1 ? 'Perfect for trying out our features' : 
-                   plan.type === 2 ? 'Ideal for growing restaurants' : 
-                   'Unleash the full power of your business'}
+                  {plan.type === 1
+                    ? 'Perfect for trying out our features'
+                    : plan.type === 2
+                      ? 'Ideal for growing restaurants'
+                      : 'Unleash the full power of your business'}
                 </p>
 
                 <div className="flex items-baseline gap-1 mb-8">
                   <span className="text-4xl font-black text-foreground">
                     {plan.price === 0 ? 'Free' : `₹${plan.price}`}
                   </span>
-                  {plan.price > 0 && <span className="text-muted-foreground font-medium text-sm">/ month</span>}
+                  {plan.price > 0 && (
+                    <span className="text-muted-foreground font-medium text-sm">
+                      / month
+                    </span>
+                  )}
                 </div>
 
                 {/* Features List */}
                 <ul className="space-y-4 mb-8 flex-grow">
                   {plan.features?.map((feat: string, index: number) => (
-                    <li key={index} className="flex items-start gap-3 text-foreground/80 font-medium text-sm">
+                    <li
+                      key={index}
+                      className="flex items-start gap-3 text-foreground/80 font-medium text-sm"
+                    >
                       <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
                       <span>{feat}</span>
                     </li>
                   ))}
-                  
+
                   {/* Dynamic Capacity Indicators */}
                   <li className="flex items-start gap-3 text-slate-500 text-xs mt-4 pt-4 border-t border-slate-100">
-                    <span>Products: {plan.maxProducts === -1 ? 'Unlimited' : plan.maxProducts}</span>
+                    <span>
+                      Products:{' '}
+                      {plan.maxProducts === -1 ? 'Unlimited' : plan.maxProducts}
+                    </span>
                   </li>
                   <li className="flex items-start gap-3 text-slate-500 text-xs">
-                    <span>Staff: {plan.maxEmployees === -1 ? 'Unlimited' : `${plan.maxEmployees} users`}</span>
+                    <span>
+                      Staff:{' '}
+                      {plan.maxEmployees === -1
+                        ? 'Unlimited'
+                        : `${plan.maxEmployees} users`}
+                    </span>
                   </li>
                   <li className="flex items-start gap-3 text-slate-500 text-xs">
-                    <span>Tables/QRs: {plan.maxQRCodes === -1 ? 'Unlimited' : `${plan.maxQRCodes} tables`}</span>
+                    <span>
+                      Tables/QRs:{' '}
+                      {plan.maxQRCodes === -1
+                        ? 'Unlimited'
+                        : `${plan.maxQRCodes} tables`}
+                    </span>
                   </li>
                 </ul>
 
@@ -393,10 +510,11 @@ const PricingSection = () => {
                     </Link>
                   </Button>
                 ) : (
-                  <Button className="w-full mt-auto bg-foreground text-background hover:bg-foreground/90" asChild>
-                    <Link href="/signup">
-                      Get Started
-                    </Link>
+                  <Button
+                    className="w-full mt-auto bg-foreground text-background hover:bg-foreground/90"
+                    asChild
+                  >
+                    <Link href="/signup">Get Started</Link>
                   </Button>
                 )}
               </div>
@@ -414,14 +532,25 @@ const Testimonials = () => (
       <SectionTitle title="Trusted by Local Entrepreneurs" />
       <div className="grid md:grid-cols-3 gap-8">
         {landingData.testimonials.map((t, i) => (
-          <div key={i} className="p-8 rounded-2xl border border-border bg-gray-50/50 relative">
+          <div
+            key={i}
+            className="p-8 rounded-2xl border border-border bg-gray-50/50 relative"
+          >
             <Quote className="absolute top-6 right-8 w-10 h-10 text-primary/10" />
             <div className="flex gap-1 mb-6">
-              {[1,2,3,4,5].map(s => <Star key={s} className="w-4 h-4 fill-primary text-primary" />)}
+              {[1, 2, 3, 4, 5].map((s) => (
+                <Star key={s} className="w-4 h-4 fill-primary text-primary" />
+              ))}
             </div>
-            <p className="text-lg mb-8 italic text-foreground/80">"{t.content}"</p>
+            <p className="text-lg mb-8 italic text-foreground/80">
+              "{t.content}"
+            </p>
             <div className="flex items-center gap-4">
-              <img src={t.img} alt={t.name} className="w-12 h-12 rounded-full border border-border" />
+              <img
+                src={t.img}
+                alt={t.name}
+                className="w-12 h-12 rounded-full border border-border"
+              />
               <div>
                 <p className="font-bold text-sm">{t.name}</p>
                 <p className="text-xs text-muted-foreground">{t.role}</p>
@@ -443,11 +572,7 @@ const FAQ = () => (
       </div>
       <div className="mt-12 space-y-2">
         {landingData.faqs.map((faq, index) => (
-          <FAQItem 
-            key={index}
-            question={faq.question} 
-            answer={faq.answer} 
-          />
+          <FAQItem key={index} question={faq.question} answer={faq.answer} />
         ))}
       </div>
     </div>
@@ -461,25 +586,37 @@ const CTA = () => (
         {/* Decor */}
         <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-64 h-64 bg-black/10 rounded-full blur-3xl" />
-        
+
         <div className="relative z-10 max-w-3xl mx-auto">
-          <h2 className="text-4xl md:text-6xl font-bold text-white mb-8">Empower your small outlet today.</h2>
+          <h2 className="text-4xl md:text-6xl font-bold text-white mb-8">
+            Empower your small outlet today.
+          </h2>
           <p className="text-xl text-white/80 mb-12">
-            Join hundreds of cafes and snack bars that are modernizing their service. Get started for free.
+            Join hundreds of cafes and snack bars that are modernizing their
+            service. Get started for free.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/signup">
-              <Button size="lg" className="h-16 px-12 text-lg font-bold bg-white text-primary hover:bg-white/90">
+              <Button
+                size="lg"
+                className="h-16 px-12 text-lg font-bold bg-white text-primary hover:bg-white/90"
+              >
                 Start for Free
               </Button>
             </Link>
             <Link href="/contact">
-              <Button size="lg" variant="outline" className="h-16 px-12 text-lg font-bold border-white text-white hover:bg-white/10">
+              <Button
+                size="lg"
+                variant="outline"
+                className="h-16 px-12 text-lg font-bold border-white text-white hover:bg-white/10"
+              >
                 Ask a Question
               </Button>
             </Link>
           </div>
-          <p className="mt-8 text-white/60 text-sm">No credit card required. Setup in 5 minutes.</p>
+          <p className="mt-8 text-white/60 text-sm">
+            No credit card required. Setup in 5 minutes.
+          </p>
         </div>
       </div>
     </div>
@@ -504,9 +641,9 @@ export default function Home() {
       <Footer />
 
       {/* Interactive role-based demo selection modal */}
-      <DemoModal 
-        isOpen={isDemoModalOpen} 
-        onClose={() => setIsDemoModalOpen(false)} 
+      <DemoModal
+        isOpen={isDemoModalOpen}
+        onClose={() => setIsDemoModalOpen(false)}
       />
     </div>
   );

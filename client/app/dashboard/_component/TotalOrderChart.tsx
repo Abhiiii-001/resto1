@@ -51,7 +51,8 @@ const options: ChartOptions<'doughnut'> = {
 };
 
 function TotalOrderChart({ data }: Props) {
-  const hasData = data?.data && data.data.length > 0 && data.data.some(v => v > 0);
+  const hasData =
+    data?.data && data.data.length > 0 && data.data.some((v) => v > 0);
 
   const chartData = {
     labels: data.label,
@@ -79,7 +80,9 @@ function TotalOrderChart({ data }: Props) {
   return (
     <div className="col-span-2 row-span-2 w-full rounded-xl border border-border bg-white shadow-sm xl:col-span-1 xl:row-span-3">
       <div className="flex w-full flex-row items-center justify-between border-b border-border px-5 py-4">
-        <div className="text-base font-semibold text-foreground">Total Order Status</div>
+        <div className="text-base font-semibold text-foreground">
+          Total Order Status
+        </div>
       </div>
 
       <div className="flex h-[200px] w-full items-center justify-center px-4 py-4">

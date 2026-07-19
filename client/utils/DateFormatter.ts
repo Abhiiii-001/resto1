@@ -7,7 +7,10 @@ export const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-US', options);
 };
 
-export function formatDateTime(isoString: string): { time: string; day: string } {
+export function formatDateTime(isoString: string): {
+  time: string;
+  day: string;
+} {
   const inputDate = new Date(isoString);
   const currentDate = new Date();
 

@@ -62,7 +62,7 @@ function CreatePassword() {
         password: data?.password,
         verificationToken: token?.[0] || '',
       }).unwrap();
-      
+
       if (response?.success) {
         toast.success('Password reset successfully!');
         setIsSuccessReset(true);
@@ -71,14 +71,17 @@ function CreatePassword() {
       }
     } catch (err: any) {
       console.error('Password reset failed:', err);
-      toast.error(err?.data?.message || err.message || 'Password Reset Failed!');
+      toast.error(
+        err?.data?.message || err.message || 'Password Reset Failed!',
+      );
     } finally {
       toast.dismiss(toastId);
     }
   };
 
   const getPasswordStrength = (password: string) => {
-    if (password.length === 0) return { strength: 0, text: '', color: 'bg-gray-200' };
+    if (password.length === 0)
+      return { strength: 0, text: '', color: 'bg-gray-200' };
     if (password.length < 6)
       return { strength: 25, text: 'Weak', color: 'bg-destructive' };
     if (password.length < 8)
@@ -102,7 +105,8 @@ function CreatePassword() {
               Invalid or Expired Link
             </h1>
             <p className="mb-8 text-sm text-muted-foreground">
-              This password reset link is invalid or has expired. Please request a new one.
+              This password reset link is invalid or has expired. Please request
+              a new one.
             </p>
             <Link href="/forgot-password">
               <Button variant="outline" className="w-full py-6">
@@ -127,12 +131,11 @@ function CreatePassword() {
               Password Reset Complete
             </h1>
             <p className="mb-8 text-sm text-muted-foreground">
-              Your password has been successfully reset. You can now sign in with your new password.
+              Your password has been successfully reset. You can now sign in
+              with your new password.
             </p>
             <Link href="/signin" className="block w-full">
-              <Button className="w-full py-6">
-                Sign In Now
-              </Button>
+              <Button className="w-full py-6">Sign In Now</Button>
             </Link>
           </div>
         </div>
@@ -155,9 +158,7 @@ function CreatePassword() {
               Restro
             </span>
           </div>
-          <h1 className="text-2xl font-bold text-foreground">
-            Reset Password
-          </h1>
+          <h1 className="text-2xl font-bold text-foreground">Reset Password</h1>
           <p className="text-sm text-muted-foreground">
             Please enter your new password below.
           </p>
@@ -189,10 +190,10 @@ function CreatePassword() {
                   type={showPassword ? 'text' : 'password'}
                   id="password"
                   className={cn(
-                    "w-full rounded-lg border py-2.5 pl-10 pr-10 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary/20",
+                    'w-full rounded-lg border py-2.5 pl-10 pr-10 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary/20',
                     errors.password
-                      ? "border-destructive bg-destructive/5"
-                      : "border-border bg-white hover:border-muted-foreground/30 focus:border-primary"
+                      ? 'border-destructive bg-destructive/5'
+                      : 'border-border bg-white hover:border-muted-foreground/30 focus:border-primary',
                   )}
                   placeholder="••••••••"
                 />
@@ -201,7 +202,11 @@ function CreatePassword() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground"
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </button>
               </div>
 
@@ -216,7 +221,7 @@ function CreatePassword() {
                           ? 'text-destructive'
                           : passwordStrength.strength < 75
                             ? 'text-amber-500'
-                            : 'text-green-600'
+                            : 'text-green-600',
                       )}
                     >
                       {passwordStrength.text}
@@ -224,7 +229,10 @@ function CreatePassword() {
                   </div>
                   <div className="h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
                     <div
-                      className={cn("h-full transition-all duration-500", passwordStrength.color)}
+                      className={cn(
+                        'h-full transition-all duration-500',
+                        passwordStrength.color,
+                      )}
                       style={{ width: `${passwordStrength.strength}%` }}
                     ></div>
                   </div>
@@ -232,7 +240,9 @@ function CreatePassword() {
               )}
 
               {errors.password && (
-                <p className="text-xs text-destructive">{errors.password.message}</p>
+                <p className="text-xs text-destructive">
+                  {errors.password.message}
+                </p>
               )}
             </div>
 
@@ -257,10 +267,10 @@ function CreatePassword() {
                   type={showConfirmPassword ? 'text' : 'password'}
                   id="confirmPassword"
                   className={cn(
-                    "w-full rounded-lg border py-2.5 pl-10 pr-10 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary/20",
+                    'w-full rounded-lg border py-2.5 pl-10 pr-10 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary/20',
                     errors.confirmPassword
-                      ? "border-destructive bg-destructive/5"
-                      : "border-border bg-white hover:border-muted-foreground/30 focus:border-primary"
+                      ? 'border-destructive bg-destructive/5'
+                      : 'border-border bg-white hover:border-muted-foreground/30 focus:border-primary',
                   )}
                   placeholder="••••••••"
                 />
@@ -269,11 +279,17 @@ function CreatePassword() {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground"
                 >
-                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </button>
               </div>
               {errors.confirmPassword && (
-                <p className="text-xs text-destructive">{errors.confirmPassword.message}</p>
+                <p className="text-xs text-destructive">
+                  {errors.confirmPassword.message}
+                </p>
               )}
             </div>
 

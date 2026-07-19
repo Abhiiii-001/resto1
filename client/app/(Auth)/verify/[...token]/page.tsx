@@ -36,7 +36,8 @@ function Verify() {
               Verification Failed
             </h1>
             <p className="mb-8 text-sm text-muted-foreground">
-              The verification link is invalid or has expired. Please try signing up again or contact support.
+              The verification link is invalid or has expired. Please try
+              signing up again or contact support.
             </p>
             <Link href="/signin" className="block w-full">
               <Button variant="outline" className="w-full py-6">
@@ -70,7 +71,8 @@ function Verify() {
             Email Verified!
           </h1>
           <p className="mb-8 text-sm text-muted-foreground">
-            Your account has been successfully verified. You can now sign in to your dashboard.
+            Your account has been successfully verified. You can now sign in to
+            your dashboard.
           </p>
           <Link href="/signin" className="block w-full">
             <Button className="w-full py-6 text-base font-semibold">
