@@ -7,7 +7,7 @@ import { setCredentials } from '@/redux/states/authSlice';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
+import { ChefHat, Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import { useAppSelector } from '@/redux/redux';
 import { USER_ROLE_TYPE } from '@/constants/CommonConstant';
 
@@ -56,8 +56,9 @@ const SignIn: React.FC = () => {
         {/* Header */}
         <div className="px-8 pb-6 pt-8 text-center">
           <div className="mb-4 flex items-center justify-center gap-2">
+            <ChefHat className="h-6 w-6 text-primary" />
             <span className="text-2xl font-bold tracking-tight text-foreground">
-              🍽️ Restro
+              Restro
             </span>
           </div>
           <h2 className="text-2xl font-bold text-foreground">

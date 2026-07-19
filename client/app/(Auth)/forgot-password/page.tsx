@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
-import { Mail, ArrowLeft } from 'lucide-react';
+import { Mail, ArrowLeft, ChefHat } from 'lucide-react';
 import { useResetPasswordMutation } from '@/redux/api/auth';
 import { Button } from '@/components/ui/button';
 
@@ -79,8 +79,9 @@ export default function ForgotPasswordPage() {
         {/* Header */}
         <div className="flex flex-col items-center justify-center gap-2 px-8 pt-8 pb-6 text-center">
           <div className="mb-2 flex items-center justify-center gap-2">
+            <ChefHat className="h-6 w-6 text-primary" />
             <span className="text-2xl font-bold tracking-tight text-foreground">
-              🍽️ Restro
+             Restro
             </span>
           </div>
           <h1 className="text-2xl font-bold text-foreground">

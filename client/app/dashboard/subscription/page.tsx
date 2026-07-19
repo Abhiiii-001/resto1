@@ -290,10 +290,6 @@ export default function SubscriptionPage() {
             <span>&gt;</span>
             <span className="text-foreground">Subscription</span>
             </div>
-              
-          <p className="text-muted-foreground text-sm max-w-lg mt-1">
-            Manage your business tier, track service transactions, and view historical invoices.
-          </p>
           </div>
           
           {/* Tab Control */}

@@ -197,9 +197,9 @@ const OrderList = () => {
         </div>
       </div>
 
-      {/* Filters Bar (Keeping original design as requested, just updating colors) */}
+      {/* Filters Bar*/}
       <div className="mb-6 flex w-full flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex w-full sm:w-fit flex-row rounded-xl border border-border bg-background text-[0.90rem] font-semibold leading-4 text-foreground shadow-sm overflow-x-auto no-scrollbar">
+        <div className="flex w-full sm:w-fit flex-row rounded-xl border border-border bg-background text-[0.90rem] font-semibold leading-4 text-foreground shadow-sm ">
           <div className="border-r border-border px-6 py-4 text-muted-foreground">
             <Filter className="h-4 w-4" />
           </div>
@@ -266,7 +266,7 @@ const OrderList = () => {
 
                 {/* Modal trigger */}
                 {filterModal === data.name && (
-                  <div className="absolute top-[110%] z-10 left-0" onClick={(e) => e.stopPropagation()}>
+                  <div className="absolute top-[110%] z-10 -left-[50%]" onClick={(e) => e.stopPropagation()}>
                     <FilterModal
                       title={data.modalTitle}
                       name={data.name}

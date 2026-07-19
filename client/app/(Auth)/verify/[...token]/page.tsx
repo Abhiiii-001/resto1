@@ -1,6 +1,6 @@
 'use client';
 import { useVerifyTokenMutation } from '@/redux/api/auth';
-import { X, CheckCircle2 } from 'lucide-react';
+import { X, CheckCircle2, ChefHat } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import React, { useEffect } from 'react';
@@ -55,8 +55,9 @@ function Verify() {
         {/* Header */}
         <div className="flex flex-col items-center justify-center gap-2 px-8 pt-8 pb-4 text-center">
           <div className="mb-2 flex items-center justify-center gap-2">
+            <ChefHat className="h-6 w-6 text-primary" />
             <span className="text-2xl font-bold tracking-tight text-foreground">
-              🍽️ Restro
+              Restro
             </span>
           </div>
         </div>

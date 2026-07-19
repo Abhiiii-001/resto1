@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import SignupForm1 from '../_components/SignupForm1';
 import SignupForm2 from '../_components/SignupForm2';
-import { Check } from 'lucide-react';
+import { Check, ChefHat } from 'lucide-react';
 
 function Signup() {
   const [step, setStep] = useState(1);
@@ -16,8 +16,9 @@ function Signup() {
         {/* Header */}
         <div className="flex flex-col items-center justify-center gap-2 px-8 py-8">
           <div className="mb-2 flex items-center justify-center gap-2">
+            <ChefHat className="h-6 w-6 text-primary" />
             <span className="text-2xl font-bold tracking-tight text-foreground">
-              🍽️ Restro
+             Restro
             </span>
           </div>
           <h2 className="text-2xl font-bold text-foreground">

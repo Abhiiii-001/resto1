@@ -230,9 +230,9 @@ const ContactFormSection = () => {
               <p className="text-white/80 mb-6">
                 Need help setting up your QR codes? Our team can guide you through the process in under 10 minutes.
               </p>
-              <Button className="bg-white text-primary hover:bg-white/90 font-bold">
+              {/* <Button className="bg-white text-primary hover:bg-white/90 font-bold">
                 View Setup Guide
-              </Button>
+              </Button> */}
             </div>
           </motion.div>
         </div>
