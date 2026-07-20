@@ -29,8 +29,8 @@ function VariantModal({ clickedProduct, setClickedProduct }: Props) {
   return (
     // Dim backdrop without blur so products behind remain crisp
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
-      style={{ background: "rgba(0,0,0,0.4)" }}
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 overflow-y-auto py-8 font-sans"
+      style={{ background: "rgba(0,0,0,0.5)" }}
       onClick={() => setClickedProduct(null)}
     >
       <motion.div
@@ -38,36 +38,36 @@ function VariantModal({ clickedProduct, setClickedProduct }: Props) {
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: "100%", opacity: 0 }}
         transition={{ type: "spring", stiffness: 280, damping: 28 }}
-        className="bg-white w-full sm:max-w-lg sm:rounded-3xl rounded-t-3xl shadow-2xl overflow-hidden"
+        className="bg-white w-full sm:max-w-lg rounded-[2.5rem] border-4 border-gray-900 shadow-[12px_12px_0px_#111] overflow-hidden my-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Drag handle */}
-        <div className="flex justify-center pt-3 pb-1">
-          <div className="w-10 h-1 bg-gray-200 rounded-full" />
+        <div className="flex justify-center pt-4 pb-1">
+          <div className="w-12 h-1.5 bg-gray-900 rounded-full" />
         </div>
 
         {/* Close */}
-        <div className="flex items-center justify-between px-6 pt-2 pb-3 border-b border-gray-100">
+        <div className="flex items-center justify-between px-8 pt-3 pb-4 border-b-4 border-gray-900 bg-rYellow">
           <div>
-            <h3 className="text-lg font-black text-gray-900">{clickedProduct?.name}</h3>
+            <h3 className="text-2xl font-black text-gray-900 uppercase tracking-tighter">{clickedProduct?.name}</h3>
             {clickedProduct?.description && (
-              <p className="text-xs text-gray-500 font-medium mt-0.5">
+              <p className="text-xs text-gray-800 font-bold mt-0.5">
                 {clickedProduct.description}
               </p>
             )}
           </div>
           <button
             onClick={() => setClickedProduct(null)}
-            className="w-9 h-9 rounded-full bg-rGray flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
+            className="w-10 h-10 rounded-full border-2 border-gray-900 bg-white flex items-center justify-center text-gray-900 hover:bg-rRed hover:text-white transition-all shadow-[2px_2px_0px_#111]"
           >
-            <X size={18} />
+            <X size={20} />
           </button>
         </div>
 
         {/* Variant Slider — passes product thumbnail for circle image */}
-        <div className="px-6 pt-4">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-8">
-            Choose size
+        <div className="px-8 pt-6 pb-2">
+          <p className="text-xs font-black text-gray-900 uppercase tracking-widest mb-6 inline-block bg-rGray px-3 py-1 border border-gray-900 rounded-full">
+            Choose Size
           </p>
           <VariantSlider
             data={clickedProduct?.productVariants}
@@ -78,30 +78,30 @@ function VariantModal({ clickedProduct, setClickedProduct }: Props) {
         </div>
 
         {/* Quantity + CTA */}
-        <div className="px-6 py-5 flex items-center justify-between gap-4 border-t border-gray-100 mt-4">
+        <div className="px-8 py-6 flex items-center justify-between gap-4 border-t-4 border-gray-900 mt-4 bg-white">
           {/* Qty controls */}
           <div className="flex items-center gap-3">
             <button
               onClick={() => dispatch(removeToCart({ variant: currentVariant, quantity: 1 }))}
-              className="w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-colors"
+              className="w-10 h-10 rounded-xl border-2 border-gray-900 bg-rGray flex items-center justify-center font-black hover:bg-rYellow transition-colors shadow-[2px_2px_0px_#111]"
             >
-              <Minus size={16} className="text-gray-700" />
+              <Minus size={18} className="text-gray-900" />
             </button>
-            <span className="text-xl font-black text-gray-900 w-6 text-center">{quantity}</span>
+            <span className="text-2xl font-black text-gray-900 w-6 text-center">{quantity}</span>
             <button
               onClick={() => dispatch(addToCart({ variant: currentVariant, quantity: 1, product: clickedProduct }))}
-              className="w-10 h-10 rounded-xl bg-gray-900 hover:bg-black flex items-center justify-center transition-colors"
+              className="w-10 h-10 rounded-xl border-2 border-gray-900 bg-rRed text-white flex items-center justify-center font-black hover:bg-red-700 transition-colors shadow-[2px_2px_0px_#111]"
             >
-              <Plus size={16} className="text-white" />
+              <Plus size={18} className="text-white" />
             </button>
           </div>
 
           {/* Done */}
           <button
             onClick={() => setClickedProduct(null)}
-            className="flex-1 py-3 bg-rRed hover:bg-red-700 text-white font-bold rounded-2xl transition-colors"
+            className="flex-1 py-4 bg-gray-900 hover:bg-rRed text-rYellow hover:text-white font-black text-base uppercase tracking-wider rounded-2xl border-4 border-gray-900 shadow-[4px_4px_0px_#C8161D] transition-all"
           >
-            {quantity > 0 ? `Add ${quantity} to Cart · ₹${currentVariant?.price * quantity}` : "Done"}
+            {quantity > 0 ? `Add ${quantity} · ₹${currentVariant?.price * quantity}` : "Done"}
           </button>
         </div>
       </motion.div>

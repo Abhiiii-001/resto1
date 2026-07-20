@@ -12,6 +12,7 @@ import SmartDiscoverySection from "./_components/landing/SmartDiscoverySection";
 import HowItWorksSection from "./_components/landing/HowItWorksSection";
 import WhyChooseSection from "./_components/landing/WhyChooseSection";
 import OrderExperienceSection from "./_components/landing/OrderExperienceSection";
+import PartnerSection from "./_components/landing/PartnerSection";
 import Footer from "./_components/landing/Footer";
 import RestaurantModal from "./_components/RestaurantModal";
 
@@ -41,6 +42,8 @@ export default function Home() {
         <WhyChooseSection />
         
         <OrderExperienceSection />
+
+        <PartnerSection />
       </main>
 
       <Footer />

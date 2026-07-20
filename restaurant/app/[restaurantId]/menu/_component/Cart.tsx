@@ -46,22 +46,22 @@ function Cart({ setIsCartOpen }: Props) {
         animate={{ x: 0 }}
         exit={{ x: "100%" }}
         transition={{ type: "tween", duration: 0.35 }}
-        className="bg-white shadow-2xl w-full max-w-md h-full flex flex-col overflow-hidden"
+        className="bg-white border-l-4 border-gray-900 shadow-2xl w-full max-w-md h-full flex flex-col overflow-hidden font-sans"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
+        <div className="flex items-center justify-between px-6 py-5 border-b-4 border-gray-900 flex-shrink-0 bg-rYellow">
           <button
             onClick={() => setIsCartOpen(false)}
-            className="p-2 rounded-full hover:bg-gray-100 text-gray-500 transition-colors"
+            className="w-10 h-10 rounded-full border-2 border-gray-900 bg-white flex items-center justify-center text-gray-900 hover:bg-rRed hover:text-white transition-all shadow-[2px_2px_0px_#111]"
           >
             <ChevronLeft size={20} />
           </button>
-          <h2 className="text-lg font-bold text-gray-900">My Order</h2>
-          <div className="flex items-center gap-2 text-sm text-gray-500 font-medium">
+          <h2 className="text-xl font-black uppercase tracking-tighter text-gray-900">My Order</h2>
+          <div className="flex items-center gap-2 text-sm text-gray-900 font-black">
             <span
               onClick={() => dispatch(setEatingLocation(!isPack))}
-              className="flex items-center gap-1.5 cursor-pointer hover:text-rRed transition-colors"
+              className="flex items-center gap-1.5 cursor-pointer bg-white px-3 py-1 rounded-full border-2 border-gray-900 shadow-[2px_2px_0px_#111] uppercase text-xs"
               title="Switch eating location"
             >
               {isPack ? "Take Out" : "Eat In"}
@@ -71,12 +71,12 @@ function Cart({ setIsCartOpen }: Props) {
         </div>
 
         {/* Items */}
-        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-3">
+        <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4 bg-rGray">
           {orders.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center gap-3 py-20 text-center">
-              <span className="text-5xl">🛒</span>
-              <p className="font-bold text-gray-900">Your cart is empty</p>
-              <p className="text-sm text-gray-500 font-medium">Add some items to get started</p>
+              <span className="text-6xl">🛒</span>
+              <p className="font-black text-2xl uppercase tracking-tighter text-gray-900">Your cart is empty</p>
+              <p className="text-sm text-gray-700 font-bold">Add some food to get started!</p>
             </div>
           ) : (
             orders.map((order) => (
@@ -87,19 +87,19 @@ function Cart({ setIsCartOpen }: Props) {
 
         {/* Bill + Checkout */}
         {orders.length > 0 && (
-          <div className="px-6 py-5 border-t border-gray-100 flex-shrink-0 space-y-4 bg-white">
+          <div className="px-6 py-6 border-t-4 border-gray-900 flex-shrink-0 space-y-5 bg-white">
             <div className="space-y-2">
-              <div className="flex justify-between text-sm font-medium text-gray-600">
+              <div className="flex justify-between text-base font-bold text-gray-700">
                 <span>Subtotal</span>
                 <span>₹{totalAmount}</span>
               </div>
-              <div className="flex justify-between text-sm font-medium text-gray-600">
+              <div className="flex justify-between text-base font-bold text-gray-700">
                 <span>Discount</span>
-                <span className="text-rGreen">– ₹0</span>
+                <span className="text-rGreen font-black">– ₹0</span>
               </div>
-              <div className="flex justify-between text-base font-black text-gray-900 pt-2 border-t border-gray-100">
+              <div className="flex justify-between text-xl font-black text-gray-900 pt-3 border-t-2 border-gray-900 uppercase tracking-tight">
                 <span>Total</span>
-                <span>₹{totalAmount}</span>
+                <span className="bg-rYellow px-2 border border-gray-900">₹{totalAmount}</span>
               </div>
             </div>
 
@@ -110,10 +110,10 @@ function Cart({ setIsCartOpen }: Props) {
                   router.push(`/${restaurantId as string}/menu/payment`);
                 })
               }
-              className="w-full flex items-center justify-center gap-2 py-4 bg-gray-900 hover:bg-black text-white font-bold rounded-2xl transition-colors shadow-md"
+              className="w-full flex items-center justify-center gap-3 py-4 bg-gray-900 hover:bg-rRed text-rYellow hover:text-white font-black text-lg uppercase tracking-wider rounded-2xl border-4 border-gray-900 shadow-[6px_6px_0px_#C8161D] transition-all transform hover:scale-[1.01]"
             >
               Checkout
-              <ArrowRight size={18} />
+              <ArrowRight size={20} />
             </button>
           </div>
         )}
@@ -126,9 +126,9 @@ const CartItem = ({ order }: { order: SubOrderInterface }) => {
   const dispatch = useAppDispatch();
 
   return (
-    <div className="flex gap-3 items-center bg-rGray rounded-2xl p-3">
+    <div className="flex gap-4 items-center bg-white rounded-2xl p-4 border-4 border-gray-900 shadow-[4px_4px_0px_#111]">
       {/* Image */}
-      <div className="w-16 h-16 rounded-xl overflow-hidden bg-white flex-shrink-0 flex items-center justify-center border border-gray-100">
+      <div className="w-16 h-16 rounded-xl overflow-hidden bg-rYellow flex-shrink-0 flex items-center justify-center border-2 border-gray-900">
         <Image
           src={order?.product.thumbnail || "/burger.webp"}
           alt={order?.product.name}
@@ -140,31 +140,31 @@ const CartItem = ({ order }: { order: SubOrderInterface }) => {
 
       {/* Info */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-bold text-gray-900 truncate">{order?.product.name}</p>
-        <p className="text-xs text-gray-500 font-medium">{order?.variant.size}</p>
-        <p className="text-sm font-bold text-rRed mt-0.5">₹{order?.variant.price}</p>
+        <p className="text-base font-black text-gray-900 truncate uppercase tracking-tight">{order?.product.name}</p>
+        <p className="text-xs text-gray-700 font-bold uppercase">{order?.variant.size}</p>
+        <p className="text-sm font-black text-rRed mt-0.5">₹{order?.variant.price}</p>
       </div>
 
       {/* Qty controls */}
       <div className="flex items-center gap-2 flex-shrink-0">
         <button
           onClick={() => dispatch(removeToCart({ variant: order.variant, quantity: 1 }))}
-          className="w-7 h-7 rounded-lg border border-gray-200 flex items-center justify-center font-bold text-sm hover:bg-gray-100 transition-colors"
+          className="w-8 h-8 rounded-xl border-2 border-gray-900 bg-rGray flex items-center justify-center font-black text-base hover:bg-rYellow transition-colors shadow-[2px_2px_0px_#111]"
         >
           −
         </button>
-        <span className="text-sm font-bold w-4 text-center">{order.quantity}</span>
+        <span className="text-base font-black w-4 text-center">{order.quantity}</span>
         <button
           onClick={() => dispatch(addToCart({ variant: order.variant, quantity: 1, product: order.product as ProductInterface }))}
-          className="w-7 h-7 rounded-lg bg-rRed flex items-center justify-center font-bold text-sm text-white hover:bg-red-700 transition-colors"
+          className="w-8 h-8 rounded-xl border-2 border-gray-900 bg-rRed text-white flex items-center justify-center font-black text-base hover:bg-red-700 transition-colors shadow-[2px_2px_0px_#111]"
         >
           +
         </button>
         <button
           onClick={() => dispatch(removeToCart({ variant: order.variant, quantity: order.quantity }))}
-          className="w-7 h-7 rounded-lg text-gray-400 hover:text-rRed hover:bg-red-50 flex items-center justify-center transition-colors ml-1"
+          className="w-8 h-8 rounded-xl border-2 border-gray-900 text-gray-900 hover:text-white hover:bg-rRed flex items-center justify-center transition-colors ml-1 shadow-[2px_2px_0px_#111]"
         >
-          <X size={14} />
+          <X size={16} />
         </button>
       </div>
     </div>

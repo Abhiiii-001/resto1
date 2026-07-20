@@ -9,13 +9,13 @@ type Props = {
 
 function Category({ data, isActive }: Props) {
   return (
-    <div className="flex flex-col items-center justify-center gap-2 p-2 py-3 cursor-pointer">
+    <div className="flex flex-col items-center justify-center gap-2 p-2 py-3 cursor-pointer group">
       {/* Circle image — fully filled, clipped */}
       <div
-        className={`relative w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden flex-shrink-0 transition-all duration-200 ${
+        className={`relative w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden flex-shrink-0 transition-all duration-200 border-2 border-gray-900 ${
           isActive
-            ? "ring-3 ring-white ring-offset-2 ring-offset-rRed scale-110 shadow-md"
-            : "ring-2 ring-gray-200"
+            ? "bg-rYellow ring-4 ring-gray-900 scale-110 shadow-[3px_3px_0px_#111]"
+            : "bg-white group-hover:scale-105"
         }`}
       >
         <Image
@@ -26,8 +26,8 @@ function Category({ data, isActive }: Props) {
         />
       </div>
       <p
-        className={`text-xs font-bold text-center leading-tight transition-colors ${
-          isActive ? "text-white" : "text-gray-700"
+        className={`text-xs font-black uppercase tracking-tight text-center leading-tight transition-colors ${
+          isActive ? "text-gray-900 bg-rYellow px-1.5 py-0.5 rounded border border-gray-900" : "text-gray-700"
         }`}
       >
         {data?.name}

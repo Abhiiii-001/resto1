@@ -25,10 +25,27 @@ export const metadata: Metadata = {
     template: "%s | Restro"
   },
   description: "Experience seamless dining with Restro. View menus, order online, and enjoy the best food from your favorite local restaurants.",
-  keywords: ["restaurant", "online ordering", "food delivery", "menu", "dining", "restro"],
+  keywords: ["restaurant", "online ordering", "food delivery", "menu", "dining", "restro", "qr code ordering"],
   authors: [{ name: "Restro Team" }],
-  viewport: "width=device-width, initial-scale=1",
   robots: "index, follow",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://restro.com",
+    title: "Restro | Smart Restaurant Ordering System",
+    description: "Experience seamless dining with Restro. Skip the wait, scan table QR codes, and order instantly.",
+    siteName: "Restro",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Restro | Smart Restaurant Ordering System",
+    description: "Experience seamless dining with Restro. Skip the wait, scan table QR codes, and order instantly.",
+  },
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({

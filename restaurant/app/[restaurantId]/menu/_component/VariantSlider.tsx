@@ -44,10 +44,10 @@ function VariantSlider({ data, currentVariant, setCurrentVariant, thumbnail }: P
                   {/* Circle image — product thumbnail, fully filled, clipped */}
                   <div className="flex w-full items-center justify-center pt-3 pb-2">
                     <div
-                      className={`relative w-20 h-20 rounded-full overflow-hidden flex-shrink-0 transition-all duration-200 ${
+                      className={`relative w-20 h-20 rounded-full overflow-hidden flex-shrink-0 transition-all duration-200 border-2 border-gray-900 ${
                         isActive
-                          ? "ring-4 ring-rRed ring-offset-2 scale-110 shadow-lg"
-                          : "ring-2 ring-gray-200 opacity-70"
+                          ? "bg-rYellow ring-4 ring-gray-900 scale-110 shadow-[4px_4px_0px_#111]"
+                          : "bg-white opacity-70"
                       }`}
                     >
                       <Image
@@ -62,15 +62,15 @@ function VariantSlider({ data, currentVariant, setCurrentVariant, thumbnail }: P
                   {/* Size + price */}
                   <div className="flex flex-col items-center gap-0.5 mt-2">
                     <span
-                      className={`text-xs font-bold truncate max-w-[80px] text-center ${
-                        isActive ? "text-rRed" : "text-gray-500"
+                      className={`text-xs font-black uppercase tracking-tight truncate max-w-[80px] text-center ${
+                        isActive ? "text-gray-900 bg-rYellow px-1.5 py-0.5 rounded border border-gray-900" : "text-gray-500"
                       }`}
                     >
                       {item.size.length > 8 ? item.size.substring(0, 7) + "…" : item.size}
                     </span>
                     <span
                       className={`text-sm font-black ${
-                        isActive ? "text-gray-900" : "text-gray-400"
+                        isActive ? "text-rRed" : "text-gray-400"
                       }`}
                     >
                       ₹{item.price}

@@ -22,17 +22,17 @@ function Menu() {
   }, [restaurantData])
 
   return (
-    <div className='w-screen min-h-screen bg-rGray'>
+    <div className='w-full max-w-full overflow-x-hidden min-h-screen bg-rGray'>
       {/* Fixed header — consistent height on all screens */}
-      <div className='h-16 px-4 lg:px-8 w-full fixed top-0 left-0 right-0 bg-white border-b border-gray-100 z-30'>
+      <div className='h-20 px-4 lg:px-8 w-full fixed top-0 left-0 right-0 bg-white border-b-4 border-gray-900 z-30 flex items-center'>
         <Header isCartOpen={isCartOpen} setIsCartOpen={setIsCartOpen} />
       </div>
 
       {/* Main content pushed below fixed header */}
-      <div className='pt-16 h-full flex'>
+      <div className='pt-20 h-full flex'>
         {/* Category Sidebar — fixed, starts below header */}
         <div
-          className={`fixed top-16 left-0 bottom-0 w-24 lg:w-64 bg-white border-r border-gray-100 ${isCartOpen ? 'z-0' : 'z-20'}`}
+          className={`fixed top-20 left-0 bottom-0 w-24 lg:w-64 bg-white border-r-4 border-gray-900 ${isCartOpen ? 'z-0' : 'z-20'}`}
         >
           <CategorySidebar
             data={restaurantData?.data}

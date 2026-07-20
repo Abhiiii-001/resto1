@@ -109,61 +109,62 @@ function Success({ data, restaurantDetails }: SuccessProps) {
 
   return (
     <motion.div
-    initial={{opacity: 0, scale:0.8}}
-    animate={{opacity:1, scale:1}}
-    transition={{ease:"easeInOut", duration:0.4}}
-    className='bg-rGray absolute inset-0 flex items-center justify-center w-screen min-h-screen px-4 z-50 pt-20 pb-4'
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ ease: "easeInOut", duration: 0.4 }}
+      className="bg-rGray fixed inset-0 z-50 overflow-x-hidden overflow-y-auto font-sans selection:bg-gray-900 selection:text-white"
     >
-        <ReactConfetti
+      <ReactConfetti
         width={width}
         height={height}
         recycle={false}
         numberOfPieces={800}
         initialVelocityY={30}
-        />
-        
+      />
+
+      <div className="min-h-full w-full flex flex-col items-center justify-center py-12 px-4">
         <AnimatePresence>
-            <div className='flex flex-col justify-center items-center gap-6 max-w-md w-full mt-6 mb-6 '>
+          <div className="flex flex-col justify-center items-center gap-6 max-w-md w-full my-auto">
                 {/* success icon */}
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1, rotate: [0, 10, -10, 0] }}
                   transition={{ duration: 0.5, delay: 0.2 }}
-                  className='shadow-2xl text-4xl rounded-full flex items-center justify-center bg-rGreen w-24 h-24 text-white'
+                  className='shadow-[6px_6px_0px_#111] border-4 border-gray-900 text-4xl rounded-full flex items-center justify-center bg-rGreen w-24 h-24 text-white'
                 >
-                    <Check size={48} strokeWidth={3} />
+                    <Check size={48} strokeWidth={4} />
                 </motion.div>
 
                 <div className='text-center space-y-2'>
-                    <h2 className='text-4xl font-serif font-bold text-gray-900'>Success!</h2>
-                    <p className='text-lg font-medium text-gray-600'>Your order has been placed.</p>
+                    <h2 className='text-5xl font-black uppercase tracking-tighter text-gray-900'>Success!</h2>
+                    <p className='text-xl font-bold uppercase tracking-wider text-rRed bg-white px-3 py-1 border-2 border-gray-900 shadow-[3px_3px_0px_#111] inline-block'>Your order is in the kitchen.</p>
                 </div>
 
                 {/* QR Code Preview Card */}
-                <div className='bg-white p-6 rounded-3xl shadow-xl border border-gray-100 flex flex-col items-center gap-4 w-full'>
+                <div className='bg-white p-8 rounded-[2.5rem] shadow-[10px_10px_0px_#111] border-4 border-gray-900 flex flex-col items-center gap-4 w-full'>
                     <div className='text-center'>
-                        <p className='text-xs font-bold text-gray-400 uppercase tracking-widest mb-1'>Order Code</p>
-                        <p className='text-2xl font-black text-gray-900'>{data?.orderCode}</p>
+                        <p className='text-xs font-black text-gray-900 uppercase tracking-widest mb-1'>Order Code</p>
+                        <p className='text-4xl font-black text-gray-900 bg-rYellow px-4 py-1 border-2 border-gray-900 shadow-[3px_3px_0px_#111] inline-block'>{data?.orderCode}</p>
                     </div>
 
                     {data?.name && (
                         <div className='text-center'>
-                            <p className='text-xs font-bold text-gray-400 uppercase tracking-widest mb-1'>Customer</p>
-                            <p className='text-lg font-bold text-gray-700 capitalize'>{data.name}</p>
+                            <p className='text-xs font-black text-gray-900 uppercase tracking-widest mb-1'>Guest</p>
+                            <p className='text-xl font-black text-gray-900 uppercase tracking-tight'>{data.name}</p>
                         </div>
                     )}
                     
-                    <div className='bg-gray-50 p-4 rounded-2xl' ref={qrRef} />
+                    <div className='bg-rGray p-4 rounded-2xl border-4 border-gray-900 shadow-[4px_4px_0px_#111]' ref={qrRef} />
                     
-                    <p className='text-sm font-semibold text-gray-500 text-center px-4'>
-                        Show this QR code at the counter to collect your order.
+                    <p className='text-sm font-black text-gray-800 text-center px-4 uppercase tracking-tight'>
+                      Show this QR code at the counter to collect your order.
                     </p>
                 </div>
                 
                 <div className='flex flex-col gap-3 w-full'>
                     <button
                         onClick={downloadTicketHandler}
-                        className='flex-1 py-4 flex items-center justify-center gap-2 bg-gray-900 text-white font-bold rounded-2xl shadow-lg hover:bg-black transition-all active:scale-95'
+                        className='flex-1 py-4 flex items-center justify-center gap-3 bg-gray-900 text-rYellow hover:bg-rRed hover:text-white font-black text-lg uppercase tracking-wider rounded-2xl border-4 border-gray-900 shadow-[6px_6px_0px_#C8161D] transition-all transform hover:scale-[1.01]'
                     >
                         <Download size={20} />
                         Download Ticket
@@ -171,18 +172,19 @@ function Success({ data, restaurantDetails }: SuccessProps) {
                     
                     <Link
                         href={`/${restaurantDetails?.id}/menu`}
-                        className='flex-1 py-4 flex items-center justify-center gap-2 bg-white text-gray-900 border-2 border-gray-100 font-bold rounded-2xl shadow-sm hover:bg-gray-50 transition-all active:scale-95'
+                        className='flex-1 py-4 flex items-center justify-center gap-3 bg-white text-gray-900 border-4 border-gray-900 font-black text-lg uppercase tracking-wider rounded-2xl shadow-[6px_6px_0px_#111] hover:bg-rYellow transition-all transform hover:scale-[1.01]'
                     >
                         <Home size={20} />
-                        Go to Home
+                        Go to Menu
                     </Link>
                 </div>
 
-                <p className='text-sm text-gray-400 font-medium'>
+                <p className='text-xs text-gray-700 font-bold uppercase tracking-wider'>
                     Please save this ticket for your reference.
                 </p>
             </div>
         </AnimatePresence>
+      </div>
 
         {/* HIDDEN TICKET FOR EXPORT */}
         <div 

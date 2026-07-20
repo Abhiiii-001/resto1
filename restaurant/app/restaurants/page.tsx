@@ -1,15 +1,15 @@
 "use client";
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useGetAllRestaurantIdQuery } from "@/redux/api/restaurant";
 import { AnimatePresence, motion } from "motion/react";
 import RestaurantCard from "../_components/RestaurantCard";
 import RestaurantModal from "../_components/RestaurantModal";
-import { ArrowLeft, Search } from "lucide-react";
+import Navbar from "../_components/landing/Navbar";
+import Footer from "../_components/landing/Footer";
+import { Search } from "lucide-react";
 import { Restaurant } from "@/types";
 
 export default function RestaurantsDirectory() {
-  const router = useRouter();
   const { data, isLoading } = useGetAllRestaurantIdQuery();
   const restaurants = data?.restaurant || [];
 
@@ -21,101 +21,74 @@ export default function RestaurantsDirectory() {
   );
 
   return (
-    <div className="min-h-screen bg-rGray font-sans">
-      {/* Sticky Header */}
-      <header className="w-full bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 py-4 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => router.push("/")}
-              className="p-2 rounded-full hover:bg-gray-100 text-gray-500 transition-colors"
+    <div className="min-h-screen bg-rGray font-sans selection:bg-gray-900 selection:text-white">
+      <Navbar />
+
+      {/* Hero strip with integrated search */}
+      <div className="bg-rYellow border-b-4 border-gray-900 text-gray-900 px-4 pt-36 pb-16">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-8">
+          <div>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-5xl md:text-7xl font-black mb-3 uppercase tracking-tighter drop-shadow-sm"
             >
-              <ArrowLeft size={20} />
-            </button>
-            <div
-              className="flex items-center gap-2 cursor-pointer"
-              onClick={() => router.push("/")}
+              All Restaurants 🍽️
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-gray-900 font-black text-xl uppercase tracking-wider inline-block bg-white px-4 py-1 border-2 border-gray-900 shadow-[3px_3px_0px_#111]"
             >
-              <div className="w-8 h-8 bg-rRed rounded-lg flex items-center justify-center text-white font-bold text-sm">
-                R
-              </div>
-              <span className="text-lg font-bold text-gray-900">Restro</span>
-            </div>
+              {restaurants.length > 0
+                ? `${restaurants.length} spot${restaurants.length !== 1 ? "s" : ""} ready for instant ordering`
+                : "Discover top spots near you"}
+            </motion.p>
           </div>
 
-          {/* Search bar — desktop */}
-          <div className="relative hidden sm:block w-72">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search size={16} className="text-gray-400" />
+          {/* Search bar inside Hero */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
+            className="relative w-full md:w-96"
+          >
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <Search size={20} className="text-gray-900" />
             </div>
             <input
               type="text"
-              placeholder="Search restaurants..."
+              placeholder="Search by restaurant name..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="block w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-xl bg-rGray placeholder-gray-400 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-rRed/20 focus:border-rRed transition-all"
+              className="block w-full pl-12 pr-4 py-4 border-4 border-gray-900 rounded-2xl bg-white placeholder-gray-500 text-base font-bold focus:outline-none shadow-[6px_6px_0px_#111] focus:shadow-[3px_3px_0px_#111] transition-all"
             />
-          </div>
-        </div>
-      </header>
-
-      {/* Hero strip */}
-      <div className="bg-rRed text-white px-4 py-10">
-        <div className="max-w-7xl mx-auto">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-3xl md:text-4xl font-black mb-2"
-          >
-            All Restaurants 🍽️
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-red-100 font-medium"
-          >
-            {restaurants.length > 0
-              ? `${restaurants.length} restaurant${restaurants.length !== 1 ? "s" : ""} available to order from`
-              : "Discover restaurants near you"}
-          </motion.p>
+          </motion.div>
         </div>
       </div>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {/* Mobile search */}
-        <div className="relative sm:hidden mb-8">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search size={16} className="text-gray-400" />
-          </div>
-          <input
-            type="text"
-            placeholder="Search restaurants..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="block w-full pl-9 pr-3 py-3 border border-gray-200 rounded-2xl bg-white placeholder-gray-400 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-rRed/20 focus:border-rRed transition-all shadow-sm"
-          />
-        </div>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 
         {/* Results label */}
         {searchQuery && (
-          <p className="text-sm text-gray-500 font-medium mb-6">
+          <p className="text-lg text-gray-900 font-black uppercase tracking-wider mb-8">
             {filteredRestaurants.length} result{filteredRestaurants.length !== 1 ? "s" : ""} for{" "}
-            <span className="text-gray-900 font-bold">&quot;{searchQuery}&quot;</span>
+            <span className="bg-rYellow px-2 border-2 border-gray-900">&quot;{searchQuery}&quot;</span>
           </p>
         )}
 
         {/* Grid */}
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm animate-pulse">
-                <div className="h-48 bg-gray-100" />
+              <div key={i} className="bg-white rounded-3xl overflow-hidden border-4 border-gray-900 shadow-[6px_6px_0px_#111] animate-pulse">
+                <div className="h-48 bg-gray-200 border-b-4 border-gray-900" />
                 <div className="p-5 space-y-3">
-                  <div className="h-4 bg-gray-100 rounded-full w-3/4" />
-                  <div className="h-3 bg-gray-100 rounded-full w-full" />
-                  <div className="h-3 bg-gray-100 rounded-full w-1/2" />
+                  <div className="h-5 bg-gray-200 rounded-full w-3/4" />
+                  <div className="h-4 bg-gray-200 rounded-full w-full" />
+                  <div className="h-4 bg-gray-200 rounded-full w-1/2" />
                 </div>
               </div>
             ))}
@@ -124,12 +97,12 @@ export default function RestaurantsDirectory() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
           >
             {filteredRestaurants.map((restaurant: Restaurant, index: number) => (
               <motion.div
                 key={restaurant.id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
               >
@@ -144,26 +117,28 @@ export default function RestaurantsDirectory() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-32"
+            className="text-center py-24 bg-white rounded-[2rem] border-4 border-gray-900 shadow-[8px_8px_0px_#111] max-w-lg mx-auto"
           >
-            <div className="w-24 h-24 mx-auto bg-white rounded-3xl flex items-center justify-center mb-6 shadow-sm border border-gray-100">
-              <Search size={32} className="text-gray-300" />
+            <div className="w-24 h-24 mx-auto bg-rYellow rounded-3xl flex items-center justify-center mb-6 border-4 border-gray-900 shadow-[4px_4px_0px_#111]">
+              <Search size={40} className="text-gray-900" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">
+            <h3 className="text-3xl font-black text-gray-900 mb-2 uppercase tracking-tighter">
               No restaurants found
             </h3>
-            <p className="text-gray-500 font-medium mb-8">
+            <p className="text-gray-700 font-bold mb-8">
               We couldn&apos;t find anything matching &quot;{searchQuery}&quot;
             </p>
             <button
               onClick={() => setSearchQuery("")}
-              className="px-6 py-3 bg-white border border-gray-200 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+              className="px-8 py-4 bg-gray-900 text-rYellow border-2 border-gray-900 rounded-full font-black uppercase tracking-wider shadow-[4px_4px_0px_#C8161D] hover:bg-rRed hover:text-white transition-all"
             >
               Clear search
             </button>
           </motion.div>
         )}
       </main>
+
+      <Footer />
 
       <AnimatePresence>
         {selectedRestaurant && (

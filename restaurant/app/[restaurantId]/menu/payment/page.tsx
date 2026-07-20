@@ -17,6 +17,7 @@ import React, { useEffect, useState, useTransition } from "react";
 import { toast } from "react-toastify";
 import { motion } from "motion/react";
 import Success from "./_component/Success";
+import Header from "../_component/Header";
 import { RestaurantDetailsInterface, useGetRestaurantDetailsQuery } from "@/redux/api/restaurant";
 import NotificationComponent from "./_component/Notification";
 
@@ -74,16 +75,13 @@ function Payment() {
           restaurantId: restaurantId as string,
         };
 
-        dispatch(resetCart());
-
-        // //console.log(orderData);
-
         const response = await createOrderApi(orderData);
 
         toast.dismiss(toastId);
         if ("error" in response) {
           throw new Error("Unable to create order!");
         } else {
+          dispatch(resetCart());
           toast.success("Order Created!");
           setOrderId(response?.data?.data?.id);
           setInvoiceModal(response.data.data);
@@ -96,49 +94,39 @@ function Payment() {
   };
 
   return (
-    <div className="min-h-screen bg-rGray flex flex-col">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-rGray flex flex-col font-sans selection:bg-gray-900 selection:text-white">
       {/* Header */}
-      <div className="bg-white border-b border-gray-100 px-4 py-4 flex items-center gap-4 sticky top-0 z-10">
-        <button
-          onClick={() =>
-            startTransition(() => {
-              router.push(`/${restaurantId}/menu`);
-            })
-          }
-          className="p-2 rounded-full hover:bg-gray-100 text-gray-500 transition-colors"
-        >
-          <ArrowLeft size={20} />
-        </button>
-        <h1 className="text-lg font-bold text-gray-900">Checkout</h1>
+      <div className="h-20 px-4 lg:px-8 w-full border-b-4 border-gray-900 bg-white z-30 sticky top-0">
+        <Header />
       </div>
 
-      <div className="flex-1 max-w-lg mx-auto w-full px-4 py-8 flex flex-col gap-6">
+      <div className="flex-1 max-w-lg mx-auto w-full px-4 py-8 flex flex-col gap-8">
         {/* Cart Summary */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <h2 className="text-base font-bold text-gray-900 mb-4">Order Summary</h2>
-          <div className="space-y-3">
+        <div className="bg-white rounded-[2rem] border-4 border-gray-900 shadow-[8px_8px_0px_#111] p-8">
+          <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight mb-6 pb-2 border-b-2 border-gray-900">Order Summary</h2>
+          <div className="space-y-4">
             {cartData?.orders?.map((ord: SubOrderInterface, i: number) => (
-              <div key={i} className="flex justify-between items-center">
+              <div key={i} className="flex justify-between items-center bg-rGray p-3.5 rounded-xl border-2 border-gray-900 shadow-[2px_2px_0px_#111]">
                 <div>
-                  <p className="text-sm font-semibold text-gray-800">{ord.product.name}</p>
-                  <p className="text-xs text-gray-400 font-medium">{ord.variant.size} × {ord.quantity}</p>
+                  <p className="text-base font-black text-gray-900 uppercase tracking-tight">{ord.product.name}</p>
+                  <p className="text-xs text-gray-700 font-bold uppercase">{ord.variant.size} × {ord.quantity}</p>
                 </div>
-                <p className="text-sm font-bold text-gray-900">₹{ord.variant.price * ord.quantity}</p>
+                <p className="text-base font-black text-rRed">₹{ord.variant.price * ord.quantity}</p>
               </div>
             ))}
           </div>
-          <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
-            <p className="text-sm font-semibold text-gray-600">Total Amount</p>
-            <p className="text-xl font-black text-rRed">₹{cartData?.totalAmount}</p>
+          <div className="mt-6 pt-4 border-t-4 border-gray-900 flex justify-between items-center">
+            <p className="text-base font-black text-gray-900 uppercase tracking-wider">Total Amount</p>
+            <p className="text-3xl font-black text-gray-900 bg-rYellow px-3 py-1 border-2 border-gray-900 shadow-[3px_3px_0px_#111]">₹{cartData?.totalAmount}</p>
           </div>
         </div>
 
         {/* Customer Info */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <h2 className="text-base font-bold text-gray-900 mb-4">Customer Details (Optional)</h2>
+        <div className="bg-white rounded-[2rem] border-4 border-gray-900 shadow-[8px_8px_0px_#111] p-8">
+          <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tight mb-4">Customer Details (Optional)</h2>
           <div className="space-y-4">
             <div>
-              <label htmlFor="customerName" className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 px-1">
+              <label htmlFor="customerName" className="block text-xs font-black text-gray-900 uppercase tracking-wider mb-2">
                 Your Name
               </label>
               <input
@@ -146,11 +134,11 @@ function Payment() {
                 id="customerName"
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
-                placeholder="e.g. John Doe"
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rRed/20 focus:border-rRed transition-all"
+                placeholder="e.g. Alex Chen"
+                className="w-full px-5 py-4 bg-rGray border-4 border-gray-900 rounded-2xl text-base font-bold focus:outline-none focus:bg-white shadow-[4px_4px_0px_#111] transition-all"
               />
-              <p className="mt-2 text-[10px] text-gray-400 px-1 italic">
-                * This will be displayed on your digital order ticket.
+              <p className="mt-2 text-xs font-bold text-gray-600 italic">
+                * Displayed on your digital kitchen ticket.
               </p>
             </div>
           </div>
@@ -158,28 +146,28 @@ function Payment() {
 
         {/* Payment Options */}
         <div>
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4 px-1">
+          <p className="text-sm font-black text-gray-900 uppercase tracking-wider mb-4 px-1">
             Select Payment Method
           </p>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-6">
             {/* Cash */}
             <motion.button
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.4 }}
-              whileHover={{ scale: 1.03, y: -3 }}
+              whileHover={{ scale: 1.03, y: -4, rotate: -1 }}
               whileTap={{ scale: 0.97 }}
-              className="bg-white border-2 border-gray-100 hover:border-rRed rounded-2xl p-6 flex flex-col items-center gap-3 cursor-pointer shadow-sm hover:shadow-md transition-all group"
+              className="bg-rYellow border-4 border-gray-900 rounded-[2rem] p-6 flex flex-col items-center gap-4 cursor-pointer shadow-[8px_8px_0px_#111] hover:shadow-[4px_4px_0px_#111] transition-all group"
               onClick={() => {
                 dispatch(setPayementOption({ mode: "Cash" }));
                 CreateOrderHandler("Cash");
               }}
               disabled={isLoading}
             >
-              <div className="w-16 h-16 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <div className="w-20 h-20 bg-white border-2 border-gray-900 rounded-2xl flex items-center justify-center shadow-[3px_3px_0px_#111] group-hover:rotate-6 transition-transform">
                 <Image src="/cashPayment.png" alt="cash" height={60} width={60} />
               </div>
-              <span className="text-sm font-bold text-gray-800 group-hover:text-rRed transition-colors">
+              <span className="text-base font-black text-gray-900 uppercase tracking-tighter">
                 Pay at Counter
               </span>
             </motion.button>
@@ -189,15 +177,15 @@ function Payment() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.4, delay: 0.1 }}
-              className="relative bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl p-6 flex flex-col items-center gap-3 cursor-not-allowed opacity-60"
+              className="relative bg-gray-200 border-4 border-dashed border-gray-900 rounded-[2rem] p-6 flex flex-col items-center gap-4 cursor-not-allowed opacity-60"
             >
-              <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap">
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-900 text-rYellow text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full border-2 border-gray-900 whitespace-nowrap">
                 Coming Soon
               </span>
-              <div className="w-16 h-16 flex items-center justify-center">
+              <div className="w-20 h-20 bg-white border-2 border-gray-900 rounded-2xl flex items-center justify-center opacity-70">
                 <Image src="/onlinePayment.png" alt="online" height={60} width={60} />
               </div>
-              <span className="text-sm font-bold text-gray-500">Pay Online</span>
+              <span className="text-base font-black text-gray-700 uppercase tracking-tighter">Pay Online</span>
             </motion.div>
           </div>
         </div>
