@@ -28,7 +28,7 @@ export default function Contact() {
             animate={{ opacity: 1, scale: 1 }}
             className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white text-gray-900 border-2 border-gray-900 shadow-[4px_4px_0px_#111] mb-8 font-black uppercase text-sm"
           >
-            Contact Restro
+            Contact Restroo
           </motion.div>
           
           <motion.h1

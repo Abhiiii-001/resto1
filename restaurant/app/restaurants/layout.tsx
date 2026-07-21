@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Explore Restaurants | Restro",
+  title: "Explore Restaurants | Restroo",
   description: "Browse top local restaurants and order food instantly with zero friction or downloads.",
   openGraph: {
-    title: "Explore Local Restaurants | Restro",
+    title: "Explore Local Restaurants | Restroo",
     description: "Browse top local restaurants and order food instantly.",
   },
 };

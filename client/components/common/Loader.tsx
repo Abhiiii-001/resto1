@@ -14,7 +14,7 @@ const Loader = (props: Props) => {
     <div className="no-scroll absolute inset-0 flex h-screen w-screen items-center justify-center bg-transparent backdrop-blur-sm">
       <div className="loader"></div>
       <div className="absolute rotate-[-20deg] animate-pulse font-serif font-semibold text-[#F5A463]">
-        Restro
+        Restroo
       </div>
     </div>
   );

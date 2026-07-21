@@ -12,7 +12,7 @@ export const generateSubscriptionInvoicePDF = (payment: any, stream: NodeJS.Writ
   doc.moveDown();
 
   // --- Company Info ---
-  doc.fillColor("#000000").fontSize(14).text("Restro SaaS Platform");
+  doc.fillColor("#000000").fontSize(14).text("Restroo SaaS Platform");
   doc.fontSize(10).text("123 Tech Park, Bangalore");
   doc.text("Karnataka, India - 560001");
   doc.moveDown();
@@ -46,7 +46,7 @@ export const generateSubscriptionInvoicePDF = (payment: any, stream: NodeJS.Writ
   doc.fontSize(12).font("Helvetica-Bold").text(`INR ${payment.amount.toFixed(2)}`, 450, 410, { align: "right" });
 
   doc.fontSize(10).fillColor("#777777").text(
-    "Thank you for choosing Restro SaaS. For support, contact support@restro.com",
+    "Thank you for choosing Restroo SaaS. For support, contact support@restro.com",
     50, 700, { align: "center", width: 500 }
   );
 

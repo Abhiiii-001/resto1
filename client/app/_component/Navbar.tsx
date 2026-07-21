@@ -166,7 +166,7 @@ function Navbar() {
         <Link href="/" className="flex items-center gap-2">
           <ChefHat className="h-6 w-6 text-primary" />
           <span className="text-xl font-bold tracking-tight text-foreground">
-            Restro
+            Restroo
           </span>
         </Link>
       </div>

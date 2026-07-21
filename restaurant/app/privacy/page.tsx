@@ -33,7 +33,7 @@ export default function PrivacyPolicy() {
           <div>
             <h2 className="text-3xl font-black uppercase tracking-tight mb-4 text-rRed">1. Our Commitment to Zero Tracking</h2>
             <p className="font-bold text-lg leading-relaxed text-gray-800">
-              Restro is designed to operate with minimal data collection. We do not require account creation, social logins, or personal identification to browse menus or place orders at participating restaurants.
+              Restroo is designed to operate with minimal data collection. We do not require account creation, social logins, or personal identification to browse menus or place orders at participating restaurants.
             </p>
           </div>
 

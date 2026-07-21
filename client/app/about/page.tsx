@@ -75,7 +75,7 @@ const Hero = () => (
             Hero.
           </h1>
           <p className="text-xl text-muted-foreground mb-12 leading-relaxed">
-            Restro was built for the small business owner who wants to provide a
+            Restroo was built for the small business owner who wants to provide a
             5-star digital experience without the enterprise complexity. We
             believe every local outlet deserves smart tools.
           </p>
@@ -90,7 +90,7 @@ const Hero = () => (
       >
         <Image
           src="/assets/about.png"
-          alt="Restro Team"
+          alt="Restroo Team"
           width={1600}
           height={900}
           className="w-full h-auto object-cover max-h-[600px]"

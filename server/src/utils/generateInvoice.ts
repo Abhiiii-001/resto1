@@ -37,7 +37,7 @@ export const generateInvoice = async (data: any, orderCode: string, restaurantDe
         doc
             .fillColor('#444444')
             .fontSize(20)
-            .text(restaurantDetails?.name || "Restro", 110, 57)
+            .text(restaurantDetails?.name || "Restroo", 110, 57)
             .fontSize(10)
             .text(restaurantDetails?.address || "", 110, 80)
             .text(`${restaurantDetails?.email} | ${restaurantDetails?.number}`, 110, 95)

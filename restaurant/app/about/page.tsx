@@ -11,7 +11,7 @@ const values = [
     icon: <Zap className="text-gray-900" size={32} />,
     title: "Speed First",
     description:
-      "We built Restro for the impatient foodie. From browsing to ordering in under 30 seconds.",
+      "We built Restroo for the impatient foodie. From browsing to ordering in under 30 seconds.",
     color: "bg-rYellow",
   },
   {
@@ -34,7 +34,7 @@ const values = [
     icon: <Users className="text-white" size={32} />,
     title: "Built for Everyone",
     description:
-      "Whether you're a solo diner or a big group, Restro makes ordering seamless for all.",
+      "Whether you're a solo diner or a big group, Restroo makes ordering seamless for all.",
     color: "bg-gray-900",
     textColor: "text-white"
   },
@@ -42,7 +42,7 @@ const values = [
 
 const team = [
   { name: "Abhishek Kumar", role: "Founder & Developer", initials: "AK" },
-  { name: "Team Restro", role: "Design & Engineering", initials: "TR" },
+  { name: "Team Restroo", role: "Design & Engineering", initials: "TR" },
 ];
 
 export default function About() {
@@ -58,7 +58,7 @@ export default function About() {
             animate={{ opacity: 1, scale: 1 }}
             className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white border-2 border-gray-900 shadow-[4px_4px_0px_#111] mb-8"
           >
-            <span className="text-sm font-black text-gray-900 uppercase tracking-wider">About Restro</span>
+            <span className="text-sm font-black text-gray-900 uppercase tracking-wider">About Restroo</span>
           </motion.div>
           
           <motion.h1
@@ -79,7 +79,7 @@ export default function About() {
             transition={{ delay: 0.2 }}
             className="text-xl md:text-2xl text-gray-900 font-bold max-w-2xl mx-auto leading-relaxed"
           >
-            Restro is a zero-friction food ordering platform built for
+            Restroo is a zero-friction food ordering platform built for
             the next generation of diners — no logins, no app downloads, just instant food.
           </motion.p>
         </div>
@@ -102,7 +102,7 @@ export default function About() {
               digital experience that puts you in control.
             </p>
             <p className="text-gray-700 font-bold leading-relaxed text-lg">
-              Restro connects restaurants and customers through a fast,
+              Restroo connects restaurants and customers through a fast,
               intuitive ordering platform — accessible to anyone with a
               smartphone and a craving.
             </p>
@@ -163,7 +163,7 @@ export default function About() {
       <section className="py-32 px-4 bg-white border-b-4 border-gray-900">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-5xl md:text-7xl font-black text-gray-900 mb-4 uppercase tracking-tighter">
-            The People Behind Restro
+            The People Behind Restroo
           </h2>
           <p className="text-xl text-gray-700 font-bold uppercase tracking-wider mb-16">
             A passionate team obsessed with removing dining friction.

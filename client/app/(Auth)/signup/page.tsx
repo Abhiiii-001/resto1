@@ -18,7 +18,7 @@ function Signup() {
           <div className="mb-2 flex items-center justify-center gap-2">
             <ChefHat className="h-6 w-6 text-primary" />
             <span className="text-2xl font-bold tracking-tight text-foreground">
-              Restro
+              Restroo
             </span>
           </div>
           <h2 className="text-2xl font-bold text-foreground">

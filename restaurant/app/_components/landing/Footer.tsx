@@ -23,7 +23,7 @@ export default function Footer() {
               <div className="w-12 h-12 bg-gray-900 rounded-xl flex items-center justify-center text-rYellow font-black text-2xl shadow-[4px_4px_0px_#C8161D] group-hover:shadow-[2px_2px_0px_#C8161D] group-hover:translate-x-[2px] group-hover:translate-y-[2px] transition-all">
                 <ChefHat className="h-6 w-6 text-primary" />
               </div>
-              <span className="text-3xl font-black text-gray-900 tracking-tighter uppercase">Restro</span>
+              <span className="text-3xl font-black text-gray-900 tracking-tighter uppercase">Restroo</span>
             </div>
             <p className="text-gray-900 font-bold mb-8 text-xl leading-snug">
               The modern way to experience dining. <br/>
@@ -97,7 +97,7 @@ export default function Footer() {
 
         <div className="pt-8 flex flex-col md:flex-row justify-between items-center gap-4 border-t-4 border-gray-900 mt-8">
           <p className="text-gray-900 text-sm font-bold uppercase tracking-wider">
-            &copy; {new Date().getFullYear()} Restro. All rights reserved.
+            &copy; {new Date().getFullYear()} Restroo. All rights reserved.
           </p>
           <div className="flex gap-8 text-sm text-gray-900 font-bold uppercase tracking-wider">
             <button onClick={() => router.push('/privacy')} className="hover:text-rRed hover:underline decoration-2 underline-offset-4">Privacy</button>

@@ -12,7 +12,7 @@ const Footer = () => {
                 <ChefHat className="h-6 w-6 text-primary group-hover:text-white transition-colors duration-300" />
               </div>
               <span className="text-2xl font-bold tracking-tight text-foreground">
-                Restro
+                Restroo
               </span>
             </Link>
             <p className="text-muted-foreground leading-relaxed">
@@ -124,7 +124,7 @@ const Footer = () => {
 
         <div className="mt-16 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground font-medium">
           <p suppressHydrationWarning>
-            &copy; {new Date().getFullYear()} Restro. All rights reserved.
+            &copy; {new Date().getFullYear()} Restroo. All rights reserved.
           </p>
         </div>
       </div>

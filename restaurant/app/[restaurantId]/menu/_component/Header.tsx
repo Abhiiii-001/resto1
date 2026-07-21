@@ -87,7 +87,7 @@ function Header({ isCartOpen = false, setIsCartOpen, backUrl, showCart = true }:
         <div className="flex flex-col min-w-0">
           <div className="flex items-center gap-2">
             <h1 className="text-base sm:text-lg font-black text-gray-900 truncate leading-tight uppercase tracking-tighter">
-              {restaurantDetails?.name || "Restro Direct"}
+              {restaurantDetails?.name || "Restroo Direct"}
             </h1>
             {restaurantDetails?.isOpen && (
               <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rGreen text-white border border-gray-900 text-[10px] font-black uppercase tracking-wider">

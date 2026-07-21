@@ -74,7 +74,7 @@ export const baseTemplate = (content: string) => `
             ${content}
         </div>
         <div class="footer">
-            <p>&copy; ${new Date().getFullYear()} Restro. All rights reserved.</p>
+            <p>&copy; ${new Date().getFullYear()} Restroo. All rights reserved.</p>
             <p>Your online hero for restaurant management.</p>
         </div>
     </div>
@@ -84,14 +84,14 @@ export const baseTemplate = (content: string) => `
 
 export const welcomeEmailTemplate = (name: string, role: 'Restaurant' | 'User') => {
     const roleMessage = role === 'Restaurant' 
-        ? "We're thrilled to have your restaurant on board. Restro is designed to streamline your operations, enhance customer experience, and help your business grow."
+        ? "We're thrilled to have your restaurant on board. Restroo is designed to streamline your operations, enhance customer experience, and help your business grow."
         : "Welcome to the team! You have successfully signed up. Please note that your account is currently in a waiting period. You will be able to log in once your restaurant administrator verifies your account.";
 
     const content = `
-        <h2>Welcome to Restro, ${name || 'there'}! 🎉</h2>
+        <h2>Welcome to Restroo, ${name || 'there'}! 🎉</h2>
         <p>Thank you for joining our platform. ${roleMessage}</p>
         <p>If you have any questions or need assistance getting started, our support team is always here to help.</p>
-        <p>Best regards,<br>The Restro Team</p>
+        <p>Best regards,<br>The Restroo Team</p>
     `;
     return baseTemplate(content);
 }
@@ -100,7 +100,7 @@ export const employeeVerifiedTemplate = (name: string, loginLink: string) => {
     const content = `
         <h2>You're Verified, ${name || 'there'}! ✅</h2>
         <p>Great news! Your restaurant administrator has verified your employee account.</p>
-        <p>You can now log in to the Restro platform and start managing operations.</p>
+        <p>You can now log in to the Restroo platform and start managing operations.</p>
         <div style="text-align: center;">
             <a href="${loginLink}" class="button">Log In Now</a>
         </div>
@@ -130,7 +130,7 @@ export const verificationEmailTemplate = (link: string, title: string, message: 
 export const resetPasswordEmailTemplate = (link: string) => {
     const content = `
         <h2>Password Reset Request</h2>
-        <p>We received a request to reset the password for your Restro account. If you made this request, please click the button below to choose a new password.</p>
+        <p>We received a request to reset the password for your Restroo account. If you made this request, please click the button below to choose a new password.</p>
         <div style="text-align: center;">
             <a href="${link}" class="button">Reset Password</a>
         </div>

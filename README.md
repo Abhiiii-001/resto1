@@ -1,6 +1,6 @@
-# Restro - Smart Restaurant Management & Ordering System
+# Restroo - Smart Restaurant Management & Ordering System
 
-Restro is a comprehensive, full-stack SaaS platform designed to modernize restaurant operations. It features a powerful admin dashboard for restaurant owners and a seamless, real-time ordering experience for customers via QR codes.
+Restroo is a comprehensive, full-stack SaaS platform designed to modernize restaurant operations. It features a powerful admin dashboard for restaurant owners and a seamless, real-time ordering experience for customers via QR codes.
 
 ## 🚀 Overview
 
@@ -97,7 +97,7 @@ npm run dev
 ## 📂 Directory Structure
 
 ```text
-Restro/
+Restroo/
 ├── client/          # Next.js Admin Dashboard
 ├── restaurant/      # Next.js Customer Ordering App
 ├── server/          # Express API & Prisma Schema

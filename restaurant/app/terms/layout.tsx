@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms of Service | Restro",
-  description: "Read Restro's terms of service for dining and ordering food.",
+  title: "Terms of Service | Restroo",
+  description: "Read Restroo's terms of service for dining and ordering food.",
   openGraph: {
-    title: "Terms of Service | Restro",
-    description: "Rules and terms governing the use of the Restro platform.",
+    title: "Terms of Service | Restroo",
+    description: "Rules and terms governing the use of the Restroo platform.",
   },
 };
 

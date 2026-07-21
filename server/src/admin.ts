@@ -116,7 +116,7 @@ export async function setupAdminJS(app: Express): Promise<void> {
       rootPath: "/admin",
       resources,
       branding: {
-        companyName: "Restro Admin",
+        companyName: "Restroo Admin",
         logo: false,
         softwareBrothers: false,
       },

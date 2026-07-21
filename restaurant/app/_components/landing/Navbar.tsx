@@ -67,7 +67,7 @@ export default function Navbar() {
               <div className="w-12 h-12 bg-gray-900 rounded-2xl flex items-center justify-center text-rYellow font-black text-2xl shadow-[4px_4px_0px_#C8161D] transition-all group-hover:shadow-[2px_2px_0px_#C8161D] group-hover:translate-x-[2px] group-hover:translate-y-[2px]">
                 <ChefHat className="h-6 w-6 text-primary" />
               </div>
-              <span className="text-2xl font-black text-gray-900 tracking-tighter uppercase">Restro</span>
+              <span className="text-2xl font-black text-gray-900 tracking-tighter uppercase">Restroo</span>
             </motion.div>
             
             {/* Links */}

@@ -54,7 +54,7 @@ export default function WhyChooseSection() {
               transition={{ delay: 0.1 }}
               className="text-xl text-gray-800 font-bold mb-8 max-w-lg leading-relaxed"
             >
-              Restro is built for speed. We removed every unnecessary click so you can order and eat without friction.
+              Restroo is built for speed. We removed every unnecessary click so you can order and eat without friction.
             </motion.p>
             
             <motion.div

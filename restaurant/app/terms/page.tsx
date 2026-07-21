@@ -33,28 +33,28 @@ export default function TermsOfService() {
           <div>
             <h2 className="text-3xl font-black uppercase tracking-tight mb-4 text-rRed">1. Acceptance of Terms</h2>
             <p className="font-bold text-lg leading-relaxed text-gray-800">
-              By accessing Restro or scanning a table QR code to place an order, you agree to comply with these Terms of Service and all applicable laws and regulations.
+              By accessing Restroo or scanning a table QR code to place an order, you agree to comply with these Terms of Service and all applicable laws and regulations.
             </p>
           </div>
 
           <div>
             <h2 className="text-3xl font-black uppercase tracking-tight mb-4 text-rRed">2. Order Fulfillment</h2>
             <p className="font-bold text-lg leading-relaxed text-gray-800">
-              Restro provides the digital platform connecting you with food service providers. Orders placed via Restro are transmitted directly to the chosen restaurant kitchen. Fulfillment time and item availability are managed directly by the restaurant.
+              Restroo provides the digital platform connecting you with food service providers. Orders placed via Restroo are transmitted directly to the chosen restaurant kitchen. Fulfillment time and item availability are managed directly by the restaurant.
             </p>
           </div>
 
           <div>
             <h2 className="text-3xl font-black uppercase tracking-tight mb-4 text-rRed">3. Acceptable Use</h2>
             <p className="font-bold text-lg leading-relaxed text-gray-800">
-              Users agree not to submit fraudulent orders, misuse QR codes, or disrupt the operation of the platform. Restro reserves the right to refuse service to fraudulent requests.
+              Users agree not to submit fraudulent orders, misuse QR codes, or disrupt the operation of the platform. Restroo reserves the right to refuse service to fraudulent requests.
             </p>
           </div>
 
           <div>
             <h2 className="text-3xl font-black uppercase tracking-tight mb-4 text-rRed">4. Modifications</h2>
             <p className="font-bold text-lg leading-relaxed text-gray-800">
-              Restro reserves the right to update these terms at any time. Continued use of the platform constitutes acceptance of updated terms.
+              Restroo reserves the right to update these terms at any time. Continued use of the platform constitutes acceptance of updated terms.
             </p>
           </div>
 

@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Restro",
-  description: "Read Restro's privacy policy. We prioritize your privacy with zero unnecessary data collection.",
+  title: "Privacy Policy | Restroo",
+  description: "Read Restroo's privacy policy. We prioritize your privacy with zero unnecessary data collection.",
   openGraph: {
-    title: "Privacy Policy | Restro",
+    title: "Privacy Policy | Restroo",
     description: "Your privacy is paramount. Simple, transparent privacy practices.",
   },
 };

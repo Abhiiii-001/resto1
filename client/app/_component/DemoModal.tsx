@@ -99,7 +99,7 @@ const DemoModal: React.FC<DemoModalProps> = ({ isOpen, onClose }) => {
       }
 
       dispatch(setCredentials(response));
-      toast.success(`Welcome to Restro! Logged in as ${account.title}`);
+      toast.success(`Welcome to Restroo! Logged in as ${account.title}`);
 
       onClose();
 
@@ -167,7 +167,7 @@ const DemoModal: React.FC<DemoModalProps> = ({ isOpen, onClose }) => {
                     Choose a Demo Role
                   </h3>
                   <p className="text-sm text-slate-500">
-                    Explore Restro instantly with auto-generated credentials
+                    Explore Restroo instantly with auto-generated credentials
                   </p>
                 </div>
               </div>

@@ -211,7 +211,7 @@ const Hero = ({ onOpenDemo }: { onOpenDemo: () => void }) => {
             <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-border">
               <Image
                 src="/assets/hero.png"
-                alt="Restro Dashboard"
+                alt="Restroo Dashboard"
                 width={1200}
                 height={800}
                 className="w-full h-auto"

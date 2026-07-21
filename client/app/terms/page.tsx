@@ -20,7 +20,7 @@ export default function TermsPage() {
               1. Acceptance of Terms
             </h2>
             <p>
-              By accessing and using Restro ("the Service"), you accept and
+              By accessing and using Restroo ("the Service"), you accept and
               agree to be bound by the terms and provision of this agreement. If
               you do not agree to abide by these terms, please do not use this
               Service.
@@ -30,7 +30,7 @@ export default function TermsPage() {
               2. Description of Service
             </h2>
             <p>
-              Restro provides a digital QR-based menu and ordering platform for
+              Restroo provides a digital QR-based menu and ordering platform for
               restaurants, cafes, and food outlets. The service includes table
               management, menu digitization, and live order tracking.
             </p>
@@ -60,7 +60,7 @@ export default function TermsPage() {
               5. Modifications to Service
             </h2>
             <p>
-              Restro reserves the right at any time to modify or discontinue,
+              Restroo reserves the right at any time to modify or discontinue,
               temporarily or permanently, the Service (or any part thereof) with
               or without notice.
             </p>

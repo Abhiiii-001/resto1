@@ -184,7 +184,7 @@ const Sidebar = () => {
         {!isSidebarCollapsed && (
           <div className="mb-6 px-4">
             <p className="text-center text-xs text-muted-foreground">
-              &copy; {new Date().getFullYear()} Restro
+              &copy; {new Date().getFullYear()} Restroo
             </p>
           </div>
         )}

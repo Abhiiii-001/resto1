@@ -109,7 +109,7 @@ export const UserSignup = async(req: Request,res: Response): Promise<any> => {
       // Send welcome email to User
       mailSender(
         email,
-        "Welcome to Restro!",
+        "Welcome to Restroo!",
         welcomeEmailTemplate(name || "Employee", "User")
       );
 
@@ -220,13 +220,13 @@ export const RestaurantSignup = async(req: Request,res: Response): Promise<any> 
       const mailResponse = await mailSender(
         email,
         "Verify Your Restaurant Account",
-        verificationEmailTemplate(verificationLink, "Verify Your Account", "Thank you for registering your restaurant with Restro. Please verify your email address to get started.")
+        verificationEmailTemplate(verificationLink, "Verify Your Account", "Thank you for registering your restaurant with Restroo. Please verify your email address to get started.")
       );
 
       // Send welcome email
       mailSender(
         email,
-        "Welcome to Restro!",
+        "Welcome to Restroo!",
         welcomeEmailTemplate(name, "Restaurant")
       );
 
@@ -542,7 +542,7 @@ export const ResetPassword = async(req: Request,res: Response): Promise<any> => 
    
    const mailResponse = mailSender(
       email,
-      "Reset Your Restro Password",
+      "Reset Your Restroo Password",
       resetPasswordEmailTemplate(verificationLink)
     );
 

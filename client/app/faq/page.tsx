@@ -11,7 +11,7 @@ export default function FAQPage() {
               Frequently Asked Questions
             </h1>
             <p className="text-xl text-muted-foreground">
-              Everything you need to know about Restro.
+              Everything you need to know about Restroo.
             </p>
           </div>
 

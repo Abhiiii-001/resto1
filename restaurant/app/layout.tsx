@@ -21,25 +21,25 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Restro | Smart Restaurant Ordering System",
-    template: "%s | Restro"
+    default: "Restroo | Smart Restaurant Ordering System",
+    template: "%s | Restroo"
   },
-  description: "Experience seamless dining with Restro. View menus, order online, and enjoy the best food from your favorite local restaurants.",
+  description: "Experience seamless dining with Restroo. View menus, order online, and enjoy the best food from your favorite local restaurants.",
   keywords: ["restaurant", "online ordering", "food delivery", "menu", "dining", "restro", "qr code ordering"],
-  authors: [{ name: "Restro Team" }],
+  authors: [{ name: "Restroo Team" }],
   robots: "index, follow",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://restro.com",
-    title: "Restro | Smart Restaurant Ordering System",
-    description: "Experience seamless dining with Restro. Skip the wait, scan table QR codes, and order instantly.",
-    siteName: "Restro",
+    title: "Restroo | Smart Restaurant Ordering System",
+    description: "Experience seamless dining with Restroo. Skip the wait, scan table QR codes, and order instantly.",
+    siteName: "Restroo",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Restro | Smart Restaurant Ordering System",
-    description: "Experience seamless dining with Restro. Skip the wait, scan table QR codes, and order instantly.",
+    title: "Restroo | Smart Restaurant Ordering System",
+    description: "Experience seamless dining with Restroo. Skip the wait, scan table QR codes, and order instantly.",
   },
 };
 
