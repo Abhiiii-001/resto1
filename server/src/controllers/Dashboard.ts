@@ -1,8 +1,5 @@
-import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
-
-
-const prisma = new PrismaClient();
+import prisma from "../config/prisma";
 
 export const GetDashboardData = async(req: Request,res: Response): Promise<any> => {
     try {

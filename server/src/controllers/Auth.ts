@@ -1,10 +1,16 @@
 import { Request , Response } from "express"
-import { PrismaClient } from "@prisma/client"
+import prisma from '../config/prisma'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
 import mailSender from '../utils/mailSender'
-import { welcomeEmailTemplate, verificationEmailTemplate, resetPasswordEmailTemplate, employeeVerifiedTemplate } from '../utils/mailTemplates'
+import {
+  renderRestaurantVerification,
+  renderUserVerification,
+  renderRestaurantWelcome,
+  renderUserWelcome,
+  renderResetPassword,
+} from '../emails'
 import uploadToCloudinary from "../utils/cloudinaryUploader"
 
 import dotenv from "dotenv"
@@ -36,12 +42,6 @@ interface LoginInterface {
    email: string
    password: string
 }
-
-const prisma = new PrismaClient({
-  datasources: {
-      db: { url: process.env.DATABASE_URL },
-  },
-});
 
 //  *************** SIGNUP ENDPOINTS  *****************
 
@@ -79,6 +79,26 @@ export const UserSignup = async(req: Request,res: Response): Promise<any> => {
         return res.status(404).json({success: false,message:"Restaurant Id is not correct"});
       }
 
+      // Check employee limit from the restaurant's subscription
+      const subscription = await prisma.subscription.findFirst({
+        where: { restaurantId },
+        include: { plan: true },
+      });
+
+      if (subscription && subscription.plan.maxEmployees !== -1) {
+        const verifiedEmployeeCount = await prisma.user.count({
+          where: { restaurantId, isVerified: true },
+        });
+
+        if (verifiedEmployeeCount >= subscription.plan.maxEmployees) {
+          return res.status(403).json({
+            success: false,
+            message: `This restaurant has reached its employee limit (${subscription.plan.maxEmployees}). The owner needs to upgrade their plan.`,
+            code: "LIMIT_REACHED",
+          });
+        }
+      }
+
       const hashedPassword: string = (await bcrypt.hash(password,10)).toString();
       const verificationToken =  crypto.randomUUID().toString();
 
@@ -99,19 +119,16 @@ export const UserSignup = async(req: Request,res: Response): Promise<any> => {
 
       const verificationLink = `${process.env.CLIENT_URL}/verify/${verificationToken}`;
       
-      // Send verification email to Restaurant
-      const mailResponse =  mailSender(
-        restaurant.email,
-        "Verify Employee Account",
-        verificationEmailTemplate(verificationLink, "Employee Verification Required", `A new employee (${name || email}) has signed up and requires your verification to join your workspace.`)
-      );
-
-      // Send welcome email to User
+      // Send employee approval email to Restaurant Owner asynchronously
       mailSender(
-        email,
-        "Welcome to Restroo!",
-        welcomeEmailTemplate(name || "Employee", "User")
-      );
+        restaurant.email,
+        "Employee Verification Required",
+        renderUserVerification({
+          employeeName: name || email,
+          restaurantName: restaurant.name,
+          verificationUrl: verificationLink
+        })
+      ).catch((err) => console.error("[Background Email Error]:", err));
 
       return res.status(200).json({
         success: true,
@@ -139,7 +156,6 @@ export const RestaurantSignup = async(req: Request,res: Response): Promise<any> 
     } = reqData;
 
     const file = req.files?.thumbnail;
-    //console.log(file);
 
     
     //check user is already present
@@ -156,14 +172,11 @@ export const RestaurantSignup = async(req: Request,res: Response): Promise<any> 
       }
 
       //upload file
-      const thumbnailUploadRes = await uploadToCloudinary(file,'my-files');
-      //console.log("UPLOAD FILE RESPONSE : ",thumbnailUploadRes);
-      // fs.unlinkSync(file.tempFilePath); 
+      const thumbnailUploadRes = await uploadToCloudinary(file,'my-files'); 
 
     //hash password
     const hashedPassword: string = (await bcrypt.hash(password,10)).toString();
     const verificationToken =  crypto.randomUUID().toString();
-    //console.log("verification token",verificationToken);
 
     //generate resCode
     let code = generateRandomNumber(4).toString();
@@ -190,52 +203,47 @@ export const RestaurantSignup = async(req: Request,res: Response): Promise<any> 
             verificationToken
         }
     });
-    //console.log(restaurant)
     if(!restaurant)
         return res.status(500).json({success: false,message:"Something wrong while user creation!"});
 
-    // Create a trial subscription for the restaurant
+    // Create a demo subscription for the restaurant (default 14 days demo period)
     const demoPlan = await prisma.plan.findFirst({
-       where: { type: PLAN_TYPE.DEMO }
+       where: { OR: [{ isDemo: true }, { type: PLAN_TYPE.DEMO }] }
     });
 
     if (demoPlan) {
        const now = new Date();
-       const trialEndsAt = new Date(now.getTime() + demoPlan.trialDays * 24 * 60 * 60 * 1000);
+       const demoDurationDays = 14;
+       const periodEnd = new Date(now.getTime() + demoDurationDays * 24 * 60 * 60 * 1000);
        await prisma.subscription.create({
           data: {
              restaurantId: restaurant.id,
              planId: demoPlan.id,
              status: SUBSCRIPTION_STATUS.ACTIVE,
              currentPeriodStart: now,
-             currentPeriodEnd: trialEndsAt, // trial period
-             trialEndsAt: trialEndsAt,
+             currentPeriodEnd: periodEnd,
           }
        });
     }
 
-      const verificationLink = `${process.env.CLIET_URL}/verify/${verificationToken}`;
+      const verificationLink = `${process.env.CLIENT_URL || "http://localhost:3001"}/verify/${verificationToken}`;
       
-      // Send verification email
-      const mailResponse = await mailSender(
-        email,
-        "Verify Your Restaurant Account",
-        verificationEmailTemplate(verificationLink, "Verify Your Account", "Thank you for registering your restaurant with Restroo. Please verify your email address to get started.")
-      );
-
-      // Send welcome email
+      // Send verification email asynchronously in background
       mailSender(
         email,
-        "Welcome to Restroo!",
-        welcomeEmailTemplate(name, "Restaurant")
-      );
+        "Verify Your Restaurant Account",
+        renderRestaurantVerification({
+          restaurantName: name,
+          ownerName: name,
+          verificationUrl: verificationLink
+        })
+      ).catch((err) => console.error("[Background Email Error]:", err));
 
       res.status(200).json({
         success: true,
-        message:"User created! , Waiting for verification",
-        user:restaurant,
-        mailResponse:mailResponse?.response
-    });
+        message: "Account created! Please check your email for verification.",
+        user: restaurant,
+      });
    } catch (error:any) {
       //console.log("Error",error.message);
       return res.status(500).json({success: false,message:"Signup Failed!"});
@@ -254,7 +262,6 @@ export const Login = async(req: Request,res: Response): Promise<any> => {
          where:{
             email,
             isActive: true,
-            // isVerified: true,
          },
       });
 
@@ -265,7 +272,6 @@ export const Login = async(req: Request,res: Response): Promise<any> => {
           user = await prisma.user.findUnique({
            where:{
             email,
-            // isVerified: true
            }
          });
          //@ts-ignore
@@ -300,10 +306,10 @@ export const Login = async(req: Request,res: Response): Promise<any> => {
       );
  
       res.cookie('token',token,{
-         // httpOnly: true,        // Prevent client-side access
-         secure: false, // Use secure in production,
+         httpOnly: true,       
+         secure: true,
          sameSite: "lax",
-         maxAge: 3600000 * 8        // 8 hour
+         maxAge: 3600000 * 8        
       })
  
       return res.status(200)
@@ -341,7 +347,6 @@ export const VerifyToken = async(req: Request,res: Response): Promise<any> => {
             message: "Token not found"
          });
       }
-      //console.log(token);
       let user: any = await prisma.restaurant.findUnique({
          where:{
             verificationToken: token
@@ -353,7 +358,7 @@ export const VerifyToken = async(req: Request,res: Response): Promise<any> => {
             name: true,
          }
       });
-      //console.log(user);
+
       if(!user){
          user = await prisma.user.findUnique({
             where:{
@@ -367,7 +372,7 @@ export const VerifyToken = async(req: Request,res: Response): Promise<any> => {
             }
          });
       }
-      //console.log(user);
+
       if(!user) {
          return res.status(401).json({
             success: false,
@@ -385,6 +390,16 @@ export const VerifyToken = async(req: Request,res: Response): Promise<any> => {
                // verificationToken: ""
             }
           })
+
+         await mailSender(
+            user.email,
+            "Welcome to Restroo!",
+            renderRestaurantWelcome({
+               restaurantName: user.name,
+               ownerName: undefined,
+               dashboardUrl: `${process.env.CLIENT_URL}/dashboard`
+         })
+         );
       }
       else{
          await prisma.user.update({
@@ -398,20 +413,21 @@ export const VerifyToken = async(req: Request,res: Response): Promise<any> => {
           })
           
           // Send verified email to User so they can login
-          mailSender(
+          await mailSender(
              user.email,
              "Your Account is Verified!",
-             employeeVerifiedTemplate(user.name, `${process.env.CLIENT_URL || ''}/login`)
+             renderUserWelcome({
+                userName: user.name || "Employee",
+                loginUrl: `${process.env.CLIENT_URL || ''}/signin`
+             })
           );
       }
-      //console.log(2);
 
       return res.status(200).json({
          success: true,
          message: "User verified successfully!"
       })
    } catch (error) {
-       //console.log("Verify token error",error);
        return res.status(500).json({
          success: false,
          message: "Something went wrong!"
@@ -540,11 +556,14 @@ export const ResetPassword = async(req: Request,res: Response): Promise<any> => 
       })
    }
    
-   const mailResponse = mailSender(
+   mailSender(
       email,
-      "Reset Your Restroo Password",
-      resetPasswordEmailTemplate(verificationLink)
-    );
+      "Reset Your Restroo Account Password",
+      renderResetPassword({
+         userName: user.name || "User",
+         resetUrl: verificationLink
+      })
+   ).catch((err) => console.error("[Background Email Error]:", err));
 
     return res.status(200).json({
       success: true,
@@ -590,8 +609,6 @@ export const ResetPasswordMaker = async(req: Request,res: Response): Promise<any
       }
 
       const hashedNewPassword = (await bcrypt.hash(password,10)).toString();
-      //console.log(hashedNewPassword)
-      //console.log(password)
       if(user.role === "Restaurant"){
         await prisma.restaurant.update({
             where: {id: user.id},

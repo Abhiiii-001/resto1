@@ -29,8 +29,8 @@ async function main() {
       data: {
         name: 'Demo Plan',
         type: 1, // DEMO
+        isDemo: true,
         price: 0,
-        trialDays: 14,
         maxProducts: 15,
         maxCategories: 3,
         maxEmployees: 1,
@@ -43,8 +43,8 @@ async function main() {
       data: {
         name: 'Pro Plan',
         type: 2, // PRO
+        isDemo: false,
         price: 999,
-        trialDays: 0,
         maxProducts: 50,
         maxCategories: 10,
         maxEmployees: 3,
@@ -57,8 +57,8 @@ async function main() {
       data: {
         name: 'Premium Plan',
         type: 3, // PREMIUM
+        isDemo: false,
         price: 1999,
-        trialDays: 0,
         maxProducts: -1,
         maxCategories: -1,
         maxEmployees: -1,
@@ -102,7 +102,6 @@ async function main() {
       status: 1, // ACTIVE
       currentPeriodStart: now,
       currentPeriodEnd: new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000),
-      trialEndsAt: new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000),
     }
   });
 

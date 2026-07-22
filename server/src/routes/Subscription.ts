@@ -8,7 +8,8 @@ import {
   handlePaymentCallback,
   cancelSubscription,
   getPaymentHistory,
-  downloadInvoice
+  downloadInvoice,
+  previewSubscriptionChange
 } from "../controllers/Subscription";
 
 const router = express.Router();
@@ -16,6 +17,7 @@ const router = express.Router();
 router.get("/plans", getPlans);
 router.get("/current", Auth, IsRestaurant, getCurrentSubscription);
 router.post("/create-order", Auth, IsRestaurant, createPaymentOrder);
+router.post("/preview-change", Auth, IsRestaurant, previewSubscriptionChange);
 router.post("/verify-payment", Auth, IsRestaurant, verifyPaymentStatus);
 router.post("/payment/callback", handlePaymentCallback); // Public callback
 router.post("/cancel", Auth, IsRestaurant, cancelSubscription);

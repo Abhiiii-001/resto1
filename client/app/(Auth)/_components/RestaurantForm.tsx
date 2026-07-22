@@ -63,7 +63,7 @@ function RestaurantForm({ prevFormData }: Props) {
 
       toast.success('Signup Success!');
       router.push('/signin');
-      toast.info('Login Now!');
+      toast.info('Verification Email is sent to your email!');
     } catch (err: unknown) {
       console.error('Signup failed:', err);
       if (err instanceof Error) {

@@ -1,8 +1,6 @@
-import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import uploadToCloudinary from "../utils/cloudinaryUploader";
-
-const prisma = new PrismaClient
+import prisma from "../config/prisma";
 
 interface ProductVariantInterface{
     size: string;
@@ -125,6 +123,7 @@ export const GetAllProducts = async(req: Request,res: Response):Promise<any> => 
     
         const allProducts = await prisma.product.findMany({
             where:{
+                isActive: true,
                 category:{
                     restaurantId: restaurantId
                 }
@@ -139,14 +138,6 @@ export const GetAllProducts = async(req: Request,res: Response):Promise<any> => 
             }
         });
 
-        // //console.log(restaurantId,allProducts)
-
-        // const popularProducts = await prisma.product.findMany({
-        //     take:10,
-        //     orderBy:{
-        //         rating:"desc"
-        //     }
-        // });
 
         return res.status(200).json({
             message:"Product fetched!",
@@ -165,6 +156,7 @@ export const GetProductByQuery = async(req: Request,res: Response):Promise<any> 
         const { search , restaurantId } = req.params;
         const products = await prisma.product.findMany({
             where:{
+                isActive: true,
                 name:{
                     contains: search
                 },
@@ -188,9 +180,12 @@ export const GetAllProductsByCategory = async(req: Request,res: Response):Promis
         const products = await prisma.category.findMany({
             where:{
                 restaurantId: restaurantId,
+                isActive: true
             },
             include:{
-                products: true
+                products: {
+                    where: { isActive: true }
+                }
             }
         });
         return res.status(200).json({

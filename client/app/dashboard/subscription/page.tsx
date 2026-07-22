@@ -1,7 +1,8 @@
 'use client';
 import Link from 'next/link';
 import { useState } from 'react';
-import { useAppSelector } from '@/redux/redux';
+import { useAppSelector, useAppDispatch } from '@/redux/redux';
+import { openModal } from '@/redux/states/modalSlice';
 import {
   CreditCard,
   Zap,
@@ -20,6 +21,7 @@ import {
   useGetCurrentSubscriptionQuery,
   useGetPaymentHistoryQuery,
   useCreatePaymentOrderMutation,
+  usePreviewSubscriptionChangeMutation,
 } from '@/redux/api/subscription';
 import { toast } from 'react-toastify';
 import { cn } from '@/lib/utils';
@@ -31,15 +33,41 @@ const PlanOverview = () => {
     useGetCurrentSubscriptionQuery({});
   const [createOrder, { isLoading: isCreatingOrder }] =
     useCreatePaymentOrderMutation();
+  const [previewChange] = usePreviewSubscriptionChangeMutation();
+  const dispatch = useAppDispatch();
 
   const handleUpgrade = async (planId: string) => {
     try {
+      const previewRes = await previewChange({ planId }).unwrap();
+      if (previewRes.success) {
+        const { willDeactivate } = previewRes.data;
+        
+        // Check if anything will be deactivated (i.e. it's a downgrade causing data loss)
+        if (
+          willDeactivate.products > 0 ||
+          willDeactivate.categories > 0 ||
+          willDeactivate.employees > 0
+        ) {
+          dispatch(
+            openModal({
+              type: 'DOWNGRADE_CONFIRMATION',
+              data: {
+                planId,
+                preview: previewRes.data,
+              },
+            })
+          );
+          return; // Stop here, modal will handle the actual payment order creation
+        }
+      }
+
+      // No downgrade issues, proceed directly to payment
       const res = await createOrder({ planId }).unwrap();
       if (res.success && res.redirectUrl) {
         window.location.href = res.redirectUrl;
       }
     } catch (error: any) {
-      toast.error(error?.data?.message || 'Failed to initiate payment');
+      toast.error(error?.data?.message || 'Failed to initiate plan change');
     }
   };
 
@@ -74,7 +102,7 @@ const PlanOverview = () => {
                 Your Subscription
               </p>
               <h2 className="text-3xl font-black text-foreground">
-                {currentSub?.plan?.name || 'Trial Period'}
+                {currentSub?.plan?.name || 'Demo Period'}
               </h2>
               <div className="flex items-center gap-3 mt-2">
                 {currentSub && (
@@ -218,16 +246,7 @@ const PlanOverview = () => {
                       : `${plan.maxEmployees} Employees`}
                   </span>
                 </div>
-                <div className="flex items-start gap-3 text-foreground/80 font-medium text-sm">
-                  <div className="mt-1 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                    <Check className="w-3 h-3 text-green-600" />
-                  </div>
-                  <span>
-                    {plan.maxQRCodes === -1
-                      ? 'Unlimited QR Codes'
-                      : `${plan.maxQRCodes} QR Codes`}
-                  </span>
-                </div>
+
                 <div className="flex items-start gap-3 text-foreground/80 font-medium text-sm">
                   <div className="mt-1 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
                     <Check className="w-3 h-3 text-green-600" />
