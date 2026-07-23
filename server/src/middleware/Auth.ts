@@ -1,12 +1,9 @@
 /// <reference path="../types/express.d.ts" />
 import { Request , Response , NextFunction } from "express";
 import jwt from 'jsonwebtoken'
-
 import dotenv from 'dotenv'
-import { PrismaClient } from "@prisma/client";
+import prisma from "../config/prisma";
 dotenv.config();
-
-const prisma = new PrismaClient();
 
 export const Auth = async(req: Request,res: Response,next: NextFunction): Promise<any> => {
     try {

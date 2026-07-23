@@ -1,11 +1,10 @@
 import { Request, Response } from "express";
 import crypto from 'crypto';
-import { PrismaClient } from "@prisma/client";
 import { SUBSCRIPTION_STATUS, PLAN_TYPE, PAYMENT_TYPE, PAYMENT_STATUS } from "../constants";
 import { initiatePhonePePayment, verifyPhonePePayment, verifyPhonePeChecksum } from "../utils/phonepe";
 import { generateSubscriptionInvoicePDF } from "../utils/pdfGenerator";
-
-const prisma = new PrismaClient();
+import { reconcileDowngrade, previewPlanChange } from "../utils/reconcileDowngrade";
+import prisma from "../config/prisma";
 
 export const getPlans = async (req: Request, res: Response): Promise<any> => {
   try {
@@ -72,7 +71,6 @@ export const createPaymentOrder = async (req: Request, res: Response): Promise<a
           status: SUBSCRIPTION_STATUS.ACTIVE,
           currentPeriodStart: now,
           currentPeriodEnd: currentPeriodEnd,
-          trialEndsAt: null,
         },
         create: {
           restaurantId,
@@ -151,6 +149,23 @@ export const createPaymentOrder = async (req: Request, res: Response): Promise<a
   }
 };
 
+export const previewSubscriptionChange = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { planId } = req.body;
+    const restaurantId = req.user?.restaurantId || req.user?.id;
+    if (!restaurantId) return res.status(401).json({ success: false, message: "Unauthorized" });
+
+    const plan = await prisma.plan.findUnique({ where: { id: planId } });
+    if (!plan) return res.status(404).json({ success: false, message: "Plan not found" });
+
+    const preview = await previewPlanChange(restaurantId, plan);
+    return res.status(200).json({ success: true, data: preview });
+  } catch (error) {
+    console.error("previewSubscriptionChange Error:", error);
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
 export const verifyPaymentStatus = async (req: Request, res: Response): Promise<any> => {
   try {
     const { transactionId, planId } = req.body;
@@ -191,7 +206,6 @@ export const verifyPaymentStatus = async (req: Request, res: Response): Promise<
            status: SUBSCRIPTION_STATUS.ACTIVE,
            currentPeriodStart: now,
            currentPeriodEnd: currentPeriodEnd,
-           trialEndsAt: null, // clear trial
          }
        });
     } else {
@@ -215,6 +229,9 @@ export const verifyPaymentStatus = async (req: Request, res: Response): Promise<
         subscriptionId: subscription.id
       }
     });
+
+    // Reconcile limits (e.g., deactivate excess products if downgrading)
+    await reconcileDowngrade(restaurantId, plan);
 
     return res.status(200).json({ success: true, message: "Subscription activated successfully" });
   } catch (error) {
@@ -298,6 +315,9 @@ export const handlePaymentCallback = async (req: Request, res: Response): Promis
                 subscriptionId: subscription.id
               }
             });
+
+            // Reconcile limits (e.g., deactivate excess products if downgrading)
+            await reconcileDowngrade(payment.restaurantId, plan);
          }
        }
     }

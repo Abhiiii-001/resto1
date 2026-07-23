@@ -5,7 +5,7 @@ export interface Plan {
   name: string;
   type: PlanType;
   price: number;
-  trialDays: number;
+  isDemo: boolean;
   maxProducts: number;
   maxCategories: number;
   maxEmployees: number;
@@ -21,7 +21,6 @@ export interface Subscription {
   status: SubscriptionStatus;
   currentPeriodStart: string;
   currentPeriodEnd: string;
-  trialEndsAt: string | null;
   plan: Plan;
 }
 

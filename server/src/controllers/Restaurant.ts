@@ -1,8 +1,6 @@
-import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import uploadToCloudinary from "../utils/cloudinaryUploader";
-
-const prisma = new PrismaClient();
+import prisma from "../config/prisma";
 
 export const GetAllRestaurants = async(req: Request,res: Response):Promise<any> => {
     try {

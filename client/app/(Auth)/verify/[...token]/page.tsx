@@ -51,7 +51,7 @@ function Verify() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50/50 p-4">
+    <div className="flex min-h-[90%] items-center justify-center bg-gray-50/50 p-4">
       <div className="w-full max-w-md overflow-hidden rounded-xl border border-border bg-white shadow-sm">
         {/* Header */}
         <div className="flex flex-col items-center justify-center gap-2 px-8 pt-8 pb-4 text-center">
@@ -76,7 +76,7 @@ function Verify() {
           </p>
           <Link href="/signin" className="block w-full">
             <Button className="w-full py-6 text-base font-semibold">
-              Sign In Now
+              Log In Now
             </Button>
           </Link>
         </div>

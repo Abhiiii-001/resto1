@@ -1,8 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../config/prisma";
 import { SUBSCRIPTION_STATUS, PLAN_TYPE } from "../constants";
-
-const prisma = new PrismaClient();
 
 export const SubscriptionGuard = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
   try {
@@ -25,17 +23,19 @@ export const SubscriptionGuard = async (req: Request, res: Response, next: NextF
       });
     }
 
-    // Check if trial/period has ended
+    // Check if billing/demo period has ended for ANY plan type
     const now = new Date();
-    if (subscription.trialEndsAt && now > subscription.trialEndsAt && subscription.plan.type === PLAN_TYPE.DEMO) {
+    if (now > subscription.currentPeriodEnd) {
       await prisma.subscription.update({
         where: { id: subscription.id },
         data: { status: SUBSCRIPTION_STATUS.EXPIRED },
       });
       return res.status(403).json({
         success: false,
-        message: "Trial expired. Please upgrade.",
-        code: "TRIAL_EXPIRED",
+        message: subscription.plan.isDemo
+          ? "Demo period expired. Please upgrade your plan."
+          : "Subscription period expired. Please renew.",
+        code: "SUBSCRIPTION_EXPIRED",
       });
     }
 

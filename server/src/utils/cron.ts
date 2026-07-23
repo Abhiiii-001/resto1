@@ -1,23 +1,19 @@
 import cron from "node-cron";
-import { PrismaClient, Duration } from "@prisma/client";
+import { Duration } from "@prisma/client";
 import { calculateSummary } from "../utils/summary";
 import { SUBSCRIPTION_STATUS } from "../constants";
-
-const prisma = new PrismaClient();
+import prisma from "../config/prisma";
 
 // Run every day at 00:05 to expire subscriptions
 cron.schedule("5 0 * * *", async () => {
   try {
     const now = new Date();
     
-    // Find active subscriptions that have passed their end date
+    // Find active subscriptions that have passed their currentPeriodEnd
     const expiredSubscriptions = await prisma.subscription.updateMany({
       where: {
         status: SUBSCRIPTION_STATUS.ACTIVE,
-        OR: [
-          { currentPeriodEnd: { lt: now } },
-          { trialEndsAt: { lt: now } }
-        ]
+        currentPeriodEnd: { lt: now }
       },
       data: {
         status: SUBSCRIPTION_STATUS.EXPIRED

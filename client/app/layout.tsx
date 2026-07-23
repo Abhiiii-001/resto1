@@ -23,6 +23,8 @@ export const metadata: Metadata = {
   robots: metadataData.global.robots as any,
 };
 
+import GlobalModal from '@/components/modals/GlobalModal';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -36,6 +38,8 @@ export default function RootLayout({
         <StoreProvider>
           <Navbar />
           <main className="flex-1 pt-16">{children}</main>
+          
+          <GlobalModal />
 
           <ToastContainer
             position="top-right"

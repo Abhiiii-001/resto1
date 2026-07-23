@@ -1,4 +1,3 @@
-import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import fs from 'fs'
 import crypto from "crypto";
@@ -7,8 +6,8 @@ import { emitNewOrder } from "../socket";
 import { generateInvoice } from "../utils/generateInvoice";
 import uploadToCloudinary, { uploadPDFToCloudinary } from "../utils/cloudinaryUploader";
 import { sendPushNotification } from "../utils/notificationSender";
-
-const prisma = new PrismaClient();
+import { SUBSCRIPTION_STATUS } from "../constants";
+import prisma from "../config/prisma";
 
 function generateOrderCode() {
     return "ORD-" + crypto.randomBytes(4).toString("hex").toUpperCase();
@@ -33,8 +32,23 @@ export const CreateOrder = async(req: Request,res: Response): Promise<any> => {
     const restaurantDetails = await prisma.restaurant.findUnique({
         where:{
             id: restaurantId
+        },
+        include: {
+            subscription: true
         }
-    })
+    });
+
+    if (restaurantDetails?.subscription) {
+        const sub = restaurantDetails.subscription;
+        const now = new Date();
+        if (sub.status !== SUBSCRIPTION_STATUS.ACTIVE || now > sub.currentPeriodEnd) {
+            return res.status(402).json({
+                success: false,
+                message: "Restaurant subscription is currently inactive. Order placement is temporarily disabled.",
+                code: "RESTAURANT_INACTIVE"
+            });
+        }
+    }
 
     const orderCode = generateOrderCode();
     const invoiceBuffer = await generateInvoice(req.body,orderCode,restaurantDetails);
@@ -222,9 +236,25 @@ export const GetAllOrders = async(req: Request,res: Response): Promise<any> => {
         
         const { restaurantId } = req.params;
 
+        // Fetch subscription to check orderHistory limit
+        const subscription = await prisma.subscription.findFirst({
+            where: { restaurantId },
+            include: { plan: true },
+        });
+
+        const orderHistoryDays = subscription?.plan?.orderHistory ?? -1;
+
+        // Build date filter: if orderHistory > 0, only return orders within that window
+        const dateFilter: any = {};
+        if (orderHistoryDays > 0) {
+            const cutoffDate = new Date(Date.now() - orderHistoryDays * 24 * 60 * 60 * 1000);
+            dateFilter.createdAt = { gte: cutoffDate.toISOString() };
+        }
+
         const orders = await prisma.order.findMany({
             where:{
-                restaurantId: restaurantId
+                restaurantId,
+                ...dateFilter,
             },
             include:{
                 orders: true
@@ -234,11 +264,11 @@ export const GetAllOrders = async(req: Request,res: Response): Promise<any> => {
         return res.status(200).json({
             success: true,
             message: "All orders retrived",
-            data: orders
+            data: orders,
+            ...(orderHistoryDays > 0 && { orderHistoryDays }),
         });
 
     } catch (error) {
-        //console.log("Get all orders error",error);
         return res.status(500).json({
             success: false,
             message: "Something wrong , while retriving all orders"

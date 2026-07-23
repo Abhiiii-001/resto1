@@ -1,144 +1,136 @@
-export const baseTemplate = (content: string) => `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            background-color: #f8f8f7;
-            margin: 0;
-            padding: 0;
-            color: #323232;
-        }
-        .container {
-            max-width: 600px;
-            margin: 40px auto;
-            background-color: #ffffff;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-        .header {
-            background-color: #C8161D;
-            padding: 30px 20px;
-            text-align: center;
-            color: #ffffff;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 28px;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-        .content {
-            padding: 40px 30px;
-            line-height: 1.6;
-        }
-        .content h2 {
-            color: #C8161D;
-            font-size: 22px;
-            margin-top: 0;
-        }
-        .button {
-            display: inline-block;
-            background-color: #C8161D;
-            color: #ffffff !important;
-            text-decoration: none;
-            padding: 14px 28px;
-            border-radius: 6px;
-            font-weight: bold;
-            margin: 20px 0;
-            font-size: 16px;
-        }
-        .footer {
-            background-color: #f8f8f7;
-            padding: 20px;
-            text-align: center;
-            font-size: 14px;
-            color: #959595;
-            border-top: 1px solid #eeeeee;
-        }
-        .footer p {
-            margin: 5px 0;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>RESTRO</h1>
-        </div>
-        <div class="content">
-            ${content}
-        </div>
-        <div class="footer">
-            <p>&copy; ${new Date().getFullYear()} Restroo. All rights reserved.</p>
-            <p>Your online hero for restaurant management.</p>
-        </div>
-    </div>
-</body>
-</html>
-`;
+import {
+  renderRestaurantVerification,
+  renderUserVerification,
+  renderRestaurantWelcome,
+  renderUserWelcome,
+  renderSubscriptionExpiry,
+  renderSubscriptionExpired,
+  renderLayout,
+  emailTokens,
+} from '../emails';
+import { renderButton } from '../emails/components/Button';
+import { renderCard, renderFallbackLink } from '../emails/components/Card';
 
+// Re-export core email engine components & tokens
+export {
+  renderRestaurantVerification,
+  renderUserVerification,
+  renderRestaurantWelcome,
+  renderUserWelcome,
+  renderSubscriptionExpiry,
+  renderSubscriptionExpired,
+  renderLayout as baseTemplate,
+  emailTokens,
+};
+
+// Backward-compatible wrapper for verification emails
+export const verificationEmailTemplate = (link: string, title?: string, message?: string) => {
+  return renderRestaurantVerification({
+    restaurantName: 'Restroo Workspace',
+    ownerName: 'Valued User',
+    verificationUrl: link,
+  });
+};
+
+// Backward-compatible wrapper for welcome emails
 export const welcomeEmailTemplate = (name: string, role: 'Restaurant' | 'User') => {
-    const roleMessage = role === 'Restaurant' 
-        ? "We're thrilled to have your restaurant on board. Restroo is designed to streamline your operations, enhance customer experience, and help your business grow."
-        : "Welcome to the team! You have successfully signed up. Please note that your account is currently in a waiting period. You will be able to log in once your restaurant administrator verifies your account.";
+  if (role === 'Restaurant') {
+    return renderRestaurantWelcome({
+      restaurantName: name || 'Your Restaurant',
+      ownerName: name || 'Restaurant Owner',
+      dashboardUrl: `${process.env.CLIENT_URL || 'https://restro-client.vercel.app'}/dashboard`,
+    });
+  }
+  return renderUserWelcome({
+    userName: name || 'User',
+    loginUrl: process.env.CLIENT_URL || 'https://restro-client.vercel.app',
+  });
+};
 
-    const content = `
-        <h2>Welcome to Restroo, ${name || 'there'}! 🎉</h2>
-        <p>Thank you for joining our platform. ${roleMessage}</p>
-        <p>If you have any questions or need assistance getting started, our support team is always here to help.</p>
-        <p>Best regards,<br>The Restroo Team</p>
-    `;
-    return baseTemplate(content);
-}
-
+// Backward-compatible wrapper for employee verified emails
 export const employeeVerifiedTemplate = (name: string, loginLink: string) => {
-    const content = `
-        <h2>You're Verified, ${name || 'there'}! ✅</h2>
-        <p>Great news! Your restaurant administrator has verified your employee account.</p>
-        <p>You can now log in to the Restroo platform and start managing operations.</p>
-        <div style="text-align: center;">
-            <a href="${loginLink}" class="button">Log In Now</a>
-        </div>
-        <p style="font-size: 14px; color: #646464; margin-top: 30px;">
-            If the button doesn't work, copy and paste the following link into your browser:<br>
-            <a href="${loginLink}" style="color: #C8161D; word-break: break-all;">${loginLink}</a>
-        </p>
-    `;
-    return baseTemplate(content);
-}
+  const content = `
+    <h2 style="font-size: 20px; font-weight: 700; color: ${emailTokens.colors.slate950}; margin-top: 0; margin-bottom: 12px;">
+      Account Verified! 🎉
+    </h2>
+    <p style="margin-top: 0; margin-bottom: 16px;">
+      Hi <strong>${name || 'Employee'}</strong>,
+    </p>
+    <p style="margin-top: 0; margin-bottom: 20px;">
+      Great news! Your restaurant administrator has verified your employee account. You can now log in to the workspace and start managing operations.
+    </p>
+    ${renderButton({ text: 'Log In to Workspace', url: loginLink, variant: 'primary' })}
+    ${renderFallbackLink(loginLink)}
+  `;
 
-export const verificationEmailTemplate = (link: string, title: string, message: string) => {
-    const content = `
-        <h2>${title}</h2>
-        <p>${message}</p>
-        <div style="text-align: center;">
-            <a href="${link}" class="button">Verify Email</a>
-        </div>
-        <p style="font-size: 14px; color: #646464; margin-top: 30px;">
-            If the button doesn't work, copy and paste the following link into your browser:<br>
-            <a href="${link}" style="color: #C8161D; word-break: break-all;">${link}</a>
-        </p>
-    `;
-    return baseTemplate(content);
-}
+  const html = renderLayout({
+    content,
+    preheader: 'Your employee account has been verified - Log in now',
+  });
 
+  const text = `
+Account Verified! - Restroo
+
+Hi ${name || 'Employee'},
+
+Your restaurant administrator has verified your employee account. Log in to your workspace here:
+${loginLink}
+
+--
+Restroo Platform
+${emailTokens.company.website}
+  `.trim();
+
+  return { html, text };
+};
+
+// Backward-compatible wrapper for reset password emails
 export const resetPasswordEmailTemplate = (link: string) => {
-    const content = `
-        <h2>Password Reset Request</h2>
-        <p>We received a request to reset the password for your Restroo account. If you made this request, please click the button below to choose a new password.</p>
-        <div style="text-align: center;">
-            <a href="${link}" class="button">Reset Password</a>
-        </div>
-        <p>If you didn't request a password reset, you can safely ignore this email. Your password will remain unchanged.</p>
-        <p style="font-size: 14px; color: #646464; margin-top: 30px;">
-            If the button doesn't work, copy and paste the following link into your browser:<br>
-            <a href="${link}" style="color: #C8161D; word-break: break-all;">${link}</a>
-        </p>
-    `;
-    return baseTemplate(content);
-}
+  const content = `
+    <h2 style="font-size: 20px; font-weight: 700; color: ${emailTokens.colors.slate950}; margin-top: 0; margin-bottom: 12px;">
+      Reset Your Password 🔐
+    </h2>
+    <p style="margin-top: 0; margin-bottom: 16px;">
+      We received a request to reset the password for your Restroo account. Click the button below to choose a new password. This link is valid for 60 minutes.
+    </p>
+    ${renderButton({ text: 'Reset Password', url: link, variant: 'primary' })}
+    ${renderCard({
+      title: 'Security Notice',
+      variant: 'neutral',
+      content: 'If you did not request a password reset, you can safely ignore this email. Your password will remain unchanged.',
+    })}
+    ${renderFallbackLink(link)}
+  `;
+
+  const html = renderLayout({
+    content,
+    preheader: 'Reset your Restroo account password',
+  });
+
+  const text = `
+Reset Your Password - Restroo
+
+We received a request to reset the password for your Restroo account. Use the link below to choose a new password:
+
+${link}
+
+If you did not request a password reset, please ignore this email.
+
+--
+Restroo Platform
+${emailTokens.company.website}
+  `.trim();
+
+  return { html, text };
+};
+
+// Backward-compatible wrapper for subscription expiry
+export const subscriptionExpiringTemplate = (planName: string, daysLeft: number) => {
+  return renderSubscriptionExpiry({
+    restaurantName: 'Your Restaurant',
+    planName,
+    expiryDate: 'Upcoming',
+    daysRemaining: daysLeft,
+    renewUrl: `${process.env.CLIENT_URL || 'https://restro-client.vercel.app'}/dashboard/subscription`,
+  });
+};

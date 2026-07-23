@@ -1,29 +1,37 @@
 import nodemailer from 'nodemailer';
 
-const mailSender = async (email: string, title: string, body:string) => {
-    try{
-            let transporter = nodemailer.createTransport({
-                host:process.env.MAIL_HOST,
-                auth:{
-                    user: process.env.MAIL_USER,
-                    pass: process.env.MAIL_PASS,
-                }
-            })
+export type MailBody = string | { html: string; text?: string };
 
+const mailSender = async (email: string, title: string, body: MailBody) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      host: process.env.MAIL_HOST || 'smtp.gmail.com',
+      port: parseInt(process.env.MAIL_PORT || '587', 10),
+      secure: false, // true for 465, false for 587
+      auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS,
+      },
+    });
 
-            let info = await transporter.sendMail({
-                from: 'Restroo || A online hero',
-                to:`${email}`,
-                subject: `${title}`,
-                html: `${body}`,
-            })
-            //console.log(info);
-            return info;
-    }
-    catch(error:any) {
-        //console.log(error.message);
-    }
-}
+    const htmlContent = typeof body === 'string' ? body : body.html;
+    const textContent = typeof body === 'string' ? undefined : body.text;
 
+    const fromAddress = process.env.MAIL_FROM || process.env.MAIL_USER || 'no-reply@restroo.com';
 
-export default mailSender
+    const info = await transporter.sendMail({
+      from: `"Restroo" <${fromAddress}>`,
+      to: email,
+      subject: title,
+      html: htmlContent,
+      text: textContent,
+    });
+
+    return info;
+  } catch (error: any) {
+    console.error('❌ mailSender Error:', error?.message || error);
+    throw error;
+  }
+};
+
+export default mailSender;

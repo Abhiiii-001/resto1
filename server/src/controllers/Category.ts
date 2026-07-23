@@ -1,8 +1,6 @@
-import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import uploadToCloudinary from "../utils/cloudinaryUploader";
-
-const prisma = new PrismaClient();
+import prisma from "../config/prisma";
 export const AddCategory = async(req: Request,res: Response): Promise<any> => {
     try {
 
@@ -93,7 +91,8 @@ export const GetAllCategories = async(req: Request,res: Response): Promise<any> 
         const restaurantId = req.user.restaurantId;
         const categories = await prisma.category.findMany({
             where:{
-                restaurantId: restaurantId
+                restaurantId: restaurantId,
+                isActive: true
             },
             select:{
                 name: true,
@@ -116,7 +115,8 @@ export const GetAllCategoriesWithProducts = async(req: Request,res: Response):Pr
         const restaurantId = req.params.id;
         const categories = await prisma.category.findMany({
             where:{
-                restaurantId: restaurantId
+                restaurantId: restaurantId,
+                isActive: true
             },
             select:{
                 name: true,

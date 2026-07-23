@@ -1,7 +1,5 @@
 import { Express } from "express";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from "./config/prisma";
 
 // ─── CONFIGURABLE WRITE ACCESS ─────────────────────────────────────
 // Set a model name to `true` for full CRUD, `false` for read-only.

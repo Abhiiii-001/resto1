@@ -1,7 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from "../config/prisma";
 
 export const checkLimit = (resource: 'products' | 'categories' | 'employees') => {
   return async (req: Request, res: Response, next: NextFunction): Promise<any> => {
@@ -21,18 +19,21 @@ export const checkLimit = (resource: 'products' | 'categories' | 'employees') =>
       
       let currentCount = 0;
       if (resource === 'products') {
+         // Only count active products against the limit
          currentCount = await prisma.product.count({
-           where: { category: { restaurantId } }
+           where: { category: { restaurantId }, isActive: true }
          });
       } else if (resource === 'categories') {
+         // Only count active categories against the limit
          currentCount = await prisma.category.count({
-           where: { restaurantId }
+           where: { restaurantId, isActive: true }
          });
       } else if (resource === 'employees') {
+         // Only count verified employees (unverified are pending approval)
          currentCount = await prisma.user.count({
            where: { 
              restaurantId,
-             role: "User" // Only count staff members
+             isVerified: true,
            }
          });
       }

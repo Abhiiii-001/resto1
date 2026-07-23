@@ -1,9 +1,8 @@
-import { PrismaClient } from "@prisma/client";
 import { Request , Response } from "express";
 import bcrypt from 'bcrypt'
-
-
-const prisma = new PrismaClient();
+import mailSender from "../utils/mailSender";
+import { renderUserWelcome } from "../emails";
+import prisma from "../config/prisma";
 export const GetAllUsers = async(req: Request,res: Response):Promise<any> => {
     try {
         const restaurantId= req.params.restaurantId;
@@ -97,10 +96,26 @@ export const CreateUser = async(req: Request,res: Response):Promise<any> => {
                 restaurantId,
                 canModify: false,
                 role,
-                verificationToken:"",
+                verificationToken: crypto.randomUUID().toString(),
                 isVerified: true
             }
         });
+
+        const restaurant = await prisma.restaurant.findUnique({
+            where: {
+                id: restaurantId
+            }
+        });
+
+        // Fire email asynchronously in background to avoid blocking API response latency
+        mailSender(
+            user.email,
+            "You are added to " + (restaurant?.name || "the restaurant"),
+            renderUserWelcome({
+            userName: user.name || "Employee",
+            loginUrl: `${process.env.CLIENT_URL || ''}/signin`
+            })
+        ).catch((err) => console.error("[Background Email Error]:", err));
 
         return res.status(200).json({
             success: true,
@@ -109,6 +124,7 @@ export const CreateUser = async(req: Request,res: Response):Promise<any> => {
         })
 
     } catch (error) {
+        console.log('error', error)
         return res.status(500).json({
             success: false,
             message: "Something wrong while user creation"

@@ -38,43 +38,43 @@ services:
       DATABASE_URL: postgresql://restro_user:restro_pass@postgres:5432/restro_db
       PORT: 8000
 
-  # client:
-  #   image: node:20-alpine
-  #   container_name: restro_client
-  #   restart: unless-stopped
-  #   ports:
-  #     - '3001:3001'
-  #   volumes:
-  #     - ./client:/app
-  #     - /app/node_modules
-  #     - /app/.next
-  #   working_dir: /app
-  #   command: sh -c "npm install && npm run dev"
-  #   env_file:
-  #     - ./client/.env
-  #   environment:
-  #     NODE_ENV: development
-  #     WATCHPACK_POLLING: 'true'
-  #     CHOKIDAR_USEPOLLING: 'true'
+  client:
+    image: node:20-alpine
+    container_name: restro_client
+    restart: unless-stopped
+    ports:
+      - '3001:3001'
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+      - /app/.next
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+    env_file:
+      - ./client/.env
+    environment:
+      NODE_ENV: development
+      WATCHPACK_POLLING: 'true'
+      CHOKIDAR_USEPOLLING: 'true'
 
-  # restaurant:
-  #   image: node:20-alpine
-  #   container_name: restro_restaurant
-  #   restart: unless-stopped
-  #   ports:
-  #     - '3000:3000'
-  #   volumes:
-  #     - ./restaurant:/app
-  #     - /app/node_modules
-  #     - /app/.next
-  #   working_dir: /app
-  #   command: sh -c "npm install && npm run dev"
-  #   env_file:
-  #     - ./restaurant/.env
-  #   environment:
-  #     NODE_ENV: development
-  #     WATCHPACK_POLLING: 'true'
-  #     CHOKIDAR_USEPOLLING: 'true'
+  restaurant:
+    image: node:20-alpine
+    container_name: restro_restaurant
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./restaurant:/app
+      - /app/node_modules
+      - /app/.next
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+    env_file:
+      - ./restaurant/.env
+    environment:
+      NODE_ENV: development
+      WATCHPACK_POLLING: 'true'
+      CHOKIDAR_USEPOLLING: 'true'
 
 volumes:
   server_restro_pgdata:

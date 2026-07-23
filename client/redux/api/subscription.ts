@@ -56,6 +56,13 @@ export const subscriptionApi = createApi({
       }),
       invalidatesTags: ['Subscription', 'RestaurantDetails'],
     }),
+    previewSubscriptionChange: builder.mutation({
+      query: (data) => ({
+        url: '/preview-change',
+        method: 'POST',
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -66,4 +73,5 @@ export const {
   useVerifyPaymentMutation,
   useGetPaymentHistoryQuery,
   useCancelSubscriptionMutation,
+  usePreviewSubscriptionChangeMutation,
 } = subscriptionApi;

@@ -1,8 +1,6 @@
 
 import { Duration } from "@prisma/client";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from "../config/prisma";
 // Get the range for the PREVIOUS duration
 const getPreviousRange = (duration: Duration): { from: Date; to: Date; labelDate: Date } => {
   const now = new Date();
