@@ -1,35 +1,49 @@
-import nodemailer from 'nodemailer';
-import logger from './logger';
+import { BrevoClient } from "@getbrevo/brevo";
+import logger from "./logger";
 
-export type MailBody = string | { html: string; text?: string };
+let apiInstance: BrevoClient | null = null;
 
-const mailSender = async (email: string, title: string, body: MailBody) => {
+type MailBody = string | { html: string; text?: string };
+
+const mailSender = async (
+  email: string,
+  title: string,
+  body: MailBody
+) => {
   try {
-    const transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST || 'smtp.gmail.com',
-      port: parseInt(process.env.MAIL_PORT || '587', 10),
-      secure: false, // true for 465, false for 587
-      auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
+    if (!apiInstance) {
+      apiInstance = new BrevoClient({
+        apiKey: process.env.BREVO_API_KEY!,
+      });
+    }
+
+    const htmlContent = typeof body === "string" ? body : body.html;
+    const textContent =
+      typeof body === "string"
+        ? body.replace(/<[^>]*>/g, "")
+        : body.text;
+
+    const senderEmail =
+      process.env.MAIL_FROM || process.env.MAIL_USER!;
+
+    const response = await apiInstance.transactionalEmails.sendTransacEmail({
+      sender: {
+        name: "Restroo",
+        email: senderEmail,
       },
-    });
-
-    const htmlContent = typeof body === 'string' ? body : body.html;
-    const textContent = typeof body === 'string' ? undefined : body.text;
-
-    const fromAddress = process.env.MAIL_FROM || process.env.MAIL_USER || 'no-reply@restroo.com';
-
-    const info = await transporter.sendMail({
-      from: `"Restroo" <${fromAddress}>`,
-      to: email,
+      to: [
+        {
+          email,
+        },
+      ],
       subject: title,
-      html: htmlContent,
-      text: textContent,
+      htmlContent,
+      textContent,
     });
 
     logger.info(`Email successfully sent to ${email} with subject: "${title}"`);
-    return info;
+
+    return response;
   } catch (error: any) {
     logger.error(`❌ mailSender Error sending to ${email}:`, error);
     throw error;

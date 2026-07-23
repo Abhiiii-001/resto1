@@ -17,6 +17,7 @@
   "dependencies": {
     "@adminjs/express": "^6.1.1",
     "@adminjs/prisma": "^5.0.4",
+    "@getbrevo/brevo": "^6.0.2",
     "@phonepe-pg/pg-sdk-node": "^2.0.6",
     "@prisma/client": "^6.3.1",
     "adminjs": "^7.8.17",

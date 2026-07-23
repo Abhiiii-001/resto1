@@ -108,7 +108,7 @@ export const CreateUser = async(req: Request,res: Response):Promise<any> => {
         });
 
         // Fire email asynchronously in background to avoid blocking API response latency
-        await mailSender(
+        mailSender(
             user.email,
             "You are added to " + (restaurant?.name || "the restaurant"),
             renderUserWelcome({
