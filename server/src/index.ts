@@ -34,6 +34,7 @@ const allowedOrigins = [
     process.env.CLIENT_URL || 'http://localhost:3000', 
     process.env.RESTAURANT_CLIENT_URL || 'http://localhost:3001',
     process.env.BACKEND_URL || "http://localhost:8000",
+    process.env.BASE_RESTAURANT_URL || "http://localhost:3000"
 ];
 app.use(cors({
     origin: (origin, callback) => {
