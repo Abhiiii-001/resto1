@@ -10,6 +10,7 @@ import http from "http"
 import webpush from "web-push"
 
 import './utils/cron'
+import logger from './utils/logger'
 
 import UserRouter from './routes/Auth'
 import CategoryRouter from './routes/Category'
@@ -40,7 +41,7 @@ app.use(cors({
         if (!origin || origin === 'null' || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
-            console.warn(`[CORS] Blocked request from origin: ${origin}`);
+            logger.warn(`[CORS] Blocked request from origin: ${origin}`);
             callback(new Error('Not allowed by CORS'));
         }
     },
@@ -57,7 +58,12 @@ async function startServer() {
         contentSecurityPolicy: false,
     }));
     app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
-    app.use(morgan("common"));
+    const morganFormat = process.env.NODE_ENV === "production" ? "combined" : "dev";
+    app.use(morgan(morganFormat, {
+        stream: {
+            write: (message) => logger.info(message.trim())
+        }
+    }));
     app.use(cookieParser());
     app.use(fileUpload({
         useTempFiles: true,
@@ -111,13 +117,13 @@ async function startServer() {
     // 5. Start Listening
     const PORT = process.env.PORT || 8000;
     server.listen(PORT, () => {
-        console.log(`Server start running on port ${PORT}`);
+        logger.info(`Server start running on port ${PORT}`);
     });
 }
 
 // Bootstrap the application
 startServer().catch(err => {
-    console.error("Failed to start server:", err);
+    logger.error("Failed to start server:", err);
 });
 
 export default app;

@@ -2,8 +2,8 @@ import { Request , Response } from "express"
 import prisma from '../config/prisma'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-
 import mailSender from '../utils/mailSender'
+import logger from '../utils/logger'
 import {
   renderRestaurantVerification,
   renderUserVerification,
@@ -120,7 +120,7 @@ export const UserSignup = async(req: Request,res: Response): Promise<any> => {
       const verificationLink = `${process.env.CLIENT_URL}/verify/${verificationToken}`;
       
       // Send employee approval email to Restaurant Owner asynchronously
-      mailSender(
+      await mailSender(
         restaurant.email,
         "Employee Verification Required",
         renderUserVerification({
@@ -128,8 +128,9 @@ export const UserSignup = async(req: Request,res: Response): Promise<any> => {
           restaurantName: restaurant.name,
           verificationUrl: verificationLink
         })
-      ).catch((err) => console.error("[Background Email Error]:", err));
+      );
 
+      logger.info(`New Employee Signed Up: ${email}`);
       return res.status(200).json({
         success: true,
         message:"User created! , Waiting for verification by Restaurant",
@@ -137,7 +138,7 @@ export const UserSignup = async(req: Request,res: Response): Promise<any> => {
     });
 
      } catch (error:any) {
-      //console.log("Error",error.message);
+      logger.error("User Signup Failed:", error);
       return res.status(500).json({success: false,message:"Signup Failed!"});
    }
 }
@@ -229,7 +230,7 @@ export const RestaurantSignup = async(req: Request,res: Response): Promise<any> 
       const verificationLink = `${process.env.CLIENT_URL || "http://localhost:3001"}/verify/${verificationToken}`;
       
       // Send verification email asynchronously in background
-      mailSender(
+      await mailSender(
         email,
         "Verify Your Restaurant Account",
         renderRestaurantVerification({
@@ -237,15 +238,16 @@ export const RestaurantSignup = async(req: Request,res: Response): Promise<any> 
           ownerName: name,
           verificationUrl: verificationLink
         })
-      ).catch((err) => console.error("[Background Email Error]:", err));
+      );
 
+      logger.info(`New Restaurant Signed Up: ${email} (${name})`);
       res.status(200).json({
         success: true,
         message: "Account created! Please check your email for verification.",
         user: restaurant,
       });
    } catch (error:any) {
-      //console.log("Error",error.message);
+      logger.error("Restaurant Signup Failed:", error);
       return res.status(500).json({success: false,message:"Signup Failed!"});
    }
 }
@@ -312,6 +314,7 @@ export const Login = async(req: Request,res: Response): Promise<any> => {
          maxAge: 3600000 * 8        
       })
  
+      logger.info(`Successful login for: ${email}`);
       return res.status(200)
       .set('Authorization', `Bearer ${token}`)
       .json({
@@ -321,17 +324,18 @@ export const Login = async(req: Request,res: Response): Promise<any> => {
           token:token
        });
      } catch (error:any) {
-      //console.log("Error",error.message);
+      logger.error("Login Failed:", error);
       return res.status(500).json({success: false,message:"Login Failed!"});
    }
 }
 
 export const Logout = async(req: Request,res: Response): Promise<any> => {
    try {
+      logger.info(`User logged out`);
       res.clearCookie('token'); // Clear the cookie
       res.status(200).json({success: true, message: "Logged out successfully" });
    } catch (error) {
-        //console.log(error);
+        logger.error("Logout Failed:", error);
         return res.status(405).json({success: false,message: "Logout Failed!"});
    }
 }
@@ -556,14 +560,14 @@ export const ResetPassword = async(req: Request,res: Response): Promise<any> => 
       })
    }
    
-   mailSender(
+   await mailSender(
       email,
       "Reset Your Restroo Account Password",
       renderResetPassword({
          userName: user.name || "User",
          resetUrl: verificationLink
       })
-   ).catch((err) => console.error("[Background Email Error]:", err));
+   );
 
     return res.status(200).json({
       success: true,

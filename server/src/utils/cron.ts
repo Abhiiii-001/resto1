@@ -3,6 +3,7 @@ import { Duration } from "@prisma/client";
 import { calculateSummary } from "../utils/summary";
 import { SUBSCRIPTION_STATUS } from "../constants";
 import prisma from "../config/prisma";
+import logger from "./logger";
 
 // Run every day at 00:05 to expire subscriptions
 cron.schedule("5 0 * * *", async () => {
@@ -21,10 +22,10 @@ cron.schedule("5 0 * * *", async () => {
     });
 
     if (expiredSubscriptions.count > 0) {
-       console.log(`[Cron] Expired ${expiredSubscriptions.count} subscriptions.`);
+       logger.info(`[Cron] Expired ${expiredSubscriptions.count} subscriptions.`);
     }
   } catch (error) {
-    console.error("[Cron] Subscription Expiry Error:", error);
+    logger.error("[Cron] Subscription Expiry Error:", error);
   }
 });
 

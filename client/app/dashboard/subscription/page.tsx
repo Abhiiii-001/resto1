@@ -25,6 +25,8 @@ import {
 } from '@/redux/api/subscription';
 import { toast } from 'react-toastify';
 import { cn } from '@/lib/utils';
+import Loader from '@/components/common/Loader';
+import AlertModal from '@/components/common/AlertModal';
 
 // --- Plan Overview Component ---
 const PlanOverview = () => {
@@ -33,16 +35,21 @@ const PlanOverview = () => {
     useGetCurrentSubscriptionQuery({});
   const [createOrder, { isLoading: isCreatingOrder }] =
     useCreatePaymentOrderMutation();
-  const [previewChange] = usePreviewSubscriptionChangeMutation();
+  const [previewChange, { isLoading: isPreviewing }] =
+    usePreviewSubscriptionChangeMutation();
   const dispatch = useAppDispatch();
 
+  const [alertModal, setAlertModal] = useState<boolean | string>(false);
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
+  const [checkingPlanId, setCheckingPlanId] = useState<string | null>(null);
+
   const handleUpgrade = async (planId: string) => {
+    setCheckingPlanId(planId);
     try {
       const previewRes = await previewChange({ planId }).unwrap();
       if (previewRes.success) {
         const { willDeactivate } = previewRes.data;
         
-        // Check if anything will be deactivated (i.e. it's a downgrade causing data loss)
         if (
           willDeactivate.products > 0 ||
           willDeactivate.categories > 0 ||
@@ -50,19 +57,30 @@ const PlanOverview = () => {
         ) {
           dispatch(
             openModal({
-              type: 'DOWNGRADE_CONFIRMATION',
+              type: 'PLAN_CHANGE_CONFIRMATION',
               data: {
                 planId,
                 preview: previewRes.data,
               },
             })
           );
-          return; // Stop here, modal will handle the actual payment order creation
+          return;
         }
-      }
 
-      // No downgrade issues, proceed directly to payment
-      const res = await createOrder({ planId }).unwrap();
+        setSelectedPlanId(planId);
+        setAlertModal(true);
+      }
+    } catch (error: any) {
+      toast.error(error?.data?.message || 'Failed to initiate plan change');
+    } finally {
+      setCheckingPlanId(null);
+    }
+  };
+
+  const handleConfirmUpgrade = async () => {
+    if (!selectedPlanId) return;
+    try {
+      const res = await createOrder({ planId: selectedPlanId }).unwrap();
       if (res.success && res.redirectUrl) {
         window.location.href = res.redirectUrl;
       }
@@ -72,11 +90,7 @@ const PlanOverview = () => {
   };
 
   if (plansLoading || subLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
+    return null;
   }
 
   const currentSub = subData?.subscription;
@@ -154,14 +168,18 @@ const PlanOverview = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {plans.map((plan: any) => {
           const isPro = plan.type === 2;
-          const isPremium = plan.type === 3;
           const isCurrent = currentSub?.planId === plan.id;
+
+          const isAnyLoading = isCreatingOrder || isPreviewing || checkingPlanId !== null;
+          const isThisPlanChecking = checkingPlanId === plan.id;
+          const isThisPlanOrdering = isCreatingOrder && selectedPlanId === plan.id;
+          const isThisPlanLoading = isThisPlanChecking || isThisPlanOrdering;
 
           return (
             <div
               key={plan.id}
               className={cn(
-                'relative p-8 rounded-3xl bg-white border transition-all duration-500 hover:-translate-y-1 flex flex-col',
+                'relative p-8 rounded-3xl bg-white border transition-all duration-500 hover:-translate-y-1 flex flex-col justify-between',
                 isPro
                   ? 'border-primary/30 shadow-xl shadow-primary/5'
                   : 'border-border shadow-sm',
@@ -173,98 +191,99 @@ const PlanOverview = () => {
                 </div>
               )}
 
-              <div className="mb-6 flex justify-between items-start">
-                <div
-                  className={cn(
-                    'p-3 rounded-2xl',
-                    plan.type === 1
-                      ? 'bg-blue-50'
-                      : plan.type === 2
-                        ? 'bg-primary/10'
-                        : 'bg-amber-50',
-                  )}
-                >
-                  {plan.type === 1 && <Zap className="w-8 h-8 text-blue-600" />}
-                  {plan.type === 2 && (
-                    <Shield className="w-8 h-8 text-primary" />
-                  )}
-                  {plan.type === 3 && (
-                    <Crown className="w-8 h-8 text-amber-600" />
-                  )}
-                </div>
-              </div>
-
-              <h3 className="text-2xl font-bold text-foreground mb-1">
-                {plan.name}
-              </h3>
-              <p className="text-sm text-muted-foreground mb-6">
-                {plan.type === 1
-                  ? 'Perfect for trying out our features'
-                  : plan.type === 2
-                    ? 'Ideal for growing restaurants'
-                    : 'Unleash the full power of your business'}
-              </p>
-
-              <div className="flex items-baseline gap-1 mb-8">
-                <span className="text-4xl font-black text-foreground">
-                  ₹{plan.price}
-                </span>
-                <span className="text-muted-foreground font-medium text-sm">
-                  / month
-                </span>
-              </div>
-
-              <div className="space-y-4 mb-8 flex-grow">
-                {/* Dynamically render features from DB or custom ones */}
-                <div className="flex items-start gap-3 text-foreground/80 font-medium text-sm">
-                  <div className="mt-1 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                    <Check className="w-3 h-3 text-green-600" />
+              <div>
+                <div className="mb-6 flex justify-between items-start">
+                  <div
+                    className={cn(
+                      'p-3 rounded-2xl',
+                      plan.type === 1
+                        ? 'bg-blue-50'
+                        : plan.type === 2
+                          ? 'bg-primary/10'
+                          : 'bg-amber-50',
+                    )}
+                  >
+                    {plan.type === 1 && <Zap className="w-8 h-8 text-blue-600" />}
+                    {plan.type === 2 && (
+                      <Shield className="w-8 h-8 text-primary" />
+                    )}
+                    {plan.type === 3 && (
+                      <Crown className="w-8 h-8 text-amber-600" />
+                    )}
                   </div>
-                  <span>
-                    {plan.maxProducts === -1 ? 'Unlimited' : plan.maxProducts}{' '}
-                    Products
+                </div>
+
+                <h3 className="text-2xl font-bold text-foreground mb-1">
+                  {plan.name}
+                </h3>
+                <p className="text-sm text-muted-foreground mb-6">
+                  {plan.type === 1
+                    ? 'Perfect for trying out our features'
+                    : plan.type === 2
+                      ? 'Ideal for growing restaurants'
+                      : 'Unleash the full power of your business'}
+                </p>
+
+                <div className="flex items-baseline gap-1 mb-8">
+                  <span className="text-4xl font-black text-foreground">
+                    ₹{plan.price}
                   </span>
-                </div>
-                <div className="flex items-start gap-3 text-foreground/80 font-medium text-sm">
-                  <div className="mt-1 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                    <Check className="w-3 h-3 text-green-600" />
-                  </div>
-                  <span>
-                    {plan.maxCategories === -1
-                      ? 'Unlimited'
-                      : plan.maxCategories}{' '}
-                    Categories
-                  </span>
-                </div>
-                <div className="flex items-start gap-3 text-foreground/80 font-medium text-sm">
-                  <div className="mt-1 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                    <Check className="w-3 h-3 text-green-600" />
-                  </div>
-                  <span>
-                    {plan.maxEmployees === -1
-                      ? 'Unlimited Staff'
-                      : `${plan.maxEmployees} Employees`}
+                  <span className="text-muted-foreground font-medium text-sm">
+                    / month
                   </span>
                 </div>
 
-                <div className="flex items-start gap-3 text-foreground/80 font-medium text-sm">
-                  <div className="mt-1 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                    <Check className="w-3 h-3 text-green-600" />
+                <div className="space-y-4 mb-8 flex-grow">
+                  <div className="flex items-start gap-3 text-foreground/80 font-medium text-sm">
+                    <div className="mt-1 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                      <Check className="w-3 h-3 text-green-600" />
+                    </div>
+                    <span>
+                      {plan.maxProducts === -1 ? 'Unlimited' : plan.maxProducts}{' '}
+                      Products
+                    </span>
                   </div>
-                  <span>
-                    {plan.orderHistory === -1
-                      ? 'Full'
-                      : `${plan.orderHistory} Days`}{' '}
-                    Order History
-                  </span>
+                  <div className="flex items-start gap-3 text-foreground/80 font-medium text-sm">
+                    <div className="mt-1 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                      <Check className="w-3 h-3 text-green-600" />
+                    </div>
+                    <span>
+                      {plan.maxCategories === -1
+                        ? 'Unlimited'
+                        : plan.maxCategories}{' '}
+                      Categories
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-3 text-foreground/80 font-medium text-sm">
+                    <div className="mt-1 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                      <Check className="w-3 h-3 text-green-600" />
+                    </div>
+                    <span>
+                      {plan.maxEmployees === -1
+                        ? 'Unlimited Staff'
+                        : `${plan.maxEmployees} Employees`}
+                    </span>
+                  </div>
+
+                  <div className="flex items-start gap-3 text-foreground/80 font-medium text-sm">
+                    <div className="mt-1 w-5 h-5 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                      <Check className="w-3 h-3 text-green-600" />
+                    </div>
+                    <span>
+                      {plan.orderHistory === -1
+                        ? 'Full'
+                        : `${plan.orderHistory} Days`}{' '}
+                      Order History
+                    </span>
+                  </div>
                 </div>
               </div>
 
               <button
-                disabled={isCreatingOrder || isCurrent || plan.id == 1}
+                disabled={isAnyLoading || isCurrent || plan.id == 1}
                 onClick={() => handleUpgrade(plan.id)}
                 className={cn(
-                  'w-full py-4 rounded-xl font-black transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed',
+                  'w-full py-4 rounded-xl font-black transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed',
                   isCurrent
                     ? 'bg-muted text-muted-foreground'
                     : isPro
@@ -272,16 +291,29 @@ const PlanOverview = () => {
                       : 'bg-foreground text-background hover:bg-foreground/90',
                 )}
               >
-                {isCurrent
-                  ? 'Active Plan'
-                  : isCreatingOrder
-                    ? 'Connecting...'
-                    : 'Choose Plan'}
+                {isThisPlanLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin text-current" />
+                    <span>{isThisPlanChecking ? 'Checking...' : 'Connecting...'}</span>
+                  </>
+                ) : isCurrent ? (
+                  'Active Plan'
+                ) : (
+                  'Choose Plan'
+                )}
               </button>
             </div>
           );
         })}
       </div>
+
+      <AlertModal
+        title="Confirm Plan Change"
+        desc="Are you sure you want to proceed to payment and activate this new plan?"
+        isModalOpen={alertModal}
+        setIsModalOpen={setAlertModal}
+        clickHandler={handleConfirmUpgrade}
+      />
     </motion.div>
   );
 };
@@ -291,11 +323,7 @@ const TransactionHistory = () => {
   const { data: historyData, isLoading } = useGetPaymentHistoryQuery({});
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
+    return null;
   }
 
   const payments = historyData?.payments || [];
@@ -396,6 +424,16 @@ export default function SubscriptionPage() {
   const isRestaurant = user?.role === 'Restaurant';
 
   const currentTab = isRestaurant ? activeTab : 'history';
+
+  const { isLoading: plansLoading } = useGetPlansQuery({});
+  const { isLoading: subLoading } = useGetCurrentSubscriptionQuery({});
+  const { isLoading: historyLoading } = useGetPaymentHistoryQuery({});
+
+  const isPageLoading = 
+    (currentTab === 'plan' && (plansLoading || subLoading)) || 
+    (currentTab === 'history' && historyLoading);
+
+  if (isPageLoading) return <Loader />;
 
   return (
     <div className="space-y-10">

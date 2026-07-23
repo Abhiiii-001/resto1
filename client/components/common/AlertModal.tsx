@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Button } from '@/components/ui/button';
 import { AlertCircle } from 'lucide-react';
 
@@ -18,6 +19,11 @@ const AlertModal = ({
   setIsModalOpen,
 }: Props) => {
   const dialogRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
@@ -38,9 +44,9 @@ const AlertModal = ({
     };
   }, [isModalOpen, setIsModalOpen]);
 
-  if (!isModalOpen) return null;
+  if (!mounted || !isModalOpen) return null;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-200">
       <div
         className="w-full max-w-[420px] scale-100 rounded-2xl border border-border bg-background p-6 shadow-2xl transition-transform duration-200"
@@ -72,7 +78,8 @@ const AlertModal = ({
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

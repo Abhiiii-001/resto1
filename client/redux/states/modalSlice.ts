@@ -4,7 +4,7 @@ export type ModalType =
   | 'UPGRADE_PLAN'
   | 'PAYMENT_CONFIRMATION'
   | 'DELETE_CONFIRMATION'
-  | 'DOWNGRADE_CONFIRMATION'
+  | 'PLAN_CHANGE_CONFIRMATION'
   | 'DEMO_LOGIN';
 
 interface ModalState {

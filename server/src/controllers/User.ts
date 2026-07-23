@@ -108,14 +108,14 @@ export const CreateUser = async(req: Request,res: Response):Promise<any> => {
         });
 
         // Fire email asynchronously in background to avoid blocking API response latency
-        mailSender(
+        await mailSender(
             user.email,
             "You are added to " + (restaurant?.name || "the restaurant"),
             renderUserWelcome({
             userName: user.name || "Employee",
             loginUrl: `${process.env.CLIENT_URL || ''}/signin`
             })
-        ).catch((err) => console.error("[Background Email Error]:", err));
+        );
 
         return res.status(200).json({
             success: true,

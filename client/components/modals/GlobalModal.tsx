@@ -4,10 +4,10 @@ import { useAppSelector, useAppDispatch } from '@/redux/redux';
 import { closeModal } from '@/redux/states/modalSlice';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import DowngradeModal from './DowngradeModal';
+import PlanChangeModal from './PlanChangeModal';
 
 const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
-  DOWNGRADE_CONFIRMATION: DowngradeModal,
+  PLAN_CHANGE_CONFIRMATION: PlanChangeModal,
   // Add other modals here
 };
 

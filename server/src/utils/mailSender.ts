@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import logger from './logger';
 
 export type MailBody = string | { html: string; text?: string };
 
@@ -27,9 +28,10 @@ const mailSender = async (email: string, title: string, body: MailBody) => {
       text: textContent,
     });
 
+    logger.info(`Email successfully sent to ${email} with subject: "${title}"`);
     return info;
   } catch (error: any) {
-    console.error('❌ mailSender Error:', error?.message || error);
+    logger.error(`❌ mailSender Error sending to ${email}:`, error);
     throw error;
   }
 };
