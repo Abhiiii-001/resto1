@@ -21,6 +21,7 @@ import RestaurantRouter from "./routes/Restaurant"
 import OrderRouter from "./routes/Order"
 import DashboardRouter from './routes/Dashboard'
 import SubscriptionRouter from './routes/Subscription'
+import ContactRouter from './routes/Contact'
 
 import { registerSocketHandlers } from "./socket";
 import { setupAdminJS } from "./admin";
@@ -107,6 +108,7 @@ async function startServer() {
     app.use("/api/user", EmployeeRouter);
     app.use("/api/dashboard", DashboardRouter);
     app.use('/api/subscription', SubscriptionRouter);
+    app.use('/api/contact', ContactRouter);
 
     app.get("/", (req: Request, res: Response) => {
         res.status(200).json({
