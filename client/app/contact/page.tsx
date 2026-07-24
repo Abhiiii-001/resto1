@@ -9,6 +9,7 @@ import contactData from '@/data/contact.json';
 import Image from 'next/image';
 import Footer from '../_component/Footer';
 import { Button } from '../_component/ui/button';
+import { useSubmitContactMutation } from '@/redux/api/contact';
 
 interface ContactFormData {
   name: string;
@@ -150,6 +151,7 @@ const ContactInfo = () => {
 
 const ContactFormSection = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [submitContact] = useSubmitContactMutation();
   const {
     register,
     handleSubmit,
@@ -159,11 +161,20 @@ const ContactFormSection = () => {
 
   const onSubmit = async (data: ContactFormData) => {
     setIsLoading(true);
-    setTimeout(() => {
+    try {
+      const response = await submitContact(data).unwrap();
+      
+      if (response.success) {
+        toast.success("Message sent! We'll be in touch soon.");
+        reset();
+      } else {
+        toast.error(response.message || "Failed to send message. Please try again.");
+      }
+    } catch (error: any) {
+      toast.error(error?.data?.message || "An error occurred. Please try again later.");
+    } finally {
       setIsLoading(false);
-      toast.success("Message sent! We'll be in touch soon.");
-      reset();
-    }, 1500);
+    }
   };
 
   return (

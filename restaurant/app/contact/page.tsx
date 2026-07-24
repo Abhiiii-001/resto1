@@ -4,15 +4,23 @@ import { motion } from "motion/react";
 import Navbar from "../_components/landing/Navbar";
 import Footer from "../_components/landing/Footer";
 import { Mail, Phone, MapPin, Send, CheckCircle2 } from "lucide-react";
+import { useSubmitContactMutation } from "@/redux/api/contact";
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [submitContact] = useSubmitContactMutation();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.name && formData.email && formData.message) {
-      setSubmitted(true);
+      try {
+        await submitContact({ ...formData, type: 'Customer Inquiry' }).unwrap();
+        setSubmitted(true);
+      } catch (error) {
+        console.error("Failed to send message", error);
+      }
     }
   };
 

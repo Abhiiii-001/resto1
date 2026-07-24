@@ -11,6 +11,7 @@ import globalReducer from "@/redux/states/globalSlice";
 import { restaurantApi } from "./api/restaurant";
 import { dataApi } from "./api/data";
 import { orderApi } from "./api/order";
+import { contactApi } from "./api/contact";
 import { setupListeners } from "@reduxjs/toolkit/query";
 
 import {
@@ -58,6 +59,7 @@ const rootReducer = combineReducers({
   [restaurantApi.reducerPath]: restaurantApi.reducer,
   [dataApi.reducerPath]: dataApi.reducer,
   [orderApi.reducerPath]: orderApi.reducer,
+  [contactApi.reducerPath]: contactApi.reducer,
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
@@ -73,6 +75,7 @@ export const makeStore = () => {
       }).concat(restaurantApi.middleware)
       .concat(dataApi.middleware)
       .concat(orderApi.middleware)
+      .concat(contactApi.middleware)
   });
 };
 
