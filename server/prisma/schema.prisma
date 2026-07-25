@@ -55,6 +55,7 @@ model Restaurant {
   totalOrders       Int         @default(0)
   totalQRScan       Int         @default(0)
   isActive          Boolean     @default(true)
+  isPublished       Boolean     @default(false)
   users             User[]
   categories        Category[]
   orders            Order[]

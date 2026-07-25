@@ -78,7 +78,7 @@ function Stats(props: Props) {
   const { data } = props;
   return (
     <div className="col-span-3 row-span-2 xl:row-span-2 2xl:col-span-2">
-      <div className="grid w-full grid-cols-1 md:grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="grid w-full grid-cols-1 md:grid-cols-2 gap-4 lg:grid-cols-3">
         <StatsCard
           title="Total Earning"
           content={data.totalEarning}
@@ -95,14 +95,14 @@ function Stats(props: Props) {
           iconBg="bg-amber-50"
           iconColor="text-amber-600"
         />
-        <StatsCard
+        {/* <StatsCard
           title="Total QR Scan"
           content={data.totalQRScan}
           description="Direct customer engagement"
           icon={QrCode}
           iconBg="bg-green-50"
           iconColor="text-green-600"
-        />
+        /> */}
         <StatsCard
           title="Total Pending"
           content={data.totalPending || 0}

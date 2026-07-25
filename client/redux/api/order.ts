@@ -1,22 +1,12 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { baseQueryWithAuth } from './common';
 import { addOrdersBulk } from '../states/orderSlice';
-import { RootState } from '../redux';
 import { ApiResponse } from '@/types/common';
 import { CreateOrderPayload, Order, UpdateOrderPayload } from '@/types/order';
 import { API_URLS } from '@/constants/Urls';
 
 export const orderApi = createApi({
-  baseQuery: fetchBaseQuery({
-    baseUrl: API_URLS.order,
-    credentials: 'include',
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).auth.token;
-      if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithAuth(API_URLS.order),
   reducerPath: 'orderApi',
   tagTypes: ['getOrders'],
   endpoints: (builder) => ({

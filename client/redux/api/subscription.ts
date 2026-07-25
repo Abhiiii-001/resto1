@@ -1,4 +1,5 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { baseQueryWithAuth } from './common';
 import {
   GetPlansResponse,
   GetCurrentSubscriptionResponse,
@@ -6,20 +7,10 @@ import {
   CreatePaymentOrderResponse,
   GetPaymentHistoryResponse,
 } from '@/types/Subscription';
-import { RootState } from '../redux';
 
 export const subscriptionApi = createApi({
   reducerPath: 'subscriptionApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: `${process.env.NEXT_PUBLIC_API_BASE_URL}/subscription`,
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).auth.token;
-      if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithAuth(`${process.env.NEXT_PUBLIC_API_BASE_URL}/subscription`),
   tagTypes: ['Subscription', 'Payments', 'RestaurantDetails'],
   endpoints: (builder) => ({
     getPlans: builder.query({

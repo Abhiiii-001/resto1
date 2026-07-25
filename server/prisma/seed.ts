@@ -95,13 +95,26 @@ async function main() {
 
   // Create initial subscription for the seeded restaurant
   const now = new Date();
-  await prisma.subscription.create({
+  const subscription = await prisma.subscription.create({
     data: {
       restaurantId: restaurant.id,
       planId: plans[0].id, // Demo Plan
       status: 1, // ACTIVE
       currentPeriodStart: now,
       currentPeriodEnd: new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000),
+    }
+  });
+
+  await prisma.payment.create({
+    data: {
+      amount: 0, // Demo Plan price
+      currency: "INR",
+      paymentType: 1, // SUBSCRIPTION
+      status: 2, // CAPTURED
+      gateway: "demo",
+      gatewayPaymentId: `demo_txn_${Date.now()}`,
+      subscriptionId: subscription.id,
+      restaurantId: restaurant.id,
     }
   });
 
@@ -115,7 +128,7 @@ async function main() {
         email: 'admin@royalbistro.com',
         number: '9000010000',
         password: hashedUserPassword,
-        role: Role.Restaurant,
+        role: Role.User,
         canModify: true,
         isVerified: true,
         verificationToken: 'v-admin',
@@ -218,6 +231,20 @@ async function main() {
         quantity: o.items,
         unitPrice: Math.floor(o.amount / o.items),
         orderId: order.id
+      }
+    });
+
+    // Create payment for order
+    await prisma.payment.create({
+      data: {
+        amount: o.amount,
+        currency: "INR",
+        paymentType: 2, // ORDER
+        status: o.status === Status.Completed || o.status === Status.Ready ? 2 : 1, // CAPTURED or PENDING
+        gateway: o.paymentOption === PaymentOption.Online ? "phonepe" : "cash",
+        gatewayPaymentId: `ord_txn_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+        orderId: order.id,
+        restaurantId: restaurant.id,
       }
     });
   }
