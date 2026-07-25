@@ -2,83 +2,83 @@ import { Request, Response } from "express";
 import uploadToCloudinary from "../utils/cloudinaryUploader";
 import prisma from "../config/prisma";
 
-interface ProductVariantInterface{
+interface ProductVariantInterface {
     size: string;
     salePrice?: string;
     price: string;
 }
 
-export const CreateProduct = async(req: Request,res: Response):Promise<any> => {
+export const CreateProduct = async (req: Request, res: Response): Promise<any> => {
     try {
-        
-        const { name , categoryId ,description , variants }: {name: string,categoryId: string,description: string,variants:string} = req.body;
+
+        const { name, categoryId, description, variants }: { name: string, categoryId: string, description: string, variants: string } = req.body;
         const file = req.files?.thumbnail;
         //console.log("variants",variants);
-        const productVariants:ProductVariantInterface[] = JSON.parse(variants);
+        const productVariants: ProductVariantInterface[] = JSON.parse(variants);
         //console.log("json variant",productVariants)
 
         //console.log("Create product file",file)
 
-        const fileUploadRes = await uploadToCloudinary(file,"my-files");
+        const fileUploadRes = await uploadToCloudinary(file, "my-files");
 
         const productRes = await prisma.product.create({
-            data:{
+            data: {
                 name: name,
                 thumbnail: fileUploadRes.secure_url,
                 categoryId: categoryId,
                 description: description,
             },
-            select:{
+            select: {
                 id: true,
             }
         })
 
         try {
-            productVariants.forEach(async(v) => {
+            productVariants.forEach(async (v) => {
                 const result = await prisma.productVariant.create({
-                    data:{
-                        size:v.size,
-                        price:parseInt(v?.price),
+                    data: {
+                        size: v.size,
+                        price: parseInt(v?.price),
                         // salePrice:parseInt(v?.salePrice),
                         productId: productRes.id
                     },
-                    select:{
+                    select: {
                         id: true,
                     }
                 });
             });
         } catch (error) {
-            await prisma.product.delete({where:{id: productRes.id}});
-            return res.status(410).json({message:"Failed to create product variants"});
+            await prisma.product.delete({ where: { id: productRes.id } });
+            return res.status(410).json({ message: "Failed to create product variants" });
         }
 
 
-        return res.status(200).json({productRes})
+        return res.status(200).json({ productRes })
 
     } catch (error) {
         //console.log(error);
-        return res.status(500).json({message:"Something wrong during product creation!"});
+        return res.status(500).json({ message: "Something wrong during product creation!" });
     }
 }
 
-export const UpdateProduct = async(req: Request,res: Response):Promise<any> => {
+export const UpdateProduct = async (req: Request, res: Response): Promise<any> => {
     try {
-        let { ...productData  } = req.body;
+        let { ...productData } = req.body;
         const file = req.files?.thumbnail || null;
         const productId = req.params.productId;
 
-        if(file){
-            const uploadRes = await uploadToCloudinary(file,"my-files");
+        if (file) {
+            const uploadRes = await uploadToCloudinary(file, "my-files");
             productData.thumbnail = uploadRes.secure_url;
             //console.log("Product update thumbnail",productData.thumbnail)
         }
 
         const result = await prisma.product.update({
-            where:{
-                id:productId
+            where: {
+                id: productId
             },
             data: productData,
-            select:{
+            select: {
                 id: true
             }
         });
@@ -89,78 +89,78 @@ export const UpdateProduct = async(req: Request,res: Response):Promise<any> => {
 
     } catch (error) {
         //console.log(error);
-        return res.status(500).json({message:"Something wrong during product updation!"});
+        return res.status(500).json({ message: "Something wrong during product updation!" });
     }
 }
 
-export const DeleteProduct = async(req: Request,res: Response):Promise<any> => {
+export const DeleteProduct = async (req: Request, res: Response): Promise<any> => {
     try {
-       const productId = req.params.productId;
-       const result =  await prisma.product.delete({
-        where:{
-            id:productId
-        }
-       });
-       return res.status(200).json({messae: "Product deleted successfully!"})
+        const productId = req.params.productId;
+        const result = await prisma.product.delete({
+            where: {
+                id: productId
+            }
+        });
+        return res.status(200).json({ messae: "Product deleted successfully!" })
     } catch (error) {
         //console.log(error);
-        return res.status(500).json({message:"Something wrong during product deletion!"});
+        return res.status(500).json({ message: "Something wrong during product deletion!" });
     }
 }
 
-export const GetAllProducts = async(req: Request,res: Response):Promise<any> => {
+export const GetAllProducts = async (req: Request, res: Response): Promise<any> => {
     try {
-        
+
         // const mostSelledProducts = await prisma.product.findMany({
         //     take: 10,
         //     orderBy:{
         //         sold:"desc"
         //     }
         // });
-       
-                //@ts-ignore
+
+        //@ts-ignore
         const restaurantId = req.params.restaurantId;
-    
+
         const allProducts = await prisma.product.findMany({
-            where:{
+            where: {
                 isActive: true,
-                category:{
+                category: {
                     restaurantId: restaurantId
                 }
             },
-            include:{
-               productVariants: true,
-               category:{
-                  select:{
-                    name: true
-                  }
-               } 
+            include: {
+                productVariants: true,
+                category: {
+                    select: {
+                        name: true
+                    }
+                }
             }
         });
 
 
         return res.status(200).json({
-            message:"Product fetched!",
-            products:allProducts,
+            message: "Product fetched!",
+            products: allProducts,
         })
 
 
     } catch (error) {
         //console.log(error);
-        return res.status(500).json({message:"Something wrong during product retreive!"});
+        return res.status(500).json({ message: "Something wrong during product retreive!" });
     }
 }
 
-export const GetProductByQuery = async(req: Request,res: Response):Promise<any> => {
+export const GetProductByQuery = async (req: Request, res: Response): Promise<any> => {
     try {
-        const { search , restaurantId } = req.params;
+        const { search, restaurantId } = req.params;
         const products = await prisma.product.findMany({
-            where:{
+            where: {
                 isActive: true,
-                name:{
+                name: {
                     contains: search
                 },
-                category:{
+                category: {
                     restaurantId: restaurantId
                 }
             }
@@ -170,19 +170,19 @@ export const GetProductByQuery = async(req: Request,res: Response):Promise<any> 
         })
     } catch (error) {
         //console.log(error);
-        return res.status(500).json({message:"Something wrong during product retrieve!"});
+        return res.status(500).json({ message: "Something wrong during product retrieve!" });
     }
 }
 
-export const GetAllProductsByCategory = async(req: Request,res: Response):Promise<any> => {
+export const GetAllProductsByCategory = async (req: Request, res: Response): Promise<any> => {
     try {
-        const {restaurantId} = req.params;
+        const { restaurantId } = req.params;
         const products = await prisma.category.findMany({
-            where:{
+            where: {
                 restaurantId: restaurantId,
                 isActive: true
             },
-            include:{
+            include: {
                 products: {
                     where: { isActive: true }
                 }
@@ -190,80 +190,80 @@ export const GetAllProductsByCategory = async(req: Request,res: Response):Promis
         });
         return res.status(200).json({
             message: "Product fetched successfully!",
-            products:products
+            products: products
         })
     } catch (error) {
         //console.log(error);
-        return res.status(500).json({message:"Something wrong during product retrieve!"});
+        return res.status(500).json({ message: "Something wrong during product retrieve!" });
     }
 }
 
-export const CreateProductVaraint = async(req: Request,res: Response): Promise<any> => {
+export const CreateProductVaraint = async (req: Request, res: Response): Promise<any> => {
     try {
         //console.log(req.body)
-        const { size , price , salePrice , productId } = req.body;
-        if(!size || !price  || !productId)
-            return res.status(401).json({message: "All fields are required"});
+        const { size, price, salePrice, productId } = req.body;
+        if (!size || !price || !productId)
+            return res.status(404).json({ message: "All fields are required" });
 
         const result = await prisma.productVariant.create({
-            data:{
+            data: {
                 size,
                 price,
                 salePrice,
                 productId
             },
-            select:{
+            select: {
                 id: true,
             }
         });
 
-        return res.status(200).json({result});
+        return res.status(200).json({ result });
     } catch (error) {
-       //console.log("Error while create product variants",error); 
+        //console.log("Error while create product variants",error); 
     }
 }
 
-export const UpdateProductVaraint = async(req: Request,res: Response): Promise<any> => {
+export const UpdateProductVaraint = async (req: Request, res: Response): Promise<any> => {
     try {
-        const {...updatedData} = req.body;
+        const { ...updatedData } = req.body;
         const { id } = req.params;
         //console.log(updatedData)
         //console.log(id)
 
         const result = await prisma.productVariant.update({
-            where:{
+            where: {
                 id: id
             },
-            data:updatedData,
-            select:{
+            data: updatedData,
+            select: {
                 id: true
             }
         })
-        return res.status(200).json({result})
+        return res.status(200).json({ result })
     } catch (error) {
-       //console.log("Error while update product variants",error); 
+        //console.log("Error while update product variants",error); 
     }
 }
 
-export const DeleteProductVaraint = async(req: Request,res: Response): Promise<any> => {
+export const DeleteProductVaraint = async (req: Request, res: Response): Promise<any> => {
     try {
         const { id } = req.params;
         await prisma.productVariant.delete({
-            where:{
+            where: {
                 id: id
             }
         })
-        return res.status(200).json({message: "Product variant deleted!"})
+        return res.status(200).json({ message: "Product variant deleted!" })
     } catch (error) {
-       //console.log("Error while delete product variants",error); 
+        //console.log("Error while delete product variants",error); 
     }
 }
 
-export const GetAllProductVaraint = async(req: Request,res: Response): Promise<any> => {
+export const GetAllProductVaraint = async (req: Request, res: Response): Promise<any> => {
     try {
         const result = await prisma.productVariant.findMany({});
-        return res.status(200).json({result})
+        return res.status(200).json({ result })
     } catch (error) {
-       //console.log("Error while fetching product variants",error); 
+        //console.log("Error while fetching product variants",error); 
     }
 }

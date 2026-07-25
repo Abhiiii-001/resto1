@@ -1,5 +1,5 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { RootState } from '../redux';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { baseQueryWithAuth } from './common';
 import { ApiResponse } from '@/types/common';
 import { Restaurant, RestaurantDropdownChoics } from '@/types/restaurant';
 import { API_URLS } from '@/constants/Urls';
@@ -11,17 +11,7 @@ export interface RestaurantIdInterface {
 }
 
 export const restaurantApi = createApi({
-  baseQuery: fetchBaseQuery({
-    baseUrl: API_URLS.restaurant,
-    credentials: 'include',
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).auth.token;
-      if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithAuth(API_URLS.restaurant),
 
   tagTypes: ['RestaurantDetails'],
   reducerPath: 'restaurant',
@@ -54,6 +44,7 @@ export const restaurantApi = createApi({
         url: `/delete/${restaurantId}`,
         method: 'PUT',
       }),
+      invalidatesTags: ['RestaurantDetails'],
     }),
 
     getRestaurantDetails: build.query({
@@ -64,6 +55,14 @@ export const restaurantApi = createApi({
         response.data,
       providesTags: ['RestaurantDetails'],
     }),
+
+    raiseApprovalRequest: build.mutation<ApiResponse<string>, any>({
+      query: ({ restaurantId }) => ({
+        url: `/raise-approval/${restaurantId}`,
+        method: 'PUT',
+      }),
+      invalidatesTags: ['RestaurantDetails'],
+    })
   }),
 });
 
@@ -72,4 +71,5 @@ export const {
   useUpdateRestuarantDetailsMutation,
   useDeleteRestaurantMutation,
   useGetRestaurantDetailsQuery,
+  useRaiseApprovalRequestMutation
 } = restaurantApi;

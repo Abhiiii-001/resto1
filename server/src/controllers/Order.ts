@@ -11,152 +11,152 @@ import prisma from "../config/prisma";
 
 function generateOrderCode() {
     return "ORD-" + crypto.randomBytes(4).toString("hex").toUpperCase();
-  }
+}
 
-  
-export const CreateOrder = async(req: Request,res: Response): Promise<any> => {
-   try {
 
-    const {name , note , orders , amount , isPack , paymentOption , restaurantId } = req.body;
-    //@ts-ignore
-    const { io } = req;
-    if(!orders || !amount  || !paymentOption || (paymentOption != "Online" && paymentOption != "Cash") || !restaurantId){
-        return res.status(402).json({
-            success: false,
-            message: "Missing data!"
-        });
-    }
+export const CreateOrder = async (req: Request, res: Response): Promise<any> => {
+    try {
 
-    // //console.log("suborderdata",orders)
-    // const subOrders = JSON.parse(orders);
-    const restaurantDetails = await prisma.restaurant.findUnique({
-        where:{
-            id: restaurantId
-        },
-        include: {
-            subscription: true
-        }
-    });
-
-    if (restaurantDetails?.subscription) {
-        const sub = restaurantDetails.subscription;
-        const now = new Date();
-        if (sub.status !== SUBSCRIPTION_STATUS.ACTIVE || now > sub.currentPeriodEnd) {
+        const { name, note, orders, amount, isPack, paymentOption, restaurantId } = req.body;
+        //@ts-ignore
+        const { io } = req;
+        if (!orders || !amount || !paymentOption || (paymentOption != "Online" && paymentOption != "Cash") || !restaurantId) {
             return res.status(402).json({
                 success: false,
-                message: "Restaurant subscription is currently inactive. Order placement is temporarily disabled.",
-                code: "RESTAURANT_INACTIVE"
+                message: "Missing data!"
             });
         }
-    }
 
-    const orderCode = generateOrderCode();
-    const invoiceBuffer = await generateInvoice(req.body,orderCode,restaurantDetails);
-    const invoiceRes:any = await uploadPDFToCloudinary(invoiceBuffer);
-    //console.log("Invoice Response",invoiceRes);
-   await prisma.$transaction(async(prisma) => {
-        let totalAmount = 0;
-        //create order 
-        const order = await prisma.order.create({
-            data:{
-                name: name || "Guest",
-                note,
-                amount,
-                isPack,
-                paymentOption,
-                restaurantId,
-                orderCode,
-                invoice:invoiceRes?.secure_url || null,
-                isVerified: restaurantDetails ? restaurantDetails.autoAcceptOrder : false,
-                createdAt: new Date( Date.now() ).toISOString()
-            }
-        });
-
-        //console.log("order",order)
-
-        for(const subOrderData of orders){
-
-            totalAmount += subOrderData.unitPrice;
-
-            prisma.productVariant.update({
-                where:{
-                    id: subOrderData.productVariantId
-                },
-                data:{
-                    sold:{
-                        increment:subOrderData.quantity
-                    }
-                }
-            });
-
-            const t = await prisma.subOrder.create({
-                data:{
-                    name: subOrderData.name,
-                    variant: subOrderData.variant,
-                    productVariantId:subOrderData.productVariantId,
-                    quantity: subOrderData.quantity,
-                    unitPrice:  subOrderData.unitPrice,
-                    orderId: order.id
-                }
-            })
-         //console.log("suborder",t)
-        }
-
-
-
-        //if calculated amount is not equal to provided amount
-        // if(totalAmount !== amount){
-        //     await prisma.order.update({
-        //         data:{
-        //             amount: totalAmount,
-        //         },
-        //         where:{
-        //             id:order.id
-        //         }
-        //     })
-        // }
-        
-        const orderRes = await prisma.order.findUnique({
-            where:{
-                id: order.id
+        // //console.log("suborderdata",orders)
+        // const subOrders = JSON.parse(orders);
+        const restaurantDetails = await prisma.restaurant.findUnique({
+            where: {
+                id: restaurantId
             },
-            include:{
-                orders: true
+            include: {
+                subscription: true
             }
         });
 
-        emitNewOrder(io,restaurantId,orderRes);
+        if (restaurantDetails?.subscription) {
+            const sub = restaurantDetails.subscription;
+            const now = new Date();
+            if (sub.status !== SUBSCRIPTION_STATUS.ACTIVE || now > sub.currentPeriodEnd) {
+                return res.status(402).json({
+                    success: false,
+                    message: "Restaurant subscription is currently inactive. Order placement is temporarily disabled.",
+                    code: "RESTAURANT_INACTIVE"
+                });
+            }
+        }
 
-        return res.status(200).json({
-            success: true,
-            message: "Order created successfully!",
-            data: orderRes
-        })
+        const orderCode = generateOrderCode();
+        const invoiceBuffer = await generateInvoice(req.body, orderCode, restaurantDetails);
+        const invoiceRes: any = await uploadPDFToCloudinary(invoiceBuffer);
+        //console.log("Invoice Response",invoiceRes);
+        await prisma.$transaction(async (prisma) => {
+            let totalAmount = 0;
+            //create order 
+            const order = await prisma.order.create({
+                data: {
+                    name: name || "Guest",
+                    note,
+                    amount,
+                    isPack,
+                    paymentOption,
+                    restaurantId,
+                    orderCode,
+                    invoice: invoiceRes?.secure_url || null,
+                    isVerified: restaurantDetails ? restaurantDetails.autoAcceptOrder : false,
+                    createdAt: new Date(Date.now()).toISOString()
+                }
+            });
 
-   });
-    
-    
-   } catch (error) {
-     //console.log(error)
-      return res.status(500).json({
+            //console.log("order",order)
+
+            for (const subOrderData of orders) {
+
+                totalAmount += subOrderData.unitPrice;
+
+                prisma.productVariant.update({
+                    where: {
+                        id: subOrderData.productVariantId
+                    },
+                    data: {
+                        sold: {
+                            increment: subOrderData.quantity
+                        }
+                    }
+                });
+
+                const t = await prisma.subOrder.create({
+                    data: {
+                        name: subOrderData.name,
+                        variant: subOrderData.variant,
+                        productVariantId: subOrderData.productVariantId,
+                        quantity: subOrderData.quantity,
+                        unitPrice: subOrderData.unitPrice,
+                        orderId: order.id
+                    }
+                })
+                //console.log("suborder",t)
+            }
+
+
+
+            //if calculated amount is not equal to provided amount
+            // if(totalAmount !== amount){
+            //     await prisma.order.update({
+            //         data:{
+            //             amount: totalAmount,
+            //         },
+            //         where:{
+            //             id:order.id
+            //         }
+            //     })
+            // }
+
+            const orderRes = await prisma.order.findUnique({
+                where: {
+                    id: order.id
+                },
+                include: {
+                    orders: true
+                }
+            });
+
+            emitNewOrder(io, restaurantId, orderRes);
+
+            return res.status(200).json({
+                success: true,
+                message: "Order created successfully!",
+                data: orderRes
+            })
+
+        });
+
+
+    } catch (error) {
+        //console.log(error)
+        return res.status(500).json({
             success: false,
             message: "Something wrong while creating order!"
-      })
-   }
+        })
+    }
 }
 
 // Verify order may be use later as a future scope
-export const VerifyOrder = async(req: Request,res: Response): Promise<any> => {
+export const VerifyOrder = async (req: Request, res: Response): Promise<any> => {
     try {
         const { orderId } = req.body;
 
         const order = await prisma.order.findUnique({
-            where:{
+            where: {
                 id: orderId
             }
         })
 
-        if(!order){
+        if (!order) {
             return res.status(404).json({
                 success: false,
                 message: "Order is not found",
@@ -164,10 +164,10 @@ export const VerifyOrder = async(req: Request,res: Response): Promise<any> => {
         }
 
         const updatedOrder = await prisma.order.update({
-            where:{
+            where: {
                 id: orderId
             },
-            data:{
+            data: {
                 isVerified: true
             }
         });
@@ -186,32 +186,32 @@ export const VerifyOrder = async(req: Request,res: Response): Promise<any> => {
     }
 }
 
-export const UpdateStatus = async(req: Request,res: Response): Promise<any> => {
+export const UpdateStatus = async (req: Request, res: Response): Promise<any> => {
     try {
-        const {status} = req.body;
+        const { status } = req.body;
         const { id } = req.params;
-   
-        if(!status || !id){
-           return res.status(401).json({
-               success: false,
-               message: "Data missing"
-           })
+
+        if (!status || !id) {
+            return res.status(404).json({
+                success: false,
+                message: "Data missing"
+            })
         }
 
         const order = await prisma.order.update({
-           where:{
-               id: id
-           },
-           data:{status}
+            where: {
+                id: id
+            },
+            data: { status }
         });
-        
-        if(!order){
-           return res.status(402).json({
-               success: false,
-               message: 'Something went wrong, Try again!'
-           })
+
+        if (!order) {
+            return res.status(402).json({
+                success: false,
+                message: 'Something went wrong, Try again!'
+            })
         }
-   
+
         // Industry Standard: Handle notifications for all status updates
         if (order.subscription) {
             await NotifyCustomer(order.subscription, status, order.orderCode);
@@ -231,9 +231,9 @@ export const UpdateStatus = async(req: Request,res: Response): Promise<any> => {
     }
 }
 
-export const GetAllOrders = async(req: Request,res: Response): Promise<any> => {
+export const GetAllOrders = async (req: Request, res: Response): Promise<any> => {
     try {
-        
+
         const { restaurantId } = req.params;
 
         // Fetch subscription to check orderHistory limit
@@ -252,11 +252,11 @@ export const GetAllOrders = async(req: Request,res: Response): Promise<any> => {
         }
 
         const orders = await prisma.order.findMany({
-            where:{
+            where: {
                 restaurantId,
                 ...dateFilter,
             },
-            include:{
+            include: {
                 orders: true
             }
         })
@@ -276,10 +276,10 @@ export const GetAllOrders = async(req: Request,res: Response): Promise<any> => {
     }
 }
 
-  
-export const Subscribe = async(req: Request,res: Response): Promise<any> => {
+
+export const Subscribe = async (req: Request, res: Response): Promise<any> => {
     try {
-        const { orderId , subscription } = req.body;
+        const { orderId, subscription } = req.body;
 
         if (!orderId || !subscription) {
             return res.status(400).json({
@@ -309,7 +309,7 @@ export const Subscribe = async(req: Request,res: Response): Promise<any> => {
     }
 }
 
-export const NotifyCustomer = async(subscription: string, status: string, orderCode: string) => {
+export const NotifyCustomer = async (subscription: string, status: string, orderCode: string) => {
     try {
         const notificationMessages: Record<string, { title: string, body: string }> = {
             "Confirmed": {

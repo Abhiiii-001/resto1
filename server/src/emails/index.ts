@@ -12,3 +12,4 @@ export * from './templates/SubscriptionExpired';
 export * from './templates/ResetPassword';
 export * from './templates/ContactUs';
 export * from './templates/ContactThankYou';
+export * from './templates/RestaurantApproval';

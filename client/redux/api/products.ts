@@ -1,5 +1,5 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { RootState } from '../redux';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { baseQueryWithAuth } from './common';
 import { ApiResponse } from '@/types/common';
 import {
   type CreateProductInterface,
@@ -12,17 +12,7 @@ import {
 import { API_URLS } from '@/constants/Urls';
 
 export const productApi = createApi({
-  baseQuery: fetchBaseQuery({
-    baseUrl: API_URLS.product,
-    credentials: 'include',
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).auth.token;
-      if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithAuth(API_URLS.product),
   reducerPath: 'product',
   tagTypes: ['Products', 'ProductVariants'],
   endpoints: (build) => ({

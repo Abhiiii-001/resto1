@@ -32,7 +32,7 @@ export const restaurantApi = createApi({
         }),
         getRestaurantDetails: build.query<{ data: RestaurantDetailsInterface }, string>({
             query:(id) => ({
-                url: `/${id}`
+                url: `/customer/${id}`
             })
         })
     })
