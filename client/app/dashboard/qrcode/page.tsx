@@ -30,7 +30,8 @@ import { useRouter } from 'next/navigation';
 
 export default function QRDisplayPage() {
   const router = useRouter();
-  const { restaurantId } = useAppSelector((state) => state.auth);
+  const { restaurantId, user } = useAppSelector((state) => state.auth);
+  const isRestaurant = user?.role === 'Restaurant';
   const { data: restaurantData, isLoading } = useGetRestaurantDetailsQuery(
     restaurantId ?? skipToken,
   );
@@ -261,7 +262,7 @@ export default function QRDisplayPage() {
                     variant="outline"
                     size="lg"
                     className="w-full gap-3 text-base lg:h-14 border-primary/30 text-primary hover:bg-primary/5"
-                    disabled={isRaisingApproval}
+                    disabled={isRaisingApproval || !isRestaurant}
                     onClick={handleRaiseApproval}
                   >
                     {isRaisingApproval ? (
