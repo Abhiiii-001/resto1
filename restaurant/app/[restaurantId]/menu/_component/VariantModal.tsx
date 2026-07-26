@@ -26,6 +26,8 @@ function VariantModal({ clickedProduct, setClickedProduct }: Props) {
 
   const dispatch = useAppDispatch();
 
+  const isOutOfStock = currentVariant?.isOutOfStock;
+
   return (
     // Dim backdrop without blur so products behind remain crisp
     <div
@@ -81,7 +83,8 @@ function VariantModal({ clickedProduct, setClickedProduct }: Props) {
         <div className="px-8 py-6 flex items-center justify-between gap-4 border-t-4 border-gray-900 mt-4 bg-white">
           {/* Qty controls */}
           <div className="flex items-center gap-3">
-            <button
+            <button 
+              disabled={isOutOfStock}
               onClick={() => dispatch(removeToCart({ variant: currentVariant, quantity: 1 }))}
               className="w-10 h-10 rounded-xl border-2 border-gray-900 bg-rGray flex items-center justify-center font-black hover:bg-rYellow transition-colors shadow-[2px_2px_0px_#111]"
             >
@@ -89,6 +92,7 @@ function VariantModal({ clickedProduct, setClickedProduct }: Props) {
             </button>
             <span className="text-2xl font-black text-gray-900 w-6 text-center">{quantity}</span>
             <button
+              disabled={isOutOfStock}
               onClick={() => dispatch(addToCart({ variant: currentVariant, quantity: 1, product: clickedProduct }))}
               className="w-10 h-10 rounded-xl border-2 border-gray-900 bg-rRed text-white flex items-center justify-center font-black hover:bg-red-700 transition-colors shadow-[2px_2px_0px_#111]"
             >
@@ -98,11 +102,16 @@ function VariantModal({ clickedProduct, setClickedProduct }: Props) {
 
           {/* Done */}
           <button
-            onClick={() => setClickedProduct(null)}
-            className="flex-1 py-4 bg-gray-900 hover:bg-rRed text-rYellow hover:text-white font-black text-base uppercase tracking-wider rounded-2xl border-4 border-gray-900 shadow-[4px_4px_0px_#C8161D] transition-all"
-          >
-            {quantity > 0 ? `Add ${quantity} · ₹${currentVariant?.price * quantity}` : "Done"}
-          </button>
+  disabled={isOutOfStock}
+  onClick={() => setClickedProduct(null)}
+  className={`flex-1 py-4 font-black text-base uppercase tracking-wider rounded-2xl border-4 transition-all ${
+    isOutOfStock
+      ? "bg-gray-300 text-gray-500 border-gray-300 cursor-not-allowed shadow-none"
+      : "bg-gray-900 hover:bg-rRed text-rYellow hover:text-white border-gray-900 shadow-[4px_4px_0px_#C8161D]"
+  }`}
+>
+  {isOutOfStock ? "Not Available at this moment" : quantity > 0 ? `Add ${quantity} · ₹${currentVariant?.price * quantity}` : "Done"}
+</button>
         </div>
       </motion.div>
     </div>
