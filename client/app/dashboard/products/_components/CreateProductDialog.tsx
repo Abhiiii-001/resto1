@@ -85,51 +85,61 @@ const CreateProductDialog = ({
 
   const thumbnail = watch('thumbnail');
 
-  const createProductHandler = async (data: CreateProductFormData) => {
-    if (variants.length === 0) {
-      toast.warning('At least one variant is required!');
-      return;
-    }
-    const toastId = toast.loading('Loading...');
-    const formData = new FormData();
-    formData.append('name', data.name);
-    formData.append('thumbnail', data.thumbnail);
-    formData.append('description', data.description);
-    if (!isEdit) {
-      try {
-        formData.append('categoryId', data.categoryId);
-        formData.append('variants', JSON.stringify(variants));
+ const createProductHandler = async (data: CreateProductFormData) => {
+  if (variants.length === 0 && !isEdit) {
+    toast.warning('At least one variant is required!');
+    return;
+  }
 
-        const response = await createProduct(
-          formData as unknown as CreateProductInterface,
-        );
-        if (!response.error) {
-          toast.success('Product Created!');
-          setModal(false);
-        } else {
-          toast.error('Product creation Failed!');
-        }
-      } catch (error) {
+  const toastId = toast.loading('Loading...');
+
+  try {
+    const formData = new FormData();
+
+    formData.append('name', data.name);
+    formData.append('description', data.description);
+
+    if (data.thumbnail instanceof File) {
+      formData.append('thumbnail', data.thumbnail);
+    }
+
+    if (!isEdit) {
+      formData.append('categoryId', data.categoryId);
+      formData.append('variants', JSON.stringify(variants));
+
+      const response = await createProduct(
+        formData as unknown as CreateProductInterface,
+      );
+
+      if (!response.error) {
+        toast.success('Product Created!');
+        setModal(false);
+        reset();
+        setVariants([]);
+      } else {
         toast.error('Product creation Failed!');
       }
-      reset();
-      setVariants([]);
     } else {
-      try {
-        formData.append('id', product.id);
-        const res = await updateProduct({ id: product.id, ...data });
-        if (!res.error) {
-          toast.success('Product Updated!');
-          setModal(false);
-        } else {
-          toast.error('Product updation Failed!');
-        }
-      } catch (error) {
+      const res = await updateProduct({
+        id: product.id,
+        data: formData,
+      });
+
+      if (!res.error) {
+        toast.success('Product Updated!');
+        setModal(false);
+      } else {
         toast.error('Product updation Failed!');
       }
     }
+  } catch (error) {
+    toast.error(
+      isEdit ? 'Product updation Failed!' : 'Product creation Failed!',
+    );
+  } finally {
     toast.dismiss(toastId);
-  };
+  }
+};
 
   const ModalContent = (
     <div className="w-full">

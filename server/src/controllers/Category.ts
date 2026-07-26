@@ -62,14 +62,14 @@ export const RemoveCategory = async(req: Request,res: Response): Promise<any> =>
 export const UpdateCategory = async(req: Request,res: Response): Promise<any> => {
     try {
         let updatedData = req.body;
-        const thumbanil = req.files?.thumbanil;
+        const thumbnail = req.files?.thumbnail;
         const { categoryId } = req.params;
 
-        if(thumbanil){
-            const thumbnailUploadRes = await uploadToCloudinary(thumbanil,"my-files"); 
-            updatedData.thumbanil = thumbnailUploadRes?.secure_url;
+        if(thumbnail){
+            const thumbnailUploadRes = await uploadToCloudinary(thumbnail,"my-files"); 
+            updatedData.thumbnail = thumbnailUploadRes?.secure_url;
         }
-        console.log('debug-cate', thumbanil, updatedData)
+        console.log('debug-cate', thumbnail, updatedData)
         const result = await prisma.category.update({
             where:{
                 id: categoryId
