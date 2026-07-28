@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import prisma from "../config/prisma";
 
-export const GetDashboardData = async(req: Request,res: Response): Promise<any> => {
+export const GetDashboardData = async (req: Request, res: Response): Promise<any> => {
     try {
-        
+
         const { restaurantId } = req.params;
 
-        if(!restaurantId){
-            return res.status(401).json({
+        if (!restaurantId) {
+            return res.status(404).json({
                 success: false,
                 message: "Data missing!"
             })
@@ -24,7 +24,7 @@ export const GetDashboardData = async(req: Request,res: Response): Promise<any> 
             }
         })
 
-        if(!restaurant){
+        if (!restaurant) {
             return res.status(404).json({
                 success: false,
                 message: "Restaurant not found!"
@@ -32,7 +32,7 @@ export const GetDashboardData = async(req: Request,res: Response): Promise<any> 
         }
 
         const daySummary = await prisma.saleSummary.findMany({
-            where:{
+            where: {
                 restaurantId,
                 duration: "Day"
             },
@@ -44,7 +44,7 @@ export const GetDashboardData = async(req: Request,res: Response): Promise<any> 
 
 
         const monthSummary = await prisma.saleSummary.findMany({
-            where:{
+            where: {
                 restaurantId,
                 duration: "Month"
             },
@@ -55,16 +55,16 @@ export const GetDashboardData = async(req: Request,res: Response): Promise<any> 
         });
 
         const products = await prisma.productVariant.findMany({
-            where:{
+            where: {
                 product: {
                     category: {
                         restaurantId: restaurantId
                     }
                 }
             },
-            include:{
-                product:{
-                    select:{
+            include: {
+                product: {
+                    select: {
                         name: true,
                         thumbnail: true
                     }
@@ -79,21 +79,21 @@ export const GetDashboardData = async(req: Request,res: Response): Promise<any> 
         const statusCounts = await prisma.order.groupBy({
             by: ['status'],
             _count: {
-              _all: true,
+                _all: true,
             },
-          });
-        
-          const label: string[] = [];
-          const statusData: number[] = [];
-          let totalPending = 0;
-        
-          for (const status of statusCounts) {
+        });
+
+        const label: string[] = [];
+        const statusData: number[] = [];
+        let totalPending = 0;
+
+        for (const status of statusCounts) {
             label.push(status.status);
             statusData.push(status._count._all)
             if (status.status === 'Pending') {
-              totalPending = status._count._all;
+                totalPending = status._count._all;
             }
-          }
+        }
 
         const dahsboardData = {
             stats: {
@@ -111,7 +111,7 @@ export const GetDashboardData = async(req: Request,res: Response): Promise<any> 
             }
         }
 
-        
+
 
         return res.status(200).json({
             success: true,
@@ -119,7 +119,7 @@ export const GetDashboardData = async(req: Request,res: Response): Promise<any> 
             data: dahsboardData
         })
 
-    } catch (error:any) {
+    } catch (error: any) {
         return res.status(500).json({
             success: false,
             message: error.message

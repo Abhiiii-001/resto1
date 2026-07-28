@@ -10,3 +10,6 @@ export * from './templates/UserWelcome';
 export * from './templates/SubscriptionExpiry';
 export * from './templates/SubscriptionExpired';
 export * from './templates/ResetPassword';
+export * from './templates/ContactUs';
+export * from './templates/ContactThankYou';
+export * from './templates/RestaurantApproval';

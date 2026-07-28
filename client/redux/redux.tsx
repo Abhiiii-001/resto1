@@ -19,6 +19,7 @@ import { employeeApi } from './api/employee';
 import { orderApi } from './api/order';
 import { dashboardApi } from './api/dashboard';
 import { subscriptionApi } from './api/subscription';
+import { contactApi } from './api/contact';
 import { setupListeners } from '@reduxjs/toolkit/query';
 
 import {
@@ -72,6 +73,7 @@ const rootReducer = combineReducers({
   [orderApi.reducerPath]: orderApi.reducer,
   [dashboardApi.reducerPath]: dashboardApi.reducer,
   [subscriptionApi.reducerPath]: subscriptionApi.reducer,
+  [contactApi.reducerPath]: contactApi.reducer,
 });
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
@@ -93,7 +95,8 @@ export const makeStore = () => {
         .concat(employeeApi.middleware)
         .concat(orderApi.middleware)
         .concat(dashboardApi.middleware)
-        .concat(subscriptionApi.middleware),
+        .concat(subscriptionApi.middleware)
+        .concat(contactApi.middleware),
   });
 };
 

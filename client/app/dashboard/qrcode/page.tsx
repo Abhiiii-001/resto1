@@ -12,13 +12,14 @@ import {
   Phone,
   ChevronRight,
   CheckCircle2,
+  BadgeAlert,
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { toPng } from 'html-to-image';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAppSelector } from '@/redux/redux';
-import { useGetRestaurantDetailsQuery } from '@/redux/api/restaurant';
+import { useGetRestaurantDetailsQuery, useRaiseApprovalRequestMutation } from '@/redux/api/restaurant';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { RESTAURANT_BASE_URL } from '@/constants/Urls';
 import ShareModal from '@/app/_component/ShareLinkModal';
@@ -29,10 +30,13 @@ import { useRouter } from 'next/navigation';
 
 export default function QRDisplayPage() {
   const router = useRouter();
-  const { restaurantId } = useAppSelector((state) => state.auth);
+  const { restaurantId, user } = useAppSelector((state) => state.auth);
+  const isRestaurant = user?.role === 'Restaurant';
   const { data: restaurantData, isLoading } = useGetRestaurantDetailsQuery(
     restaurantId ?? skipToken,
   );
+  const [raiseApproval, { isLoading: isRaisingApproval }] =
+    useRaiseApprovalRequestMutation();
   const [isDownloading, setIsDownloading] = useState(false);
   const [isOpenShareModal, setIsOpenShareModal] = useState(false);
   const qrRef = useRef<HTMLDivElement>(null);
@@ -60,6 +64,23 @@ export default function QRDisplayPage() {
       toast.error('Something went wrong!');
     } finally {
       setIsDownloading(false);
+    }
+  };
+
+  const handleRaiseApproval = async () => {
+    try {
+      const response = await raiseApproval({ restaurantId: restaurantId ?? restaurantData?.id }).unwrap();
+      if (!response || !response?.success) {
+        throw new Error(response?.message || 'Something went wrong!');
+      }
+      toast.success('Approval request raised successfully!');
+    } catch (err: unknown) {
+      console.error('Approval request failed:', err);
+      if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error('Approval request failed!');
+      }
     }
   };
 
@@ -188,52 +209,76 @@ export default function QRDisplayPage() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col gap-3 mt-2">
-              <Button
-                asChild
-                size="lg"
-                className="w-full gap-3 text-base lg:h-14"
-              >
-                <a
-                  href={getQRCodeDataUrl()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Eye className="h-5 w-5" />
-                  Live Preview
-                </a>
-              </Button>
+            {
+              restaurantData?.isPublished ?
+                <div className="flex flex-col gap-3 mt-2">
+                  <Button
+                    asChild
+                    size="lg"
+                    className="w-full gap-3 text-base lg:h-14"
+                  >
+                    <a
+                      href={getQRCodeDataUrl()}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Eye className="h-5 w-5" />
+                      Live Preview
+                    </a>
+                  </Button>
 
-              <Button
-                variant="outline"
-                size="lg"
-                className="w-full gap-3 text-base lg:h-14"
-                onClick={() => setIsOpenShareModal(true)}
-              >
-                <Share2 className="h-5 w-5" />
-                Share QR Code
-              </Button>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="w-full gap-3 text-base lg:h-14"
+                    onClick={() => setIsOpenShareModal(true)}
+                  >
+                    <Share2 className="h-5 w-5" />
+                    Share QR Code
+                  </Button>
 
-              <Button
-                variant="outline"
-                size="lg"
-                className="w-full gap-3 text-base lg:h-14 border-primary/30 text-primary hover:bg-primary/5"
-                disabled={isDownloading}
-                onClick={handleDownload}
-              >
-                {isDownloading ? (
-                  <>
-                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                    Downloading...
-                  </>
-                ) : (
-                  <>
-                    <Download className="h-5 w-5" />
-                    Download QR (PNG)
-                  </>
-                )}
-              </Button>
-            </div>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="w-full gap-3 text-base lg:h-14 border-primary/30 text-primary hover:bg-primary/5"
+                    disabled={isDownloading}
+                    onClick={handleDownload}
+                  >
+                    {isDownloading ? (
+                      <>
+                        <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                        Downloading...
+                      </>
+                    ) : (
+                      <>
+                        <Download className="h-5 w-5" />
+                        Download QR (PNG)
+                      </>
+                    )}
+                  </Button>
+                </div> :
+                <div>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="w-full gap-3 text-base lg:h-14 border-primary/30 text-primary hover:bg-primary/5"
+                    disabled={isRaisingApproval || !isRestaurant}
+                    onClick={handleRaiseApproval}
+                  >
+                    {isRaisingApproval ? (
+                      <>
+                        <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                        Raising Approval...
+                      </>
+                    ) : (
+                      <>
+                        <BadgeAlert className="h-5 w-5" />
+                        Raise Approval Request
+                      </>
+                    )}
+                  </Button>
+                </div>
+            }
 
             {/* QR Code Details */}
             <div className="rounded-xl border border-border bg-white p-5 shadow-sm">

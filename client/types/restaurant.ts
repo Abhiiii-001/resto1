@@ -9,6 +9,7 @@ export type Restaurant = {
   restaurantId: string;
   email: string;
   isOpen: boolean;
+  isPublished: boolean;
   address: string;
   autoAcceptOrder: boolean;
   isActive: boolean;

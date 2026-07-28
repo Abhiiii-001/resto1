@@ -1,22 +1,12 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { RootState } from '../redux';
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { baseQueryWithAuth } from './common';
 import { API_URLS } from '@/constants/Urls';
 import { ApiResponse } from '@/types/common';
 import { DashboardData } from './dashboard';
 export { type DashboardData } from '@/types/dashboard';
 
 export const dashboardApi = createApi({
-  baseQuery: fetchBaseQuery({
-    baseUrl: API_URLS.dashboard,
-    credentials: 'include',
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).auth.token;
-      if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithAuth(API_URLS.dashboard),
   reducerPath: 'dashboardApi',
   endpoints: (builder) => ({
     getDashboardData: builder.query<DashboardData, string>({

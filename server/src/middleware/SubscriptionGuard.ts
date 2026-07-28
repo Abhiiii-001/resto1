@@ -7,7 +7,7 @@ export const SubscriptionGuard = async (req: Request, res: Response, next: NextF
     const restaurantId = req.user?.restaurantId || req.user?.id;
 
     if (!restaurantId) {
-      return res.status(401).json({ success: false, message: "Unauthorized access." });
+      return res.status(400).json({ success: false, message: "Unauthorized access." });
     }
 
     const subscription = await prisma.subscription.findFirst({
