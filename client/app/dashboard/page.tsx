@@ -12,15 +12,18 @@ import { useGetDashboardDataQuery } from '@/redux/api/dashboard';
 import Loader from '@/components/common/Loader';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { USER_ROLE_TYPE } from '@/constants/CommonConstant';
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { Summary } from '@/types/dashboard';
 
 function Dashboard() {
   const { isAuthenticated, restaurantId, role, token } = useAppSelector(
     (state) => state.auth,
   );
+  
+  const isAuthorized = isAuthenticated && role === USER_ROLE_TYPE.RESTAURANT;
+
   const { data: dashboardData, isLoading } = useGetDashboardDataQuery(
-    restaurantId && token ? restaurantId : skipToken,
+    restaurantId && token && isAuthorized ? restaurantId : skipToken,
   );
 
   const dayData: number[] = [];
@@ -41,10 +44,14 @@ function Dashboard() {
     },
   );
 
+  if (isAuthenticated && role && !isAuthorized) {
+    notFound();
+  }
+  
   if (!dashboardData || isLoading) {
     return <Loader />;
   }
-  if (!isAuthenticated || role !== USER_ROLE_TYPE.RESTAURANT) {
+  if (!isAuthenticated) {
     redirect('/');
   }
 

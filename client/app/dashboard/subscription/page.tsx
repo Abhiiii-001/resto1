@@ -23,6 +23,8 @@ import {
   useCreatePaymentOrderMutation,
   usePreviewSubscriptionChangeMutation,
 } from '@/redux/api/subscription';
+import { skipToken } from '@reduxjs/toolkit/query';
+import { notFound } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { cn } from '@/lib/utils';
 import Loader from '@/components/common/Loader';
@@ -30,9 +32,14 @@ import AlertModal from '@/components/common/AlertModal';
 
 // --- Plan Overview Component ---
 const PlanOverview = () => {
-  const { data: plansData, isLoading: plansLoading } = useGetPlansQuery({});
+  const user = useAppSelector((state) => state.auth.user);
+  const isRestaurant = user?.role === 'Restaurant';
+
+  const { data: plansData, isLoading: plansLoading } = useGetPlansQuery(
+    isRestaurant ? {} : skipToken
+  );
   const { data: subData, isLoading: subLoading } =
-    useGetCurrentSubscriptionQuery({});
+    useGetCurrentSubscriptionQuery(isRestaurant ? {} : skipToken);
   const [createOrder, { isLoading: isCreatingOrder }] =
     useCreatePaymentOrderMutation();
   const [previewChange, { isLoading: isPreviewing }] =
@@ -320,7 +327,11 @@ const PlanOverview = () => {
 
 // --- Transaction History Component ---
 const TransactionHistory = () => {
-  const { data: historyData, isLoading } = useGetPaymentHistoryQuery({});
+  const user = useAppSelector((state) => state.auth.user);
+  const isRestaurant = user?.role === 'Restaurant';
+  const { data: historyData, isLoading } = useGetPaymentHistoryQuery(
+    isRestaurant ? {} : skipToken
+  );
 
   if (isLoading) {
     return null;
@@ -425,9 +436,13 @@ export default function SubscriptionPage() {
 
   const currentTab = isRestaurant ? activeTab : 'history';
 
-  const { isLoading: plansLoading } = useGetPlansQuery({});
-  const { isLoading: subLoading } = useGetCurrentSubscriptionQuery({});
-  const { isLoading: historyLoading } = useGetPaymentHistoryQuery({});
+  const { isLoading: plansLoading } = useGetPlansQuery(isRestaurant ? {} : skipToken);
+  const { isLoading: subLoading } = useGetCurrentSubscriptionQuery(isRestaurant ? {} : skipToken);
+  const { isLoading: historyLoading } = useGetPaymentHistoryQuery(isRestaurant ? {} : skipToken);
+
+  if (user && !isRestaurant) {
+    notFound();
+  }
 
   const isPageLoading = 
     (currentTab === 'plan' && (plansLoading || subLoading)) || 

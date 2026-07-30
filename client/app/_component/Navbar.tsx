@@ -6,6 +6,7 @@ import {
   Menu,
   Settings,
   ChevronDown,
+  Radio,
 } from 'lucide-react';
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
@@ -305,12 +306,12 @@ function Navbar() {
                   {/* Menu items */}
                   <div className="p-2">
                     <Link
-                      href="/dashboard"
+                      href={role === USER_ROLE_TYPE.RESTAURANT ? "/dashboard" : "/dashboard/live-orders"}
                       onClick={() => setIsDropdownOpen(false)}
                       className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-primary/5 hover:text-primary"
                     >
-                      <LayoutDashboard className="h-4 w-4" />
-                      Dashboard
+                      {role === USER_ROLE_TYPE.RESTAURANT ? <LayoutDashboard className="h-4 w-4" /> : <Radio className="h-4 w-4" />}
+                      {role === USER_ROLE_TYPE.RESTAURANT ? "Dashboard" : "Live Orders"}
                     </Link>
                     <Link
                       href="/dashboard/settings"
