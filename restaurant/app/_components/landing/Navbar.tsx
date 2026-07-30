@@ -31,8 +31,6 @@ export default function Navbar() {
   const { scrollY } = useScroll();
   const [hidden, setHidden] = useState(false);
 
-  const clientUrl = process.env.NEXT_PUBLIC_CLIENT_URL || "http://localhost:3000";
-
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious() ?? 0;
     if (latest > previous && latest > 150) {
@@ -80,8 +78,8 @@ export default function Navbar() {
                     key={item.id}
                     onClick={() => router.push(item.route)}
                     className={`px-4 py-2 font-bold text-xs rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${isActive
-                        ? 'bg-white text-primary shadow-sm'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
+                      ? 'bg-white text-primary shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
                       }`}
                   >
                     {item.icon}

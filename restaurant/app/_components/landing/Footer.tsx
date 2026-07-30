@@ -11,15 +11,15 @@ export default function Footer() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const clientUrl = process.env.NEXT_PUBLIC_CLIENT_URL || "http://localhost:3000";
+  const clientUrl = process.env.NEXT_PUBLIC_CLIENT_URL || "http://localhost:3001";
 
   return (
     <footer className="bg-white border-t border-gray-200/80 text-gray-900 pt-14 pb-8 font-sans relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Main Grid */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-gray-100">
-          
+
           {/* Brand Info */}
           <div className="md:col-span-5 space-y-3">
             <div className="flex items-center gap-2.5 cursor-pointer group" onClick={() => router.push('/')}>
@@ -30,7 +30,7 @@ export default function Footer() {
                 Restroo<span className="text-primary">.</span>
               </span>
             </div>
-            
+
             <p className="text-xs sm:text-sm text-gray-500 font-medium leading-relaxed max-w-sm">
               The digital directory and table QR ordering platform for registered partner restaurants.
             </p>
@@ -38,7 +38,7 @@ export default function Footer() {
 
           {/* Real Clickable Links Grid */}
           <div className="md:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-8 text-xs">
-            
+
             {/* Direct Links */}
             <div>
               <h4 className="font-bold text-gray-900 uppercase tracking-wider mb-3.5">Navigation</h4>

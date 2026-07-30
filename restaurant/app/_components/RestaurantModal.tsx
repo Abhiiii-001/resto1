@@ -133,10 +133,10 @@ export default function RestaurantModal({ restaurant, onClose }: RestaurantModal
             {/* Action Buttons */}
             <div className="flex flex-col gap-3">
               <button
-                onClick={() => router.push(`${process.env.NEXT_PUBLIC_CLIENT_URL}/${restaurant.id}`)}
+                onClick={() => router.push(`/${restaurant.id}`)}
                 className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-orange-500 hover:to-orange-400 text-white font-black text-base py-4 rounded-2xl shadow-xl shadow-primary/25 transition-all cursor-pointer group"
               >
-                Open Digital Menu 
+                Open Digital Menu
                 <ArrowUpRight size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
               </button>
             </div>

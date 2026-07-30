@@ -4,7 +4,7 @@ import { motion } from 'motion/react';
 import { Store, ArrowUpRight, Zap, QrCode, ShieldCheck } from 'lucide-react';
 
 export default function PartnerSection() {
-  const clientUrl = process.env.NEXT_PUBLIC_CLIENT_URL || "http://localhost:3000";
+  const clientUrl = process.env.NEXT_PUBLIC_CLIENT_URL || "http://localhost:3001";
 
   return (
     <section className="py-24 bg-white font-sans overflow-hidden border-b border-gray-100">

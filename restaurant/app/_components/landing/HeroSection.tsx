@@ -17,7 +17,7 @@ export default function HeroSection() {
     }
   };
 
-  const clientUrl = process.env.NEXT_PUBLIC_CLIENT_URL || "http://localhost:3000";
+  const clientUrl = process.env.NEXT_PUBLIC_CLIENT_URL || "http://localhost:3001";
 
   return (
     <section id="hero" className="relative min-h-[90vh] pt-32 pb-16 overflow-hidden bg-gradient-to-b from-orange-50/70 via-white to-background font-sans selection:bg-primary/20 selection:text-primary">
@@ -25,19 +25,19 @@ export default function HeroSection() {
       <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-gradient-to-tr from-primary/15 via-orange-400/10 to-amber-300/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
+
         {/* Main Hero Header */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          
+
           {/* Left Column: Platform Value Proposition */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
             className="lg:col-span-7 space-y-6"
           >
             {/* Pill Badge */}
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ type: "spring", delay: 0.1 }}
