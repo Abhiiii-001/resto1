@@ -40,3 +40,9 @@ cron.schedule("30 0 1 * *", async () => {
   //console.log("Calculating MONTHLY summary...");
   await calculateSummary(Duration.Month);
 });
+
+// Run every Monday at 00:20
+cron.schedule("20 0 * * 1", async () => {
+  //console.log("Calculating WEEKLY summary...");
+  await calculateSummary(Duration.Week);
+});

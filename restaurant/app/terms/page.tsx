@@ -6,62 +6,55 @@ import { FileText } from "lucide-react";
 
 export default function TermsOfService() {
   return (
-    <div className="min-h-screen bg-rGray font-sans selection:bg-gray-900 selection:text-white">
+    <div className="min-h-screen bg-background font-sans selection:bg-primary/20 selection:text-primary">
       <Navbar />
 
       {/* Hero */}
-      <section className="bg-gray-900 text-white pt-36 pb-20 px-4 text-center overflow-hidden border-b-4 border-gray-900">
-        <div className="max-w-4xl mx-auto relative z-10">
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-rYellow text-gray-900 border-2 border-gray-900 shadow-[4px_4px_0px_#111] mb-8 font-black uppercase text-sm">
-            <FileText size={18} /> Terms & Rules
+      <section className="pt-32 pb-16 px-4 bg-gradient-to-b from-orange-50/70 via-white to-background border-b border-gray-100">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-extrabold uppercase tracking-wider mb-6">
+            <FileText size={14} /> Platform Rules
           </div>
           
-          <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase leading-[0.9] mb-4 text-rYellow">
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 tracking-tight leading-tight mb-3">
             Terms of Service
           </h1>
 
-          <p className="text-xl font-bold max-w-xl mx-auto text-gray-300 uppercase tracking-wider">
+          <p className="text-xs sm:text-sm text-gray-500 font-medium">
             Last updated: July 2026
           </p>
         </div>
       </section>
 
       {/* Main Content */}
-      <section className="py-20 px-4 max-w-4xl mx-auto">
-        <div className="bg-white p-10 md:p-14 rounded-[2.5rem] border-4 border-gray-900 shadow-[10px_10px_0px_#111] space-y-10 text-gray-900">
+      <section className="py-16 px-4 max-w-4xl mx-auto">
+        <div className="bg-white p-8 sm:p-12 rounded-3xl border border-gray-100 shadow-soft space-y-8 text-gray-800">
           
           <div>
-            <h2 className="text-3xl font-black uppercase tracking-tight mb-4 text-rRed">1. Acceptance of Terms</h2>
-            <p className="font-bold text-lg leading-relaxed text-gray-800">
-              By accessing Restroo or scanning a table QR code to place an order, you agree to comply with these Terms of Service and all applicable laws and regulations.
+            <h2 className="text-lg font-bold text-gray-900 mb-2">1. Acceptance of Terms</h2>
+            <p className="text-xs sm:text-sm text-gray-600 font-medium leading-relaxed">
+              By accessing Restroo or scanning a table QR code to place an order, you agree to comply with these Terms of Service and all applicable local regulations.
             </p>
           </div>
 
           <div>
-            <h2 className="text-3xl font-black uppercase tracking-tight mb-4 text-rRed">2. Order Fulfillment</h2>
-            <p className="font-bold text-lg leading-relaxed text-gray-800">
-              Restroo provides the digital platform connecting you with food service providers. Orders placed via Restroo are transmitted directly to the chosen restaurant kitchen. Fulfillment time and item availability are managed directly by the restaurant.
+            <h2 className="text-lg font-bold text-gray-900 mb-2">2. Order Fulfillment</h2>
+            <p className="text-xs sm:text-sm text-gray-600 font-medium leading-relaxed">
+              Restroo provides the digital interface connecting you directly with food outlets. Orders are transmitted immediately to the chosen restaurant kitchen. Fulfillment times and item availability are managed directly by the food provider.
             </p>
           </div>
 
           <div>
-            <h2 className="text-3xl font-black uppercase tracking-tight mb-4 text-rRed">3. Acceptable Use</h2>
-            <p className="font-bold text-lg leading-relaxed text-gray-800">
-              Users agree not to submit fraudulent orders, misuse QR codes, or disrupt the operation of the platform. Restroo reserves the right to refuse service to fraudulent requests.
+            <h2 className="text-lg font-bold text-gray-900 mb-2">3. Acceptable Use</h2>
+            <p className="text-xs sm:text-sm text-gray-600 font-medium leading-relaxed">
+              Users agree not to submit fraudulent orders or disrupt platform services. Restroo reserves the right to block fraudulent requests.
             </p>
           </div>
 
           <div>
-            <h2 className="text-3xl font-black uppercase tracking-tight mb-4 text-rRed">4. Modifications</h2>
-            <p className="font-bold text-lg leading-relaxed text-gray-800">
-              Restroo reserves the right to update these terms at any time. Continued use of the platform constitutes acceptance of updated terms.
-            </p>
-          </div>
-
-          <div>
-            <h2 className="text-3xl font-black uppercase tracking-tight mb-4 text-rRed">5. Support Contact</h2>
-            <p className="font-bold text-lg leading-relaxed text-gray-800">
-              For inquiries regarding these terms, please contact <span className="bg-rYellow px-2 border border-gray-900 font-black">support@restro.com</span>.
+            <h2 className="text-lg font-bold text-gray-900 mb-2">4. Support Contact</h2>
+            <p className="text-xs sm:text-sm text-gray-600 font-medium leading-relaxed">
+              For inquiries regarding terms or service support, contact <span className="font-bold text-primary">support@restroo.com</span>.
             </p>
           </div>
 

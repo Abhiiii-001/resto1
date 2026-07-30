@@ -1,50 +1,51 @@
+"use client";
 import React from 'react';
 import { motion } from 'motion/react';
 import { useRouter } from 'next/navigation';
+import { Utensils } from 'lucide-react';
 
 const categories = [
-  { name: 'Pizza', icon: '🍕', color: 'bg-rYellow', textColor: 'text-gray-900' },
-  { name: 'Burgers', icon: '🍔', color: 'bg-rRed', textColor: 'text-white' },
-  { name: 'Drinks', icon: '🥤', color: 'bg-rGreen', textColor: 'text-white' },
-  { name: 'Desserts', icon: '🍰', color: 'bg-gray-900', textColor: 'text-white' },
+  { name: 'Pizza & Italian', icon: '🍕', color: 'from-amber-500/10 to-orange-500/10 border-orange-200' },
+  { name: 'Gourmet Burgers', icon: '🍔', color: 'from-red-500/10 to-pink-500/10 border-red-200' },
+  { name: 'Refreshing Drinks', icon: '🥤', color: 'from-blue-500/10 to-cyan-500/10 border-blue-200' },
+  { name: 'Decadent Desserts', icon: '🍰', color: 'from-purple-500/10 to-indigo-500/10 border-purple-200' },
 ];
 
 export default function SmartDiscoverySection() {
   const router = useRouter();
 
   return (
-    <section className="py-32 bg-rGray border-b-4 border-gray-900">
+    <section className="py-24 bg-gray-50/50 font-sans border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col items-center mb-16 relative">
-          <motion.h2 
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="text-5xl md:text-7xl font-black text-gray-900 mb-4 uppercase tracking-tighter text-center"
-          >
-            Find What You <br/>
-            <span className="inline-block bg-rRed text-white px-4 py-2 rotate-[-2deg] border-4 border-gray-900 shadow-[4px_4px_0px_#111] mt-2">Crave.</span>
-          </motion.h2>
+        <div className="text-center max-w-2xl mx-auto mb-14">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-extrabold uppercase tracking-wider mb-3">
+            <Utensils size={14} />
+            Instant Discovery
+          </div>
+          <h2 className="text-3xl sm:text-5xl font-extrabold text-gray-900 tracking-tight mb-3">
+            Explore By Craving
+          </h2>
+          <p className="text-sm sm:text-base text-gray-600 font-medium">
+            Jump straight into the categories you love most from top local spots.
+          </p>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {categories.map((category, index) => (
             <motion.div
               key={category.name}
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              whileHover={{ y: -8, scale: 1.05, rotate: index % 2 === 0 ? 2 : -2 }}
+              whileHover={{ y: -6 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
+              transition={{ duration: 0.3, delay: index * 0.08 }}
               onClick={() => router.push('/restaurants')}
-              className={`${category.color} p-8 rounded-[2rem] border-4 border-gray-900 shadow-[6px_6px_0px_#111] cursor-pointer flex flex-col items-center justify-center group relative overflow-hidden`}
+              className={`bg-gradient-to-br ${category.color} p-8 rounded-3xl border shadow-soft hover:shadow-soft-md cursor-pointer flex flex-col items-center justify-center text-center group transition-all`}
             >
-              <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white to-transparent bg-[length:15px_15px]"></div>
-              
-              <span className="text-7xl mb-4 transform transition-transform group-hover:scale-125 duration-500 relative z-10 drop-shadow-md">
+              <span className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300">
                 {category.icon}
               </span>
-              <h3 className={`text-2xl font-black ${category.textColor} uppercase tracking-tight relative z-10`}>
+              <h3 className="text-base font-bold text-gray-900">
                 {category.name}
               </h3>
             </motion.div>

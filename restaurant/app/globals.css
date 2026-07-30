@@ -1,25 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  body {
+    @apply text-foreground bg-background font-sans antialiased;
+  }
 
-body {
-  color: #000;
-  background: #fdfdfd;
-  font-family: 'Inter', Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-/* Remove default serif from any legacy usage */
-* {
-  font-family: inherit;
+  html {
+    scroll-behavior: smooth;
+  }
 }
 .skeleton {
   background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);

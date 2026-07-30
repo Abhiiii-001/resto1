@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import fs from 'fs'
 import crypto from "crypto";
 import { Server } from "socket.io"
-import { emitNewOrder } from "../socket";
+import { emitNewOrder, emitOrderUpdated, emitStatsUpdated } from "../socket";
 import { generateInvoice } from "../utils/generateInvoice";
 import uploadToCloudinary, { uploadPDFToCloudinary } from "../utils/cloudinaryUploader";
 import { sendPushNotification } from "../utils/notificationSender";
@@ -27,8 +27,6 @@ export const CreateOrder = async (req: Request, res: Response): Promise<any> => 
             });
         }
 
-        // //console.log("suborderdata",orders)
-        // const subOrders = JSON.parse(orders);
         const restaurantDetails = await prisma.restaurant.findUnique({
             where: {
                 id: restaurantId
@@ -78,17 +76,6 @@ export const CreateOrder = async (req: Request, res: Response): Promise<any> => 
 
                 totalAmount += subOrderData.unitPrice;
 
-                prisma.productVariant.update({
-                    where: {
-                        id: subOrderData.productVariantId
-                    },
-                    data: {
-                        sold: {
-                            increment: subOrderData.quantity
-                        }
-                    }
-                });
-
                 const t = await prisma.subOrder.create({
                     data: {
                         name: subOrderData.name,
@@ -102,19 +89,8 @@ export const CreateOrder = async (req: Request, res: Response): Promise<any> => 
                 //console.log("suborder",t)
             }
 
-
-
-            //if calculated amount is not equal to provided amount
-            // if(totalAmount !== amount){
-            //     await prisma.order.update({
-            //         data:{
-            //             amount: totalAmount,
-            //         },
-            //         where:{
-            //             id:order.id
-            //         }
-            //     })
-            // }
+            // Order is created as Pending (default). 
+            // We increment stats only when order is Completed.
 
             const orderRes = await prisma.order.findUnique({
                 where: {
@@ -126,6 +102,7 @@ export const CreateOrder = async (req: Request, res: Response): Promise<any> => 
             });
 
             emitNewOrder(io, restaurantId, orderRes);
+            emitStatsUpdated(io, restaurantId);
 
             return res.status(200).json({
                 success: true,
@@ -197,25 +174,56 @@ export const UpdateStatus = async (req: Request, res: Response): Promise<any> =>
                 message: "Data missing"
             })
         }
-
-        const order = await prisma.order.update({
-            where: {
-                id: id
-            },
-            data: { status }
+        const existingOrder = await prisma.order.findUnique({
+            where: { id }
         });
 
-        if (!order) {
-            return res.status(402).json({
+        if (!existingOrder) {
+            return res.status(404).json({
                 success: false,
-                message: 'Something went wrong, Try again!'
-            })
+                message: "Order not found"
+            });
         }
+
+        const order = await prisma.order.update({
+            where: { id },
+            data: { status },
+            include: {
+                orders: true // Include subOrders to update product variant sales if needed
+            }
+        });
 
         // Industry Standard: Handle notifications for all status updates
         if (order.subscription) {
             await NotifyCustomer(order.subscription, status, order.orderCode);
         }
+
+        // If order is completed AND it wasn't completed before, update restaurant stats and product sales
+        if (status === "Completed" && existingOrder.status !== "Completed") {
+            await prisma.$transaction(async (prisma) => {
+                await prisma.restaurant.update({
+                    where: { id: order.restaurantId },
+                    data: {
+                        totalOrders: { increment: 1 },
+                        totalEarning: { increment: order.amount }
+                    }
+                });
+
+                for (const subOrder of order.orders) {
+                    await prisma.productVariant.update({
+                        where: { id: subOrder.productVariantId },
+                        data: {
+                            sold: { increment: subOrder.quantity }
+                        }
+                    });
+                }
+            });
+        }
+
+        //@ts-ignore
+        const { io } = req;
+        emitOrderUpdated(io, order.restaurantId, id, status);
+        emitStatsUpdated(io, order.restaurantId);
 
         return res.status(200).json({
             success: true,
@@ -258,6 +266,9 @@ export const GetAllOrders = async (req: Request, res: Response): Promise<any> =>
             },
             include: {
                 orders: true
+            },
+            orderBy: {
+                createdAt: 'desc'
             }
         })
 

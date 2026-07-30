@@ -3,154 +3,138 @@ import React from "react";
 import { motion } from "motion/react";
 import Navbar from "../_components/landing/Navbar";
 import Footer from "../_components/landing/Footer";
-import { Zap, Users, ShieldCheck, QrCode, ArrowRight } from "lucide-react";
+import { Zap, Users, ShieldCheck, QrCode, ArrowRight, Heart } from "lucide-react";
 import Link from "next/link";
 
 const values = [
   {
-    icon: <Zap className="text-gray-900" size={32} />,
+    icon: <Zap className="text-primary" size={24} />,
     title: "Speed First",
-    description:
-      "We built Restroo for the impatient foodie. From browsing to ordering in under 30 seconds.",
-    color: "bg-rYellow",
+    description: "From browsing to ordering in under 30 seconds with instant table dispatch.",
   },
   {
-    icon: <ShieldCheck className="text-white" size={32} />,
+    icon: <ShieldCheck className="text-success" size={24} />,
     title: "Privacy by Default",
-    description:
-      "No accounts, no tracking, no fuss. Just tap, order, and enjoy your meal.",
-    color: "bg-rGreen",
-    textColor: "text-white"
+    description: "No mandatory accounts or trackings. Just tap, order, and enjoy your meal.",
   },
   {
-    icon: <QrCode className="text-white" size={32} />,
+    icon: <QrCode className="text-blue-500" size={24} />,
     title: "QR-Native",
-    description:
-      "Scan a QR at your table and you're in — no app download required. Ever.",
-    color: "bg-rRed",
-    textColor: "text-white"
+    description: "Scan a QR code at your dining table and browse digital menus instantly.",
   },
   {
-    icon: <Users className="text-white" size={32} />,
+    icon: <Users className="text-purple-500" size={24} />,
     title: "Built for Everyone",
-    description:
-      "Whether you're a solo diner or a big group, Restroo makes ordering seamless for all.",
-    color: "bg-gray-900",
-    textColor: "text-white"
+    description: "Designed for solo diners, groups, and restaurant teams alike.",
   },
 ];
 
 const team = [
-  { name: "Abhishek Kumar", role: "Founder & Developer", initials: "AK" },
-  { name: "Team Restroo", role: "Design & Engineering", initials: "TR" },
+  { name: "Abhishek Kumar", role: "Founder & Lead Engineer", initials: "AK" },
+  { name: "Team Restroo", role: "Design & Product Engineering", initials: "TR" },
 ];
 
 export default function About() {
   return (
-    <div className="min-h-screen bg-rGray font-sans selection:bg-gray-900 selection:text-white">
+    <div className="min-h-screen bg-background font-sans selection:bg-primary/20 selection:text-primary">
       <Navbar />
 
       {/* Hero */}
-      <section className="bg-rYellow pt-36 pb-24 px-4 text-center overflow-hidden relative border-b-4 border-gray-900">
-        <div className="max-w-4xl mx-auto relative z-10">
+      <section className="pt-32 pb-16 px-4 bg-gradient-to-b from-orange-50/70 via-white to-background border-b border-gray-100">
+        <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white border-2 border-gray-900 shadow-[4px_4px_0px_#111] mb-8"
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-extrabold uppercase tracking-wider mb-6"
           >
-            <span className="text-sm font-black text-gray-900 uppercase tracking-wider">About Restroo</span>
+            <Heart size={14} />
+            About Restroo Direct
           </motion.div>
           
           <motion.h1
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-6xl md:text-8xl font-black text-gray-900 tracking-tighter uppercase leading-[0.9] mb-8"
+            className="text-4xl sm:text-6xl font-extrabold text-gray-900 tracking-tight leading-tight mb-6"
           >
-            Rethinking <br />
-            <span className="bg-rRed text-white px-4 py-1 inline-block rotate-[-2deg] border-4 border-gray-900 shadow-[6px_6px_0px_#111] mt-2">
-              Food Ordering.
-            </span>
+            Rethinking Digital Dining <br />
+            <span className="text-primary">Without Friction.</span>
           </motion.h1>
           
           <motion.p
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-xl md:text-2xl text-gray-900 font-bold max-w-2xl mx-auto leading-relaxed"
+            className="text-base sm:text-lg text-gray-600 font-medium max-w-2xl mx-auto leading-relaxed"
           >
-            Restroo is a zero-friction food ordering platform built for
-            the next generation of diners — no logins, no app downloads, just instant food.
+            Restroo is an instant, zero-friction dining platform designed for modern foodies and restaurant outlets — no app downloads, no account passwords, just food.
           </motion.p>
         </div>
       </section>
 
       {/* Mission */}
-      <section className="py-32 px-4 bg-white border-b-4 border-gray-900">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+      <section className="py-20 px-4 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-12 items-center">
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
+            initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-5xl md:text-6xl font-black text-gray-900 mb-6 uppercase tracking-tighter">
+            <h2 className="text-3xl font-extrabold text-gray-900 mb-4 tracking-tight">
               Our Mission
             </h2>
-            <p className="text-gray-900 font-bold text-lg leading-relaxed mb-6">
-              We believe ordering food at a restaurant should be the easiest
-              thing in the world. Not a chore. Not a queue. Just a seamless
-              digital experience that puts you in control.
+            <p className="text-gray-600 font-medium text-sm sm:text-base leading-relaxed mb-4">
+              We believe ordering food at a restaurant should be fast, seamless, and pleasant. Not a queue, not a wait, and not a tedious signup form.
             </p>
-            <p className="text-gray-700 font-bold leading-relaxed text-lg">
-              Restroo connects restaurants and customers through a fast,
-              intuitive ordering platform — accessible to anyone with a
-              smartphone and a craving.
+            <p className="text-gray-600 font-medium text-sm sm:text-base leading-relaxed">
+              Restroo connects diners and restaurant outlets through an intuitive web app accessible on any smartphone browser instantly.
             </p>
           </motion.div>
+
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
+            initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="bg-rRed text-white rounded-[2rem] p-12 text-center border-4 border-gray-900 shadow-[10px_10px_0px_#111]"
+            className="bg-primary text-white rounded-3xl p-10 text-center shadow-lg shadow-primary/20"
           >
-            <p className="text-9xl font-black text-rYellow leading-none mb-2">0</p>
-            <p className="text-3xl font-black uppercase tracking-tight mb-2">Barriers to Ordering</p>
-            <p className="text-white font-bold text-lg">
-              No signup. No app. No friction. Just food.
+            <p className="text-7xl font-extrabold mb-1">0</p>
+            <p className="text-xl font-bold uppercase tracking-wider mb-2">Friction Points</p>
+            <p className="text-xs sm:text-sm text-white/90 font-medium leading-relaxed">
+              No account creation. No app installation. Just scan & enjoy your meal.
             </p>
           </motion.div>
         </div>
       </section>
 
       {/* Values */}
-      <section className="py-32 px-4 bg-rGray border-b-4 border-gray-900">
+      <section className="py-20 px-4 bg-gray-50/50 border-y border-gray-100">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-20">
-            <h2 className="text-5xl md:text-7xl font-black text-gray-900 mb-4 uppercase tracking-tighter">
-              What We Stand For
+          <div className="text-center max-w-xl mx-auto mb-14">
+            <h2 className="text-3xl font-extrabold text-gray-900 mb-3 tracking-tight">
+              What Guides Us
             </h2>
-            <p className="text-xl font-bold text-gray-700 uppercase tracking-wider">
-              The principles that guide everything we build.
+            <p className="text-xs sm:text-sm text-gray-500 font-medium">
+              Core principles embedded in every product decision we make.
             </p>
           </div>
-          <div className="grid sm:grid-cols-2 gap-8">
+
+          <div className="grid sm:grid-cols-2 gap-6">
             {values.map((v, i) => (
               <motion.div
                 key={v.title}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ y: -6, rotate: i % 2 === 0 ? 1 : -1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.1 }}
-                className={`${v.color} p-8 rounded-[2rem] border-4 border-gray-900 shadow-[6px_6px_0px_#111] transition-all`}
+                transition={{ duration: 0.3, delay: i * 0.08 }}
+                className="bg-white p-6 rounded-3xl border border-gray-100 shadow-soft"
               >
-                <div className="w-16 h-16 bg-white border-2 border-gray-900 rounded-2xl flex items-center justify-center mb-6 shadow-[2px_2px_0px_#111]">
+                <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center mb-4">
                   {v.icon}
                 </div>
-                <h3 className={`text-3xl font-black ${v.textColor || 'text-gray-900'} mb-3 uppercase tracking-tight`}>
+                <h3 className="text-base font-bold text-gray-900 mb-2">
                   {v.title}
                 </h3>
-                <p className={`${v.textColor ? 'text-gray-200' : 'text-gray-900'} font-bold text-lg leading-relaxed`}>
+                <p className="text-xs sm:text-sm text-gray-600 font-medium leading-relaxed">
                   {v.description}
                 </p>
               </motion.div>
@@ -160,56 +144,50 @@ export default function About() {
       </section>
 
       {/* Team */}
-      <section className="py-32 px-4 bg-white border-b-4 border-gray-900">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-5xl md:text-7xl font-black text-gray-900 mb-4 uppercase tracking-tighter">
-            The People Behind Restroo
-          </h2>
-          <p className="text-xl text-gray-700 font-bold uppercase tracking-wider mb-16">
-            A passionate team obsessed with removing dining friction.
-          </p>
-          <div className="flex flex-wrap justify-center gap-12">
-            {team.map((member, i) => (
-              <motion.div
-                key={member.name}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
-                className="flex flex-col items-center gap-4 group"
-              >
-                <div className="w-24 h-24 rounded-3xl bg-gray-900 border-4 border-gray-900 flex items-center justify-center text-rYellow text-3xl font-black shadow-[6px_6px_0px_#C8161D] group-hover:rotate-6 transition-transform">
-                  {member.initials}
-                </div>
-                <div>
-                  <p className="font-black text-2xl uppercase tracking-tight text-gray-900">{member.name}</p>
-                  <p className="text-sm font-bold uppercase tracking-wider text-rRed">{member.role}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+      <section className="py-20 px-4 max-w-4xl mx-auto text-center">
+        <h2 className="text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">
+          The Team Behind Restroo
+        </h2>
+        <p className="text-xs sm:text-sm text-gray-500 font-medium mb-12">
+          Engineers and designers building next-generation culinary software.
+        </p>
+
+        <div className="flex flex-wrap justify-center gap-10">
+          {team.map((member, i) => (
+            <motion.div
+              key={member.name}
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="flex flex-col items-center gap-3"
+            >
+              <div className="w-20 h-20 rounded-3xl bg-primary text-white font-extrabold text-2xl flex items-center justify-center shadow-md shadow-primary/20">
+                {member.initials}
+              </div>
+              <div>
+                <p className="font-bold text-sm text-gray-900">{member.name}</p>
+                <p className="text-xs text-primary font-semibold">{member.role}</p>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-32 px-4 bg-rRed text-white text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="max-w-3xl mx-auto"
-        >
-          <h2 className="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-6">Ready to Experience It?</h2>
-          <p className="text-white font-bold mb-10 text-xl max-w-xl mx-auto">
-            Find a restaurant near you and experience the easiest way to order food.
+      <section className="py-20 px-4 bg-gray-900 text-white text-center">
+        <div className="max-w-2xl mx-auto">
+          <h2 className="text-3xl font-extrabold tracking-tight mb-4">Ready to Order?</h2>
+          <p className="text-xs sm:text-sm text-gray-300 font-medium mb-8">
+            Explore participating outlets near you and start ordering in seconds.
           </p>
           <Link
             href="/restaurants"
-            className="inline-flex items-center gap-3 bg-gray-900 text-rYellow font-black text-xl uppercase tracking-wider px-10 py-5 rounded-full border-4 border-gray-900 shadow-[6px_6px_0px_#FFF] hover:bg-white hover:text-gray-900 transition-all transform hover:scale-105"
+            className="inline-flex items-center gap-2 bg-primary hover:bg-primary/95 text-white font-bold text-xs px-6 py-3.5 rounded-2xl shadow-lg shadow-primary/30 transition-all"
           >
-            Explore Restaurants <ArrowRight size={24} />
+            Explore Outlets <ArrowRight size={16} />
           </Link>
-        </motion.div>
+        </div>
       </section>
 
       <Footer />

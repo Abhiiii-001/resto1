@@ -3,160 +3,171 @@ import React, { useState } from "react";
 import { motion } from "motion/react";
 import Navbar from "../_components/landing/Navbar";
 import Footer from "../_components/landing/Footer";
-import { Mail, Phone, MapPin, Send, CheckCircle2 } from "lucide-react";
+import { Mail, Phone, MapPin, Send, CheckCircle2, MessageSquare } from "lucide-react";
 import { useSubmitContactMutation } from "@/redux/api/contact";
+import { toast } from "react-toastify";
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
-
+  const [isLoading, setIsLoading] = useState(false);
   const [submitContact] = useSubmitContactMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.name && formData.email && formData.message) {
+      setIsLoading(true);
       try {
-        await submitContact({ ...formData, type: 'Customer Inquiry' }).unwrap();
-        setSubmitted(true);
-      } catch (error) {
+        const response = await submitContact({ ...formData, type: 'Restaurant Inquiry' }).unwrap();
+        if (response.success) {
+          toast.success("Message sent! We'll be in touch soon.");
+          setSubmitted(true);
+        } else {
+          toast.error(response.message || "Failed to send message.");
+        }
+      } catch (error: any) {
+        toast.error(error?.data?.message || "An error occurred. Please try again later.");
         console.error("Failed to send message", error);
+      } finally {
+        setIsLoading(false);
       }
+    } else {
+      toast.error("Please fill in all fields.");
     }
   };
 
   return (
-    <div className="min-h-screen bg-rGray font-sans selection:bg-gray-900 selection:text-white">
+    <div className="min-h-screen bg-background font-sans selection:bg-primary/20 selection:text-primary">
       <Navbar />
 
       {/* Hero */}
-      <section className="bg-rRed text-white pt-36 pb-24 px-4 text-center overflow-hidden border-b-4 border-gray-900">
-        <div className="max-w-4xl mx-auto relative z-10">
+      <section className="pt-32 pb-16 px-4 bg-gradient-to-b from-orange-50/70 via-white to-background border-b border-gray-100">
+        <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white text-gray-900 border-2 border-gray-900 shadow-[4px_4px_0px_#111] mb-8 font-black uppercase text-sm"
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-extrabold uppercase tracking-wider mb-6"
           >
-            Contact Restroo
+            <MessageSquare size={14} />
+            Contact Restroo Direct
           </motion.div>
-          
+
           <motion.h1
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.9] mb-6"
+            className="text-4xl sm:text-6xl font-extrabold text-gray-900 tracking-tight leading-tight mb-4"
           >
-            Say Hello. <br />
-            <span className="bg-rYellow text-gray-900 px-4 py-1 inline-block rotate-[2deg] border-4 border-gray-900 shadow-[6px_6px_0px_#111] mt-2">
-              We Don&apos;t Bite.
-            </span>
+            Get In Touch With Us
           </motion.h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-xl md:text-2xl font-bold max-w-xl mx-auto text-red-100"
+            className="text-base sm:text-lg text-gray-600 font-medium max-w-xl mx-auto"
           >
-            Have feedback, a partnership idea, or need help? We&apos;d love to hear from you.
+            Have questions, restaurant onboarding requests, or feedback? We&apos;d love to hear from you.
           </motion.p>
         </div>
       </section>
 
       {/* Main Content */}
-      <section className="py-24 px-4 max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-12 gap-12">
-          
+      <section className="py-16 px-4 max-w-6xl mx-auto">
+        <div className="grid lg:grid-cols-12 gap-10">
+
           {/* Info Side */}
-          <div className="md:col-span-5 space-y-8">
-            <div className="bg-rYellow p-8 rounded-[2rem] border-4 border-gray-900 shadow-[6px_6px_0px_#111]">
-              <div className="w-14 h-14 bg-white border-2 border-gray-900 rounded-2xl flex items-center justify-center mb-6 shadow-[2px_2px_0px_#111]">
-                <Mail className="text-gray-900" size={28} />
+          <div className="lg:col-span-5 space-y-6">
+            <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-soft">
+              <div className="w-12 h-12 bg-orange-50 text-primary rounded-2xl flex items-center justify-center mb-4">
+                <Mail size={22} />
               </div>
-              <h3 className="text-2xl font-black uppercase tracking-tight text-gray-900 mb-1">Email Us</h3>
-              <p className="font-bold text-gray-800">support@restro.com</p>
+              <h3 className="text-base font-bold text-gray-900 mb-1">Email Us</h3>
+              <p className="text-xs font-semibold text-gray-600">support@restroo.in</p>
             </div>
 
-            <div className="bg-white p-8 rounded-[2rem] border-4 border-gray-900 shadow-[6px_6px_0px_#111]">
-              <div className="w-14 h-14 bg-rRed border-2 border-gray-900 rounded-2xl flex items-center justify-center mb-6 shadow-[2px_2px_0px_#111]">
-                <Phone className="text-white" size={28} />
+            <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-soft">
+              <div className="w-12 h-12 bg-orange-50 text-primary rounded-2xl flex items-center justify-center mb-4">
+                <Phone size={22} />
               </div>
-              <h3 className="text-2xl font-black uppercase tracking-tight text-gray-900 mb-1">Call Us</h3>
-              <p className="font-bold text-gray-800">+1 (555) 000-RESTRO</p>
+              <h3 className="text-base font-bold text-gray-900 mb-1">Call Support</h3>
+              <p className="text-xs font-semibold text-gray-600">+91 7808968996</p>
             </div>
 
-            <div className="bg-rGreen text-white p-8 rounded-[2rem] border-4 border-gray-900 shadow-[6px_6px_0px_#111]">
-              <div className="w-14 h-14 bg-white border-2 border-gray-900 rounded-2xl flex items-center justify-center mb-6 shadow-[2px_2px_0px_#111]">
-                <MapPin className="text-gray-900" size={28} />
+            <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-soft">
+              <div className="w-12 h-12 bg-orange-50 text-primary rounded-2xl flex items-center justify-center mb-4">
+                <MapPin size={22} />
               </div>
-              <h3 className="text-2xl font-black uppercase tracking-tight mb-1">HQ Location</h3>
-              <p className="font-bold text-gray-100">123 Gourmet St, Foodie City, FC 90210</p>
+              <h3 className="text-base font-bold text-gray-900 mb-1">HQ Address</h3>
+              <p className="text-xs font-semibold text-gray-600">Satguru Enclave, Gurgaon, India</p>
             </div>
           </div>
 
           {/* Form Side */}
-          <div className="md:col-span-7">
-            <div className="bg-white p-10 rounded-[2.5rem] border-4 border-gray-900 shadow-[10px_10px_0px_#111]">
-              <h2 className="text-4xl font-black text-gray-900 uppercase tracking-tighter mb-8">Send a Message</h2>
+          <div className="lg:col-span-7">
+            <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-soft-lg">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Send a Message</h2>
 
               {submitted ? (
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.9 }}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="bg-rGreen text-white p-8 rounded-[2rem] border-4 border-gray-900 text-center"
+                  className="bg-green-50 text-success p-8 rounded-3xl border border-green-200 text-center"
                 >
-                  <CheckCircle2 size={48} className="mx-auto mb-4 text-rYellow" />
-                  <h3 className="text-3xl font-black uppercase tracking-tight mb-2">Message Sent!</h3>
-                  <p className="font-bold text-lg">Thanks for reaching out. We&apos;ll get back to you fast.</p>
-                  <button 
+                  <CheckCircle2 size={40} className="mx-auto mb-3 text-success" />
+                  <h3 className="text-xl font-bold text-gray-900 mb-1">Message Sent Successfully!</h3>
+                  <p className="text-xs font-medium text-gray-600 mb-6">Thank you for reaching out. Our team will respond shortly.</p>
+                  <button
                     onClick={() => { setSubmitted(false); setFormData({ name: "", email: "", message: "" }); }}
-                    className="mt-6 px-6 py-3 bg-white text-gray-900 font-black uppercase rounded-full border-2 border-gray-900 shadow-[3px_3px_0px_#111] hover:bg-rYellow transition-colors"
+                    className="px-6 py-2.5 bg-primary text-white font-bold text-xs rounded-xl shadow-md cursor-pointer"
                   >
-                    Send Another
+                    Send Another Inquiry
                   </button>
                 </motion.div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-black uppercase tracking-wider text-gray-900 mb-2">Your Name</label>
+                    <label className="block text-xs font-bold text-gray-700 mb-1.5">Your Name</label>
                     <input
                       type="text"
                       required
                       placeholder="Alex Chen"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-5 py-4 border-4 border-gray-900 rounded-2xl bg-rGray font-bold focus:outline-none focus:bg-white transition-colors shadow-[4px_4px_0px_#111]"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-xs font-semibold focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-black uppercase tracking-wider text-gray-900 mb-2">Your Email</label>
+                    <label className="block text-xs font-bold text-gray-700 mb-1.5">Email Address</label>
                     <input
                       type="email"
                       required
                       placeholder="alex@example.com"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-5 py-4 border-4 border-gray-900 rounded-2xl bg-rGray font-bold focus:outline-none focus:bg-white transition-colors shadow-[4px_4px_0px_#111]"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-xs font-semibold focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-black uppercase tracking-wider text-gray-900 mb-2">Message</label>
+                    <label className="block text-xs font-bold text-gray-700 mb-1.5">Message</label>
                     <textarea
-                      rows={5}
+                      rows={4}
                       required
                       placeholder="Tell us what's on your mind..."
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      className="w-full px-5 py-4 border-4 border-gray-900 rounded-2xl bg-rGray font-bold focus:outline-none focus:bg-white transition-colors shadow-[4px_4px_0px_#111]"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-xs font-semibold focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full flex items-center justify-center gap-3 bg-gray-900 text-rYellow font-black text-xl uppercase tracking-wider py-5 rounded-2xl border-4 border-gray-900 shadow-[6px_6px_0px_#C8161D] hover:bg-rRed hover:text-white transition-all transform hover:scale-[1.01]"
+                    disabled={isLoading}
+                    className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/95 text-white font-bold text-xs py-3.5 rounded-2xl shadow-md shadow-primary/20 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Submit Message <Send size={22} />
+                    {isLoading ? "Sending..." : "Submit Message"} {!isLoading && <Send size={15} />}
                   </button>
                 </form>
               )}

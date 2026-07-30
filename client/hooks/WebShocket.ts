@@ -4,6 +4,9 @@ import { Order } from '@/types/order';
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { io, Socket } from 'socket.io-client';
+import { dashboardApi } from '@/redux/api/dashboard';
+import { orderApi } from '@/redux/api/order';
+import { toast } from 'react-toastify';
 
 interface RootState {
   order: {
@@ -37,8 +40,19 @@ const useSocket = (restaurantId: string | null, url: string) => {
     });
 
     socketRef.current.on('newOrder', (orderData: any) => {
+      toast.success("New Order",)
       console.log('New order received via socket:', orderData);
       dispatch(addOrder(orderData));
+    });
+
+    socketRef.current.on('orderUpdated', (data: any) => {
+      // Could also update the specific order status in redux here if needed
+      dispatch(dashboardApi.util.invalidateTags(['Dashboard']));
+      dispatch(orderApi.util.invalidateTags(['getOrders']));
+    });
+
+    socketRef.current.on('statsUpdated', () => {
+      dispatch(dashboardApi.util.invalidateTags(['Dashboard']));
     });
 
     socketRef.current.on('disconnect', () => {

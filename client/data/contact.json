@@ -1,12 +1,12 @@
 {
-  "email": "hello@restro.com",
-  "phone": "+91 88888 77777",
-  "address": "42 Heritage Plaza, MG Road, Bangalore, India",
+  "email": "support@restroo.in",
+  "phone": "+91 7808968996",
+  "address": "Satguru Enclave, Gurgaon, India",
   "hours": "Mon - Sat: 9:00 AM - 10:00 PM",
   "socials": {
-    "twitter": "https://twitter.com/restro",
-    "facebook": "https://facebook.com/restro",
-    "instagram": "https://instagram.com/restro",
-    "linkedin": "https://linkedin.com/company/restro"
+    "twitter": "https://twitter.com/restroo",
+    "facebook": "https://facebook.com/restroo",
+    "instagram": "https://instagram.com/restroo",
+    "linkedin": "https://linkedin.com/company/restroo"
   }
 }

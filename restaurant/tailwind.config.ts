@@ -9,45 +9,29 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "var(#fdfdfd)",
-        foreground: "var(#fdfdfd)",
-        richWhite: {
-          100: "#fefefe",
-          200: "#fdfdfd",
-          300: "#fbfbfb",
-          400: "#fafafa",
-          500: "#f9f9f9",
-          600: "#c7c7c7",
-          700: "#959595",
-          800: "#646464",
-          900: "#323232",
+        background: "#f8f9fa",
+        foreground: "#1c1c1c",
+        primary: {
+          DEFAULT: "#fc8019",
+          hover: "#e57317"
         },
-        richYellow: {
-          100: "#fff4d9",
-          200: "#ffeab3",
-          300: "#ffdf8c",
-          400: "#ffd566",
-          500: "#ffca40",
-          600: "#cca233",
-          700: "#997926",
-          800: "#66511a",
-          900: "#33280d",
+        success: {
+          DEFAULT: "#60b246",
+          hover: "#539c3d"
         },
-        richRed: {
-          100: "#f4d0d2",
-          200: "#e9a2a5",
-          300: "#de7377",
-          400: "#d3454a",
-          500: "#c8161d",
-          600: "#a01217",
-          700: "#780d11",
-          800: "#50090c",
-          900: "#280406",
+        danger: {
+          DEFAULT: "#e23744"
         },
-        rGray: "#F8F8F7",
-        rRed: "#C8161D",
+        // Legacy mapping to prevent immediate breaking in untouched files
+        rGray: "#f8f9fa",
+        rRed: "#fc8019", 
         rYellow: "#FFCA40",
-        rGreen: "#2B7B3B"
+        rGreen: "#60b246"
+      },
+      boxShadow: {
+        'soft': '0 2px 8px rgba(0, 0, 0, 0.04)',
+        'soft-md': '0 4px 16px rgba(0, 0, 0, 0.06)',
+        'soft-lg': '0 8px 24px rgba(0, 0, 0, 0.08)',
       },
       keyframes: {
         marquee: {

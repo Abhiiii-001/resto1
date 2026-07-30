@@ -78,6 +78,9 @@ export const GetDashboardData = async (req: Request, res: Response): Promise<any
 
         const statusCounts = await prisma.order.groupBy({
             by: ['status'],
+            where: {
+                restaurantId: restaurantId
+            },
             _count: {
                 _all: true,
             },

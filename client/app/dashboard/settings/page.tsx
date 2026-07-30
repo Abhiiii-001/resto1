@@ -64,9 +64,9 @@ export default function EmployeeSettings() {
       setPersonalDetails(user);
       setProfileImage(
         user?.thumbnail ??
-          `https://ui-avatars.com/api/?name=${encodeURIComponent(
-            user.name || 'User',
-          )}&background=random`,
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(
+          user.name || 'User',
+        )}&background=random`,
       );
     }
   }, [user]);
@@ -125,6 +125,7 @@ export default function EmployeeSettings() {
         response = await updateRestaurantApi({
           restaurantId: user?.id,
           ...personalDetails,
+          thumbnail: profileImage,
         }).unwrap();
       } else if (role === USER_ROLE_TYPE.EMPLOYEE) {
         response = await updateEmployeeApi({

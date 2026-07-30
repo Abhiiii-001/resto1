@@ -3,7 +3,7 @@ import Image from "next/image";
 import React, { Dispatch, SetStateAction } from "react";
 import { motion } from "motion/react";
 import { ProductInterface } from "@/redux/api/data";
-import { Plus } from "lucide-react";
+import { Plus, AlertCircle } from "lucide-react";
 
 type Props = {
   data: ProductInterface;
@@ -11,42 +11,74 @@ type Props = {
 };
 
 function ProductCard({ data, setClickedProduct }: Props) {
-  // Get the lowest price from variants
   const lowestPrice = data?.productVariants?.length
     ? Math.min(...data.productVariants.map((v) => v.price))
     : null;
 
+  const allVariantsOutOfStock = data?.productVariants?.length > 0 &&
+    data.productVariants.every((v) => v.isOutOfStock);
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      whileHover={{ y: -6, rotate: 1 }}
-      className="bg-white rounded-[2rem] shadow-[6px_6px_0px_#111] hover:shadow-[10px_10px_0px_#111] border-4 border-gray-900 overflow-hidden cursor-pointer group transition-all"
+      whileHover={{ y: -4 }}
+      className="bg-white rounded-3xl shadow-soft hover:shadow-soft-md border border-gray-100 overflow-hidden cursor-pointer group transition-all flex flex-col font-sans"
       onClick={() => setClickedProduct(data)}
     >
-      {/* Product Image */}
-      <div className="relative w-full aspect-square bg-rYellow overflow-hidden border-b-4 border-gray-900">
+      {/* Image */}
+      <div className="relative w-full aspect-square bg-gray-50 overflow-hidden">
         <Image
           src={data?.thumbnail || "/burger.webp"}
           alt={data.name}
           fill
-          className="object-cover group-hover:scale-110 transition-transform duration-500"
+          className={`object-cover group-hover:scale-105 transition-transform duration-500 ${
+            allVariantsOutOfStock ? "grayscale opacity-60" : ""
+          }`}
         />
+        {allVariantsOutOfStock && (
+          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+            <span className="inline-flex items-center gap-1 text-xs font-bold text-white bg-red-600/90 px-3 py-1 rounded-full shadow-sm">
+              <AlertCircle size={12} />
+              Out of Stock
+            </span>
+          </div>
+        )}
       </div>
 
-      {/* Product Info */}
-      <div className="p-4 flex items-center justify-between gap-2 bg-white">
-        <div className="flex-1 min-w-0">
-          <p className="text-base font-black text-gray-900 truncate uppercase tracking-tighter">{data.name}</p>
+      {/* Info */}
+      <div className="p-4 flex flex-col flex-1 bg-white">
+        <div className="flex-1">
+          <h4 className="text-sm font-bold text-gray-900 line-clamp-2 leading-snug mb-1">
+            {data.name}
+          </h4>
           {lowestPrice !== null && (
-            <p className="text-xs font-black uppercase tracking-wider bg-rRed text-white px-2.5 py-0.5 rounded-full border-2 border-gray-900 inline-block mt-1 shadow-[2px_2px_0px_#111]">
-              From ₹{lowestPrice}
+            <p className="text-xs font-bold text-primary">
+              ₹{lowestPrice}
+              {data.productVariants.length > 1 && (
+                <span className="text-[10px] font-medium text-gray-400 ml-1">onwards</span>
+              )}
             </p>
           )}
         </div>
-        <div className="w-10 h-10 rounded-2xl bg-rYellow border-2 border-gray-900 flex items-center justify-center flex-shrink-0 group-hover:bg-rRed group-hover:text-white transition-colors shadow-[2px_2px_0px_#111]">
-          <Plus size={20} className="text-gray-900 group-hover:text-white" />
+        
+        {/* ADD Button */}
+        <div className="mt-3 flex justify-between items-center pt-2 border-t border-gray-100">
+          <span className="text-[11px] text-gray-400 font-medium">
+            {data.productVariants.length} option{data.productVariants.length !== 1 ? "s" : ""}
+          </span>
+          <button 
+            disabled={allVariantsOutOfStock}
+            className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center cursor-pointer ${
+              allVariantsOutOfStock
+                ? "bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed"
+                : "bg-orange-50 text-primary border border-orange-200 group-hover:bg-primary group-hover:text-white"
+            }`}
+          >
+            ADD
+            <Plus size={14} className="ml-1" />
+          </button>
         </div>
       </div>
     </motion.div>

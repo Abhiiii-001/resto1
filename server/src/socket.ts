@@ -23,3 +23,13 @@ export const emitNewOrder = (io: Server, restaurantId: string, orderData: any) =
     console.log(`Emitting newOrder to room: ${restaurantId}`);
     io.to(restaurantId).emit('newOrder', orderData);
 };
+
+export const emitOrderUpdated = (io: Server, restaurantId: string, orderId: string, status: string) => {
+    console.log(`Emitting orderUpdated to room: ${restaurantId}`);
+    io.to(restaurantId).emit('orderUpdated', { orderId, status });
+};
+
+export const emitStatsUpdated = (io: Server, restaurantId: string) => {
+    console.log(`Emitting statsUpdated to room: ${restaurantId}`);
+    io.to(restaurantId).emit('statsUpdated');
+};

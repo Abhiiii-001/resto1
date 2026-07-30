@@ -97,25 +97,24 @@ function OrderCard({ data }: Props) {
 
         <div className="flex items-center gap-2">
           <span
-            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider ring-1 ring-inset ${
-              data.status == 'Ready'
+            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider ring-1 ring-inset ${data.status == 'Ready'
                 ? 'bg-green-50 text-green-700 ring-green-600/20'
                 : data.status == 'Pending'
                   ? 'bg-amber-50 text-amber-700 ring-amber-600/20'
                   : data.status == 'Cancelled'
                     ? 'bg-red-50 text-red-700 ring-red-600/20'
                     : 'bg-primary/10 text-primary ring-primary/20'
-            }`}
+              }`}
           >
             {data.status}
           </span>
-          <Button
+          {/* <Button
             variant="ghost"
             size="icon"
             className="h-8 w-8 text-muted-foreground hover:text-foreground"
           >
             <EllipsisVertical size={16} />
-          </Button>
+          </Button> */}
         </div>
       </div>
 
@@ -127,11 +126,10 @@ function OrderCard({ data }: Props) {
           </h3>
           <div className="mt-2 flex flex-wrap gap-2">
             <span
-              className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium ${
-                data.isPack
+              className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium ${data.isPack
                   ? 'bg-blue-50 text-blue-700'
                   : 'bg-purple-50 text-purple-700'
-              }`}
+                }`}
             >
               {data.isPack ? (
                 <ShoppingBag size={12} />

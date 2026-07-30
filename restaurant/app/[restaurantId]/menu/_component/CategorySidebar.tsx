@@ -27,7 +27,7 @@ function CategorySidebar({ data, selectedCategory, setSelectedCategory }: Props)
         mousewheel={{ releaseOnEdges: false }}
         grabCursor={true}
         scrollbar={{ draggable: !!data }}
-        spaceBetween={8}
+        spaceBetween={4}
         onSlideChange={(swiper) => {
           if (data && data[swiper.realIndex]) setSelectedCategory(data[swiper.realIndex]);
         }}
@@ -42,8 +42,8 @@ function CategorySidebar({ data, selectedCategory, setSelectedCategory }: Props)
                 style={{ height: "auto" }}
                 className={`rounded-xl transition-all duration-200 ${
                   item.id === selectedCategory?.id
-                    ? "bg-rRed"
-                    : "bg-rGray hover:bg-gray-200"
+                    ? "bg-primary/5"
+                    : "bg-transparent hover:bg-gray-50"
                 }`}
                 onClick={() => setSelectedCategory(item)}
               >

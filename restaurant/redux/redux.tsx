@@ -27,6 +27,7 @@ import {
 import { PersistGate } from "redux-persist/integration/react";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 import cartReducer from "./states/cartSlice";
+import modalReducer from "./states/modalSlice";
 
 /* REDUX PERSISTENCE */
 const createNoopStorage = () => {
@@ -56,6 +57,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
   global: globalReducer,
   cart: cartReducer,
+  modal: modalReducer,
   [restaurantApi.reducerPath]: restaurantApi.reducer,
   [dataApi.reducerPath]: dataApi.reducer,
   [orderApi.reducerPath]: orderApi.reducer,

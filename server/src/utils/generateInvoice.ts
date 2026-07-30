@@ -7,6 +7,7 @@ import QRCode from 'qrcode';
  */
 export const generateInvoice = async (data: any, orderCode: string, restaurantDetails: any): Promise<Buffer> => {
     const { name, note, orders, amount, isPack, paymentOption } = data;
+    console.log('------order---------', orders)
     const dateTime = new Date().toLocaleString('en-IN', {
         timeZone: 'Asia/Kolkata',
         dateStyle: 'medium',
@@ -87,43 +88,47 @@ export const generateInvoice = async (data: any, orderCode: string, restaurantDe
         // --- Items Table ---
         const tableTop = 270;
         doc.font('Helvetica-Bold');
-        generateTableRow(doc, tableTop, 'S.No', 'Item Description', 'Variant', 'Price', 'Qty', 'Total');
+        generateTableRow(doc, tableTop, 'S.No', 'Item Description', 'Price', 'Qty', 'Total');
         generateHr(doc, tableTop + 20);
         doc.font('Helvetica');
 
         let i;
-        let invoiceTableTop = tableTop + 30;
+        let currentY = tableTop + 30;
 
         for (i = 0; i < orders.length; i++) {
             const item = orders[i];
-            const position = invoiceTableTop + i * 30;
+            const itemDesc = item.variant ? `${item.name} (${item.variant})` : item.name;
+
+            // Calculate dynamic row height so multi-line item descriptions fit without clipping
+            doc.fontSize(9.5);
+            const descHeight = doc.heightOfString(itemDesc, { width: 245 });
+            const rowHeight = Math.max(22, descHeight + 6);
 
             // Zebra striping for rows
             if (i % 2 === 1) {
-                doc.rect(50, position - 5, 500, 25).fill('#f9f9f9');
+                doc.rect(50, currentY - 4, 500, rowHeight).fill('#f9f9f9');
                 doc.fillColor('#444444');
             }
 
             generateTableRow(
                 doc,
-                position,
+                currentY,
                 (i + 1).toString(),
-                item.name,
-                item.variant,
+                itemDesc,
                 `₹${item.unitPrice}`,
                 item.quantity.toString(),
                 `₹${(item.unitPrice * item.quantity).toFixed(2)}`
             );
 
-            generateHr(doc, position + 20);
+            generateHr(doc, currentY + rowHeight - 2);
+            currentY += rowHeight + 4;
         }
 
-        const subtotalPosition = invoiceTableTop + (i + 1) * 30;
+        const subtotalPosition = currentY + 10;
         doc.font('Helvetica-Bold');
         generateTableRow(
             doc,
             subtotalPosition,
-            '',
             '',
             '',
             '',
@@ -143,22 +148,21 @@ export const generateInvoice = async (data: any, orderCode: string, restaurantDe
         doc.end();
     });
 
-function generateTableRow(doc: any, y: number, sno: string, desc: string, variant: string, price: string, qty: string, total: string) {
-    doc
-        .fontSize(10)
-        .text(sno, 50, y)
-        .text(desc, 80, y)
-        .text(variant, 250, y)
-        .text(price, 330, y, { width: 60, align: 'right' })
-        .text(qty, 400, y, { width: 40, align: 'right' })
-        .text(total, 480, y, { width: 70, align: 'right' });
-}
+    function generateTableRow(doc: any, y: number, sno: string, desc: string, price: string, qty: string, total: string) {
+        doc
+            .fontSize(9.5)
+            .text(sno, 50, y, { width: 30 })
+            .text(desc, 80, y, { width: 245 })
+            .text(price, 330, y, { width: 60, align: 'right' })
+            .text(qty, 400, y, { width: 40, align: 'right' })
+            .text(total, 480, y, { width: 70, align: 'right' });
+    }
 
-function generateHr(doc: any, y: number) {
-    doc.strokeColor('#eeeeee').lineWidth(1).moveTo(50, y).lineTo(550, y).stroke();
-}
+    function generateHr(doc: any, y: number) {
+        doc.strokeColor('#eeeeee').lineWidth(1).moveTo(50, y).lineTo(550, y).stroke();
+    }
 
-async function generateQRCode(orderCode: string): Promise<string> {
-    return await QRCode.toDataURL(orderCode);
-}
+    async function generateQRCode(orderCode: string): Promise<string> {
+        return await QRCode.toDataURL(orderCode);
+    }
 }

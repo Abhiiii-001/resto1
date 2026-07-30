@@ -14,7 +14,6 @@ function LiveOrders() {
   const { restaurantId, token } = useAppSelector((state) => state.auth);
 
   const [query, setQuery] = useState('');
-  const [filteredOrders, setFilteredOrders] = useState(orders);
 
   const { data: restaurantDetails } = useGetRestaurantDetailsQuery(
     restaurantId,
@@ -26,20 +25,25 @@ function LiveOrders() {
   const isShopOpen = restaurantDetails?.isOpen ?? false;
 
   useGetAllOrdersQuery(restaurantId && token ? restaurantId : skipToken);
-
-  useEffect(() => {
-    setFilteredOrders(orders);
-  }, [orders]);
-
-  useEffect(() => {
-    const data = orders.filter(
-      (ord: any) =>
-        !query ||
-        query === '' ||
-        ord.orderCode.toLowerCase().includes(query.toLowerCase()),
+  
+  const filteredOrders = React.useMemo(() => {
+    let result = [...orders];
+    
+    // 1. Sort by newest first
+    result.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
-    setFilteredOrders(data);
-  }, [query, orders]);
+    
+    // 2. Filter by search query
+    if (query && query.trim() !== '') {
+      result = result.filter((ord: any) =>
+        ord.orderCode.toLowerCase().includes(query.toLowerCase())
+      );
+    }
+    
+    return result;
+  }, [orders, query]);
 
   return (
     <div className="flex h-full w-full flex-col px-4 py-6 md:px-10 bg-gray-50/50 min-h-screen">

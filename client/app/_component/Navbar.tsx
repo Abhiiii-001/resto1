@@ -1,6 +1,5 @@
 'use client';
 import {
-  BellIcon,
   ChefHat,
   LayoutDashboard,
   LogOut,
@@ -31,7 +30,7 @@ function Navbar() {
   const pathname = usePathname();
 
   const { isSidebarCollapsed } = useAppSelector((state) => state.global);
-  const { user, token, isAuthenticated, restaurantId, canManage } =
+  const { user, token, isAuthenticated, restaurantId, canManage, role } =
     useAppSelector((state) => state.auth);
 
   const { data: restaurantDetails, isLoading: isLoadingRestaurantDetails } =
@@ -215,14 +214,14 @@ function Navbar() {
             )}
 
             {/* Bell */}
-            <Button
+            {/* <Button
               variant="ghost"
               size="icon"
               className="relative h-9 w-9 text-muted-foreground hover:text-foreground"
             >
               <BellIcon className="h-5 w-5" />
               <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-primary ring-2 ring-white" />
-            </Button>
+            </Button> */}
 
             {/* Divider */}
             <div className="h-6 w-px bg-border" />
@@ -267,7 +266,7 @@ function Navbar() {
               {isDropdownOpen && (
                 <div className="absolute right-0 top-[calc(100%+8px)] w-64 rounded-xl border border-border bg-white shadow-lg">
                   {/* Profile info */}
-                  <div className="flex items-center gap-3 border-b border-border px-4 py-4">
+                  <div className="flex items-center gap-3 border-b border-border px-4 py-2">
                     <div
                       className={cn(
                         'relative h-11 w-11 shrink-0 overflow-hidden rounded-full p-0.5',
@@ -291,14 +290,15 @@ function Navbar() {
                       <p className="truncate text-xs text-muted-foreground">
                         {user?.email || ''}
                       </p>
-                      <span
+                      {role === USER_ROLE_TYPE.RESTAURANT && <span
                         className={cn(
                           'mt-1 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider',
                           planStyles.bg,
                         )}
                       >
                         {planStyles.name}
-                      </span>
+                      </span>}
+
                     </div>
                   </div>
 

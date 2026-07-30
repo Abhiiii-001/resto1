@@ -7,35 +7,29 @@ export default function PartnerSection() {
   const clientUrl = process.env.NEXT_PUBLIC_CLIENT_URL || "http://localhost:3000";
 
   return (
-    <section className="py-24 bg-rYellow border-b-4 border-gray-900 overflow-hidden relative selection:bg-gray-900 selection:text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="bg-gray-900 rounded-[2.5rem] border-4 border-gray-900 shadow-[12px_12px_0px_#111] p-8 md:p-16 relative overflow-hidden">
-          {/* Background Decoration */}
-          <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none text-9xl">
-            🏬
-          </div>
+    <section className="py-24 bg-white font-sans overflow-hidden border-b border-gray-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-gray-900 rounded-[2.5rem] p-8 md:p-14 shadow-2xl relative overflow-hidden text-white">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* Left Info */}
             <div className="lg:col-span-7 space-y-6">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rRed text-white border-2 border-gray-900 text-xs font-black uppercase tracking-wider shadow-[3px_3px_0px_#fff]"
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/20 text-primary border border-primary/30 text-xs font-bold uppercase tracking-wider"
               >
-                <Store size={16} />
-                For Restaurant Owners & Outlets
+                <Store size={14} />
+                For Restaurant Managers
               </motion.div>
 
               <motion.h2
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter leading-[1.05]"
+                className="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight text-white"
               >
-                Supercharge Your <br />
-                <span className="text-rYellow">Outlet Today.</span>
+                Streamline Your Dining Operations.
               </motion.h2>
 
               <motion.p
@@ -43,44 +37,42 @@ export default function PartnerSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="text-lg text-gray-300 font-bold max-w-xl leading-relaxed"
+                className="text-sm md:text-base text-gray-300 font-medium leading-relaxed max-w-xl"
               >
-                Take full control of your restaurant. Update digital menus on the fly, process counter payments instantly, and receive live kitchen tickets in real-time.
+                Manage digital menus, process table orders instantly, manage variant stocks, and view live order kitchen feeds in real-time.
               </motion.p>
 
-              {/* Feature Pill Tags */}
               <div className="flex flex-wrap gap-3 pt-2">
-                <div className="flex items-center gap-2 bg-gray-800 border-2 border-gray-700 px-4 py-2 rounded-xl text-xs font-black text-white uppercase">
-                  <Zap size={16} className="text-rYellow" /> Instant Sync
+                <div className="flex items-center gap-2 bg-white/10 border border-white/10 px-3.5 py-2 rounded-xl text-xs font-bold">
+                  <Zap size={14} className="text-primary" /> Live Menu Sync
                 </div>
-                <div className="flex items-center gap-2 bg-gray-800 border-2 border-gray-700 px-4 py-2 rounded-xl text-xs font-black text-white uppercase">
-                  <QrCode size={16} className="text-rGreen" /> QR Generator
+                <div className="flex items-center gap-2 bg-white/10 border border-white/10 px-3.5 py-2 rounded-xl text-xs font-bold">
+                  <QrCode size={14} className="text-success" /> Table QR Printing
                 </div>
-                <div className="flex items-center gap-2 bg-gray-800 border-2 border-gray-700 px-4 py-2 rounded-xl text-xs font-black text-white uppercase">
-                  <ShieldCheck size={16} className="text-rRed" /> Secure Orders
+                <div className="flex items-center gap-2 bg-white/10 border border-white/10 px-3.5 py-2 rounded-xl text-xs font-bold">
+                  <ShieldCheck size={14} className="text-blue-400" /> Stock Controls
                 </div>
               </div>
             </div>
 
-            {/* Right Action Box */}
             <div className="lg:col-span-5 flex flex-col items-center justify-center">
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 }}
-                className="bg-white rounded-[2rem] border-4 border-gray-900 p-8 shadow-[8px_8px_0px_#C8161D] text-center w-full max-w-sm flex flex-col items-center gap-6"
+                className="bg-white text-gray-900 rounded-3xl p-8 shadow-lg text-center w-full max-w-sm flex flex-col items-center gap-6"
               >
-                <div className="w-20 h-20 rounded-2xl bg-rYellow border-4 border-gray-900 flex items-center justify-center text-4xl shadow-[4px_4px_0px_#111]">
-                  🚀
+                <div className="w-16 h-16 rounded-2xl bg-orange-50 text-primary flex items-center justify-center text-3xl font-extrabold shadow-sm">
+                  🏬
                 </div>
 
                 <div>
-                  <h3 className="text-2xl font-black text-gray-900 uppercase tracking-tight">
+                  <h3 className="text-xl font-extrabold text-gray-900 tracking-tight">
                     Partner Dashboard
                   </h3>
-                  <p className="text-xs text-gray-700 font-bold mt-1">
-                    Sign in to manage your outlet, menus, and staff.
+                  <p className="text-xs text-gray-500 font-medium mt-1">
+                    Manage menus, tables, and kitchen feeds.
                   </p>
                 </div>
 
@@ -88,13 +80,14 @@ export default function PartnerSection() {
                   href={clientUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-4 bg-rRed hover:bg-red-700 text-white font-black text-base uppercase tracking-wider rounded-2xl border-4 border-gray-900 shadow-[4px_4px_0px_#111] hover:shadow-[2px_2px_0px_#111] hover:translate-x-[2px] hover:translate-y-[2px] transition-all flex items-center justify-center gap-2 group"
+                  className="w-full py-3.5 bg-primary hover:bg-primary/95 text-white font-bold text-xs rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   Partner Dashboard
-                  <ArrowUpRight size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                  <ArrowUpRight size={16} />
                 </a>
               </motion.div>
             </div>
+
           </div>
         </div>
       </div>

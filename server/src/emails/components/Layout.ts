@@ -96,7 +96,7 @@ export function renderLayout({ content, preheader = 'Restroo Platform Notificati
                   <td align="center">
                     <!-- Brand Logo -->
                     <span style="font-size: 26px; font-weight: 800; color: ${emailTokens.colors.white}; letter-spacing: -0.5px; font-family: ${emailTokens.typography.fontFamily};">
-                      RESTRO<span style="color: ${emailTokens.colors.primary};">.</span>
+                      RESTROO<span style="color: ${emailTokens.colors.primary};">.</span>
                     </span>
                     <br>
                     <!-- Brand Subtitle / Badge -->

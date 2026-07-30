@@ -32,6 +32,7 @@ import landingData from '@/data/landing.json';
 import DemoModal from './_component/DemoModal';
 import { useGetPlansQuery } from '@/redux/api/subscription';
 import { useAppSelector } from '@/redux/redux';
+import { USER_ROLE_TYPE } from '@/constants/CommonConstant';
 
 // --- Components ---
 
@@ -415,11 +416,10 @@ const PricingSection = () => {
             return (
               <div
                 key={plan.id}
-                className={`p-8 rounded-3xl bg-white border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col relative ${
-                  isPro
+                className={`p-8 rounded-3xl bg-white border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 flex flex-col relative ${isPro
                     ? 'border-2 border-primary shadow-lg shadow-primary/5'
                     : 'border-border shadow-sm'
-                }`}
+                  }`}
               >
                 {isPro && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full shadow-md">
@@ -429,13 +429,12 @@ const PricingSection = () => {
 
                 <div className="mb-6 flex justify-between items-start">
                   <div
-                    className={`p-3 rounded-2xl ${
-                      plan.type === 1
+                    className={`p-3 rounded-2xl ${plan.type === 1
                         ? 'bg-blue-50 text-blue-600'
                         : plan.type === 2
                           ? 'bg-primary/10 text-primary'
                           : 'bg-amber-50 text-amber-600'
-                    }`}
+                      }`}
                   >
                     {plan.type === 1 && <Zap className="w-8 h-8" />}
                     {plan.type === 2 && <Shield className="w-8 h-8" />}
@@ -626,6 +625,7 @@ const CTA = () => (
 // --- Main Page ---
 
 export default function Home() {
+  const { isAuthenticated, role } = useAppSelector((state) => state.auth);
   const [isDemoModalOpen, setIsDemoModalOpen] = React.useState(false);
 
   return (
@@ -634,7 +634,9 @@ export default function Home() {
       <TrustBar />
       <ProblemSolution />
       <FeatureDeepDive />
-      <PricingSection />
+      {
+        (!isAuthenticated || role === USER_ROLE_TYPE.RESTAURANT) && <PricingSection />
+      }
       <Testimonials />
       <FAQ />
       <CTA />

@@ -74,22 +74,8 @@ export const calculateSummary = async (duration: Duration) => {
 
     
 
-    if(duration === "Day"){
-        await prisma.restaurant.update({
-            where:{
-                id: restaurant.id,
-                isVerified: true
-            },
-            data:{
-                totalEarning:{
-                    increment: totalAmount
-                },
-                totalOrders: {
-                    increment: orders.length
-                }
-            }
-        })
-    }
+    // We no longer increment totalEarning/totalOrders here, 
+    // it is now done in real-time within CreateOrder (server/src/controllers/Order.ts)
   }
 };
 

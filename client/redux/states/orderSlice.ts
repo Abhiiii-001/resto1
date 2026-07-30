@@ -12,7 +12,7 @@ const orderSlice = createSlice({
   reducers: {
     addOrder: (state, action) => {
       const newOrder = action.payload;
-      state.orders.push(newOrder);
+      state.orders.unshift(newOrder); // Add new orders to the top
       state.count += 1;
     },
     addOrdersBulk: (state, action) => {

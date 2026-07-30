@@ -1,9 +1,10 @@
 "use client";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ShoppingCart, ArrowLeft } from "lucide-react";
+import { ShoppingCart, ArrowLeft, MapPin } from "lucide-react";
 import Cart from "./Cart";
-import { useAppSelector } from "@/redux/redux";
+import { useAppSelector, useAppDispatch } from "@/redux/redux";
+import { syncRestaurantCart } from "@/redux/states/cartSlice";
 import { RestaurantDetailsInterface, useGetRestaurantDetailsQuery } from "@/redux/api/restaurant";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
@@ -21,6 +22,13 @@ function Header({ isCartOpen = false, setIsCartOpen, backUrl, showCart = true }:
   const router = useRouter();
   const [internalCartOpen, setInternalCartOpen] = useState(false);
   const [restaurantDetails, setRestaurantDetails] = useState<RestaurantDetailsInterface | undefined>();
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (restaurantId) {
+      dispatch(syncRestaurantCart(restaurantId as string));
+    }
+  }, [restaurantId, dispatch]);
 
   const { data: restaurantData } = useGetRestaurantDetailsQuery(restaurantId as string);
   useEffect(() => {
@@ -31,7 +39,6 @@ function Header({ isCartOpen = false, setIsCartOpen, backUrl, showCart = true }:
 
   const { totalItem } = useAppSelector((state) => state.cart);
 
-  // Determine back navigation dynamically if not passed
   const handleBack = () => {
     if (backUrl) {
       router.push(backUrl);
@@ -59,44 +66,39 @@ function Header({ isCartOpen = false, setIsCartOpen, backUrl, showCart = true }:
     <div className="flex items-center w-full justify-between h-full bg-white font-sans">
       {/* Left: Back + Restaurant Info */}
       <motion.div
-        initial={{ opacity: 0, x: -20 }}
+        initial={{ opacity: 0, x: -10 }}
         animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.3 }}
         className="flex items-center gap-3 min-w-0"
       >
         <button
           onClick={handleBack}
           aria-label="Go back"
-          className="w-10 h-10 rounded-full border-2 border-gray-900 bg-rYellow flex items-center justify-center text-gray-900 hover:bg-rRed hover:text-white transition-all shadow-[2px_2px_0px_#111] flex-shrink-0"
+          className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-gray-200 transition-colors flex-shrink-0 cursor-pointer"
         >
-          <ArrowLeft size={18} />
+          <ArrowLeft size={16} />
         </button>
 
-        {/* Restaurant Logo */}
-        <div className="w-10 h-10 rounded-xl border-2 border-gray-900 bg-rYellow flex items-center justify-center overflow-hidden flex-shrink-0 shadow-[2px_2px_0px_#111]">
-          <Image
-            src={restaurantDetails?.thumbnail || process.env.NEXT_PUBLIC_DEFAULT_LOGO || "/burger.webp"}
-            alt="logo"
-            width={40}
-            height={40}
-            className="object-contain"
-          />
+        {/* Restaurant Avatar */}
+        <div className="w-9 h-9 rounded-2xl bg-gray-100 flex items-center justify-center overflow-hidden flex-shrink-0 border border-gray-200/80">
+          <div className="relative w-full h-full">
+            <Image
+              src={restaurantDetails?.thumbnail || process.env.NEXT_PUBLIC_DEFAULT_LOGO || "/burger.webp"}
+              alt="logo"
+              fill
+              className="object-cover"
+            />
+          </div>
         </div>
 
-        {/* Restaurant Name & Status */}
+        {/* Restaurant Info */}
         <div className="flex flex-col min-w-0">
-          <div className="flex items-center gap-2">
-            <h1 className="text-base sm:text-lg font-black text-gray-900 truncate leading-tight uppercase tracking-tighter">
-              {restaurantDetails?.name || "Restroo Direct"}
-            </h1>
-            {restaurantDetails?.isOpen && (
-              <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-rGreen text-white border border-gray-900 text-[10px] font-black uppercase tracking-wider">
-                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> Open
-              </span>
-            )}
-          </div>
-          <p className="text-xs text-gray-700 font-bold truncate hidden sm:block">
-            {restaurantDetails?.slogan || "Smart Digital Menu & Ordering"}
+          <h1 className="text-sm font-bold text-gray-900 truncate leading-tight tracking-tight">
+            {restaurantDetails?.name || "Restroo Direct"}
+          </h1>
+          <p className="text-[11px] text-gray-400 font-medium truncate flex items-center gap-1">
+            <MapPin size={9} className="text-gray-400" />
+            {restaurantDetails?.address || "Location..."}
           </p>
         </div>
       </motion.div>
@@ -104,19 +106,19 @@ function Header({ isCartOpen = false, setIsCartOpen, backUrl, showCart = true }:
       {/* Right: Cart Button */}
       {showCart && (
         <motion.div
-          initial={{ opacity: 0, x: 20 }}
+          initial={{ opacity: 0, x: 10 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4 }}
+          transition={{ duration: 0.3 }}
           className="relative flex-shrink-0"
         >
           <button
             onClick={handleCartClick}
-            className="relative px-4 sm:px-5 py-2 sm:py-2.5 rounded-full border-2 border-gray-900 bg-rYellow font-black text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2 shadow-[3px_3px_0px_#111] hover:bg-rRed hover:text-white transition-all text-gray-900"
+            className="relative px-4 py-2 rounded-2xl bg-primary text-white font-bold text-xs flex items-center gap-2 hover:bg-primary/95 shadow-sm shadow-primary/20 transition-all cursor-pointer"
           >
-            <ShoppingCart size={18} />
-            <span>Cart</span>
+            <ShoppingCart size={15} />
+            <span className="hidden sm:inline">Cart</span>
             {totalItem > 0 && (
-              <span className="min-w-6 h-6 px-1 flex items-center justify-center text-xs font-black rounded-full bg-rRed text-white border-2 border-gray-900 shadow-[2px_2px_0px_#111]">
+              <span className="min-w-4 h-4 px-1 flex items-center justify-center text-[10px] font-extrabold rounded-full bg-white text-primary ml-0.5 shadow-xs">
                 {totalItem}
               </span>
             )}

@@ -1,103 +1,95 @@
+"use client";
 import React from 'react';
 import { motion } from 'motion/react';
-import { UserMinus, Zap, Sparkles, QrCode } from 'lucide-react';
+import { UserMinus, Zap, Sparkles, QrCode, ShieldCheck } from 'lucide-react';
 
 const reasons = [
   {
-    title: 'No Login Needed',
-    description: 'We respect your time and privacy. Zero tedious forms or accounts.',
-    icon: <UserMinus className="text-gray-900" size={28} />,
-    color: 'bg-rYellow',
+    title: 'Zero Account Friction',
+    description: 'No passwords or registrations. Jump straight to the menu and order.',
+    icon: <UserMinus className="text-primary" size={24} />,
   },
   {
-    title: 'Instant Speed',
-    description: 'Our ultra-streamlined UI lets you order in seconds flat.',
-    icon: <Zap className="text-white" size={28} />,
-    color: 'bg-rRed',
-    textColor: 'text-white'
+    title: 'Lightning Performance',
+    description: 'Minimal load times, optimized image assets, and instant cart updates.',
+    icon: <Zap className="text-primary" size={24} />,
   },
   {
-    title: 'Brutalist UI',
-    description: 'A punchy, dynamic experience designed for 2026.',
-    icon: <Sparkles className="text-white" size={28} />,
-    color: 'bg-gray-900',
-    textColor: 'text-white'
+    title: 'Modern UI & Motion',
+    description: 'Seamless smooth animations designed for touchscreens and desktop.',
+    icon: <Sparkles className="text-primary" size={24} />,
   },
   {
-    title: 'Scan & Dine',
-    description: 'Just scan the table QR. No app downloads required.',
-    icon: <QrCode className="text-white" size={28} />,
-    color: 'bg-rGreen',
-    textColor: 'text-white'
+    title: 'QR Code Native',
+    description: 'Works out-of-the-box with table QR codes across any device browser.',
+    icon: <QrCode className="text-primary" size={24} />,
   },
 ];
 
 export default function WhyChooseSection() {
   return (
-    <section id="why-choose" className="py-32 bg-white border-b-4 border-gray-900">
+    <section id="why-choose" className="py-24 bg-gray-50/50 font-sans border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row items-center gap-16">
-          <div className="lg:w-1/2">
-            <motion.h2 
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="text-5xl md:text-7xl font-black text-gray-900 mb-6 uppercase tracking-tighter leading-none"
-            >
-              The Next-Gen <br/>
-              <span className="text-rRed">Dining Way.</span>
-            </motion.h2>
-            <motion.p 
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="text-xl text-gray-800 font-bold mb-8 max-w-lg leading-relaxed"
-            >
-              Restroo is built for speed. We removed every unnecessary click so you can order and eat without friction.
-            </motion.p>
+        <div className="grid lg:grid-cols-12 gap-12 items-center">
+          
+          <div className="lg:col-span-5">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-extrabold uppercase tracking-wider mb-4">
+              <ShieldCheck size={14} />
+              Built For Speed
+            </div>
+
+            <h2 className="text-3xl sm:text-5xl font-extrabold text-gray-900 tracking-tight leading-tight mb-6">
+              Why Diners Choose <span className="text-primary">Restroo</span>
+            </h2>
+
+            <p className="text-base text-gray-600 font-medium leading-relaxed mb-8">
+              We eliminated non-essential steps from traditional dining so you can focus entirely on enjoying your food.
+            </p>
             
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="p-8 bg-rYellow rounded-[2rem] border-4 border-gray-900 shadow-[8px_8px_0px_#111] relative"
+              className="p-6 bg-white rounded-3xl border border-gray-200/80 shadow-soft"
             >
-              <p className="italic text-gray-900 font-black text-xl">
+              <p className="italic text-gray-800 font-semibold text-sm leading-relaxed">
                 &quot;No app download, no login, just scan and eat. It really is that simple.&quot;
               </p>
-              <div className="mt-6 flex items-center gap-4">
-                <div className="w-12 h-12 bg-gray-900 rounded-full border-2 border-gray-900"></div>
+              <div className="mt-4 flex items-center gap-3">
+                <div className="w-9 h-9 bg-primary/10 text-primary font-bold text-xs rounded-full flex items-center justify-center">
+                  AC
+                </div>
                 <div>
-                  <p className="font-black text-base uppercase text-gray-900">Alex Chen</p>
-                  <p className="text-xs text-gray-900 font-bold uppercase tracking-wider">Digital Nomad</p>
+                  <p className="font-bold text-xs text-gray-900">Alex Chen</p>
+                  <p className="text-[11px] text-gray-500 font-medium">Verified Diner</p>
                 </div>
               </div>
             </motion.div>
           </div>
 
-          <div className="lg:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="lg:col-span-7 grid sm:grid-cols-2 gap-6">
             {reasons.map((reason, index) => (
               <motion.div
                 key={reason.title}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ y: -6, rotate: index % 2 === 0 ? 1 : -1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-                className={`${reason.color} p-8 rounded-[2rem] border-4 border-gray-900 shadow-[6px_6px_0px_#111] transition-all`}
+                transition={{ duration: 0.4, delay: index * 0.08 }}
+                className="bg-white p-6 rounded-3xl border border-gray-100 shadow-soft hover:shadow-soft-md transition-all"
               >
-                <div className="w-14 h-14 bg-white border-2 border-gray-900 rounded-2xl flex items-center justify-center mb-6 shadow-[2px_2px_0px_#111]">
+                <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center mb-4">
                   {reason.icon}
                 </div>
-                <h3 className={`text-2xl font-black ${reason.textColor || 'text-gray-900'} mb-3 uppercase tracking-tight`}>{reason.title}</h3>
-                <p className={`${reason.textColor ? 'text-gray-200' : 'text-gray-800'} text-base font-bold leading-relaxed`}>
+                <h3 className="text-base font-bold text-gray-900 mb-2">
+                  {reason.title}
+                </h3>
+                <p className="text-xs sm:text-sm text-gray-600 font-medium leading-relaxed">
                   {reason.description}
                 </p>
               </motion.div>
             ))}
           </div>
+
         </div>
       </div>
     </section>

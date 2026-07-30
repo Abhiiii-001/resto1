@@ -51,6 +51,6 @@ export const emailTokens = {
     tagline: 'The Online Hero for Restaurant Management',
     website: process.env.CLIENT_URL,
     supportEmail: 'support@restroo.food',
-    address: '123 Restaurant Row, Suite 400, Food Tech District',
+    address: 'Satguru Enclave, Gurgaon, India',
   },
 };

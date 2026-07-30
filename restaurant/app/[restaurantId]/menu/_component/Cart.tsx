@@ -1,7 +1,7 @@
 "use client";
 import React, { Dispatch, SetStateAction, useTransition } from "react";
 import { motion } from "motion/react";
-import { ArrowRight, ChevronLeft, RefreshCcw, X } from "lucide-react";
+import { ArrowRight, ChevronLeft, RefreshCcw, X, ShoppingBag, Utensils } from "lucide-react";
 import { ProductInterface } from "@/redux/api/data";
 import { useParams, useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/redux/redux";
@@ -12,6 +12,7 @@ import {
   SubOrderInterface,
 } from "@/redux/states/cartSlice";
 import Image from "next/image";
+import Portal from "@/app/_components/Portal";
 
 type Props = {
   setIsCartOpen: Dispatch<SetStateAction<boolean>>;
@@ -25,146 +26,153 @@ function Cart({ setIsCartOpen }: Props) {
   const { orders, totalAmount, isPack } = useAppSelector(
     (state) => state.cart
   );
+  
   const dispatch = useAppDispatch();
 
   return (
-    // Fixed overlay — no backdrop-blur so content behind is not blurred
-    <motion.div
-      className="fixed inset-0 z-50 flex"
-      // dim backdrop without blur
-      style={{ background: "rgba(0,0,0,0.35)" }}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) setIsCartOpen(false);
-      }}
-    >
-      {/* Spacer — click here closes cart */}
-      <div className="flex-1" />
-
-      {/* Cart panel */}
+    <Portal>
       <motion.div
-        initial={{ x: "100%" }}
-        animate={{ x: 0 }}
-        exit={{ x: "100%" }}
-        transition={{ type: "tween", duration: 0.35 }}
-        className="bg-white border-l-4 border-gray-900 shadow-2xl w-full max-w-md h-full flex flex-col overflow-hidden font-sans"
-        onClick={(e) => e.stopPropagation()}
+        className="fixed inset-0 z-50 flex bg-black/50 backdrop-blur-xs font-sans"
+        onClick={(e) => {
+          if (e.target === e.currentTarget) setIsCartOpen(false);
+        }}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b-4 border-gray-900 flex-shrink-0 bg-rYellow">
-          <button
-            onClick={() => setIsCartOpen(false)}
-            className="w-10 h-10 rounded-full border-2 border-gray-900 bg-white flex items-center justify-center text-gray-900 hover:bg-rRed hover:text-white transition-all shadow-[2px_2px_0px_#111]"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <h2 className="text-xl font-black uppercase tracking-tighter text-gray-900">My Order</h2>
-          <div className="flex items-center gap-2 text-sm text-gray-900 font-black">
-            <span
-              onClick={() => dispatch(setEatingLocation(!isPack))}
-              className="flex items-center gap-1.5 cursor-pointer bg-white px-3 py-1 rounded-full border-2 border-gray-900 shadow-[2px_2px_0px_#111] uppercase text-xs"
-              title="Switch eating location"
-            >
-              {isPack ? "Take Out" : "Eat In"}
-              <RefreshCcw size={14} />
-            </span>
-          </div>
-        </div>
+        <div className="flex-1" />
 
-        {/* Items */}
-        <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4 bg-rGray">
-          {orders.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center gap-3 py-20 text-center">
-              <span className="text-6xl">🛒</span>
-              <p className="font-black text-2xl uppercase tracking-tighter text-gray-900">Your cart is empty</p>
-              <p className="text-sm text-gray-700 font-bold">Add some food to get started!</p>
-            </div>
-          ) : (
-            orders.map((order) => (
-              <CartItem order={order} key={order.variant.id} />
-            ))
-          )}
-        </div>
-
-        {/* Bill + Checkout */}
-        {orders.length > 0 && (
-          <div className="px-6 py-6 border-t-4 border-gray-900 flex-shrink-0 space-y-5 bg-white">
-            <div className="space-y-2">
-              <div className="flex justify-between text-base font-bold text-gray-700">
-                <span>Subtotal</span>
-                <span>₹{totalAmount}</span>
-              </div>
-              <div className="flex justify-between text-base font-bold text-gray-700">
-                <span>Discount</span>
-                <span className="text-rGreen font-black">– ₹0</span>
-              </div>
-              <div className="flex justify-between text-xl font-black text-gray-900 pt-3 border-t-2 border-gray-900 uppercase tracking-tight">
-                <span>Total</span>
-                <span className="bg-rYellow px-2 border border-gray-900">₹{totalAmount}</span>
-              </div>
+        <motion.div
+          initial={{ x: "100%" }}
+          animate={{ x: 0 }}
+          exit={{ x: "100%" }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          className="bg-white w-full max-w-md h-full flex flex-col overflow-hidden shadow-2xl border-l border-gray-100"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0 bg-white">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setIsCartOpen(false)}
+                className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 hover:bg-gray-200 transition-colors cursor-pointer"
+              >
+                <ChevronLeft size={18} />
+              </button>
+              <h2 className="text-lg font-bold text-gray-900 tracking-tight">Your Order</h2>
             </div>
 
             <button
-              onClick={() =>
-                startTransition(() => {
-                  setIsCartOpen(false);
-                  router.push(`/${restaurantId as string}/menu/payment`);
-                })
-              }
-              className="w-full flex items-center justify-center gap-3 py-4 bg-gray-900 hover:bg-rRed text-rYellow hover:text-white font-black text-lg uppercase tracking-wider rounded-2xl border-4 border-gray-900 shadow-[6px_6px_0px_#C8161D] transition-all transform hover:scale-[1.01]"
+              onClick={() => dispatch(setEatingLocation(!isPack))}
+              className="flex items-center gap-1.5 cursor-pointer bg-orange-50 text-primary border border-orange-200 px-3 py-1.5 rounded-full text-xs font-bold transition-all hover:bg-primary hover:text-white"
+              title="Switch order type"
             >
-              Checkout
-              <ArrowRight size={20} />
+              {isPack ? <ShoppingBag size={13} /> : <Utensils size={13} />}
+              {isPack ? "Takeaway" : "Dine-In"}
+              <RefreshCcw size={12} className="ml-0.5" />
             </button>
           </div>
-        )}
+
+          {/* Items */}
+          <div className="flex-1 overflow-y-auto px-6 py-6 space-y-3 bg-gray-50/50">
+            {orders.length === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center gap-3 py-20 text-center">
+                <span className="text-5xl opacity-40">🛒</span>
+                <p className="font-bold text-lg text-gray-900">Your order is empty</p>
+                <p className="text-xs text-gray-500 font-medium max-w-xs">
+                  Browse the menu and add items to your cart.
+                </p>
+              </div>
+            ) : (
+              orders.map((order) => (
+                <CartItem order={order} key={order.variant.id} />
+              ))
+            )}
+          </div>
+
+          {/* Footer Checkout */}
+          {orders.length > 0 && (
+            <div className="px-6 py-5 border-t border-gray-100 flex-shrink-0 space-y-4 bg-white shadow-soft">
+              <div className="space-y-1.5">
+                <div className="flex justify-between text-xs font-medium text-gray-500">
+                  <span>Subtotal</span>
+                  <span>₹{totalAmount}</span>
+                </div>
+                <div className="flex justify-between text-xs font-medium text-gray-500">
+                  <span>Taxes & Charges</span>
+                  <span className="text-success font-bold">Included</span>
+                </div>
+                <div className="flex justify-between text-base font-bold text-gray-900 pt-2 border-t border-gray-100">
+                  <span>Total Payable</span>
+                  <span className="text-primary font-extrabold text-lg">₹{totalAmount}</span>
+                </div>
+              </div>
+
+              <button
+                onClick={() =>
+                  startTransition(() => {
+                    setIsCartOpen(false);
+                    router.push(`/${restaurantId as string}/menu/payment`);
+                  })
+                }
+                className="w-full flex items-center justify-center gap-2 py-3.5 bg-primary hover:bg-primary/95 text-white font-bold text-sm rounded-2xl shadow-md shadow-primary/25 transition-all cursor-pointer"
+              >
+                Proceed to Checkout
+                <ArrowRight size={16} />
+              </button>
+            </div>
+          )}
+        </motion.div>
       </motion.div>
-    </motion.div>
+    </Portal>
   );
 }
 
 const CartItem = ({ order }: { order: SubOrderInterface }) => {
   const dispatch = useAppDispatch();
+  const { restaurantId } = useParams();
 
   return (
-    <div className="flex gap-4 items-center bg-white rounded-2xl p-4 border-4 border-gray-900 shadow-[4px_4px_0px_#111]">
-      {/* Image */}
-      <div className="w-16 h-16 rounded-xl overflow-hidden bg-rYellow flex-shrink-0 flex items-center justify-center border-2 border-gray-900">
+    <div className="flex gap-3 items-center bg-white rounded-2xl p-3.5 border border-gray-100 shadow-soft">
+      {/* Thumbnail */}
+      <div className="w-14 h-14 rounded-xl overflow-hidden bg-gray-50 flex-shrink-0 relative border border-gray-100">
         <Image
           src={order?.product.thumbnail || "/burger.webp"}
           alt={order?.product.name}
-          width={56}
-          height={56}
-          className="object-contain"
+          fill
+          className="object-cover"
         />
       </div>
 
       {/* Info */}
       <div className="flex-1 min-w-0">
-        <p className="text-base font-black text-gray-900 truncate uppercase tracking-tight">{order?.product.name}</p>
-        <p className="text-xs text-gray-700 font-bold uppercase">{order?.variant.size}</p>
-        <p className="text-sm font-black text-rRed mt-0.5">₹{order?.variant.price}</p>
+        <p className="text-xs font-bold text-gray-900 truncate leading-snug">{order?.product.name}</p>
+        <p className="text-[11px] text-gray-400 font-medium">{order?.variant.size}</p>
+        <p className="text-xs font-bold text-primary mt-0.5">₹{order?.variant.price}</p>
       </div>
 
       {/* Qty controls */}
-      <div className="flex items-center gap-2 flex-shrink-0">
+      <div className="flex items-center gap-1.5 flex-shrink-0">
         <button
           onClick={() => dispatch(removeToCart({ variant: order.variant, quantity: 1 }))}
-          className="w-8 h-8 rounded-xl border-2 border-gray-900 bg-rGray flex items-center justify-center font-black text-base hover:bg-rYellow transition-colors shadow-[2px_2px_0px_#111]"
+          className="w-7 h-7 rounded-lg border border-gray-200 bg-white flex items-center justify-center font-bold text-xs hover:bg-gray-50 transition-colors cursor-pointer text-gray-700"
         >
           −
         </button>
-        <span className="text-base font-black w-4 text-center">{order.quantity}</span>
+
+        <span className="text-xs font-bold w-4 text-center text-gray-900 select-none">
+          {order.quantity}
+        </span>
+
         <button
-          onClick={() => dispatch(addToCart({ variant: order.variant, quantity: 1, product: order.product as ProductInterface }))}
-          className="w-8 h-8 rounded-xl border-2 border-gray-900 bg-rRed text-white flex items-center justify-center font-black text-base hover:bg-red-700 transition-colors shadow-[2px_2px_0px_#111]"
+          onClick={() => dispatch(addToCart({ variant: order.variant, quantity: 1, product: order.product as ProductInterface, restaurantId: restaurantId as string }))}
+          className="w-7 h-7 rounded-lg border border-gray-200 bg-white flex items-center justify-center font-bold text-xs hover:bg-gray-50 transition-colors cursor-pointer text-success"
         >
           +
         </button>
+
         <button
           onClick={() => dispatch(removeToCart({ variant: order.variant, quantity: order.quantity }))}
-          className="w-8 h-8 rounded-xl border-2 border-gray-900 text-gray-900 hover:text-white hover:bg-rRed flex items-center justify-center transition-colors ml-1 shadow-[2px_2px_0px_#111]"
+          className="w-7 h-7 rounded-lg text-gray-400 hover:text-danger hover:bg-red-50 flex items-center justify-center transition-colors ml-1 cursor-pointer"
         >
-          <X size={16} />
+          <X size={14} />
         </button>
       </div>
     </div>

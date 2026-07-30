@@ -23,6 +23,7 @@ import { useGetRestaurantDetailsQuery, useRaiseApprovalRequestMutation } from '@
 import { skipToken } from '@reduxjs/toolkit/query';
 import { RESTAURANT_BASE_URL } from '@/constants/Urls';
 import ShareModal from '@/app/_component/ShareLinkModal';
+import QRCodeTemplate from '@/app/_component/templates/QRCodeTemplate';
 import Loader from '@/components/common/Loader';
 import { toast } from 'react-toastify';
 import { Button } from '@/components/ui/button';
@@ -40,11 +41,12 @@ export default function QRDisplayPage() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [isOpenShareModal, setIsOpenShareModal] = useState(false);
   const qrRef = useRef<HTMLDivElement>(null);
+  const downloadQrRef = useRef<HTMLDivElement>(null);
 
   const handleDownload = async () => {
-    if (!qrRef.current) return;
+    if (!downloadQrRef.current) return;
     setIsDownloading(true);
-    const node = qrRef.current;
+    const node = downloadQrRef.current;
     try {
       const dataUrl = await toPng(node, {
         cacheBust: true,
@@ -357,6 +359,12 @@ export default function QRDisplayPage() {
       {isOpenShareModal && (
         <ShareModal url={getQRCodeDataUrl()} setOpen={setIsOpenShareModal} />
       )}
+
+      <QRCodeTemplate
+        downloadQrRef={downloadQrRef}
+        restaurantData={restaurantData}
+        qrCodeDataUrl={getQRCodeDataUrl() || 'https://example.com'}
+      />
     </div>
   );
 }
