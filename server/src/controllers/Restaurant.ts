@@ -9,7 +9,7 @@ export const GetAllRestaurants = async (req: Request, res: Response): Promise<an
         const restaurant = await prisma.restaurant.findMany({
             where: {
                 isActive: true,
-                isPublish: true
+                isPublished: true
             },
             select: {
                 id: true,
