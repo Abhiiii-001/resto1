@@ -89,7 +89,7 @@ export const GetCustomerRestaurantDetails = async (req: Request, res: Response):
                 }
             }
         });
-        if (!restaurant || !restaurant.isActive || !restaurant.isPublished) {
+        if (!restaurant || !restaurant.isActive || !restaurant.isPublished || restaurant.subscription?.status !== SUBSCRIPTION_STATUS.ACTIVE) {
             return res.status(404).json({
                 success: false,
                 message: "Shop not found!",
