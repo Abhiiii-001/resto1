@@ -189,7 +189,6 @@ async function main() {
           create: p.variants.map(v => ({
             size: v.size,
             price: v.price,
-            salePrice: v.salePrice || null,
             sold: Math.floor(Math.random() * 100),
           }))
         }

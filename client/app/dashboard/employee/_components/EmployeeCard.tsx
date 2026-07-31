@@ -37,7 +37,7 @@ function EmployeeCard({ emp }: Props) {
       }
     } catch (error: any) {
       console.error('Error updating verification status:', error);
-      toast.error(error.message);
+      toast.error(error?.data?.message || error?.message || 'Something went wrong!');
     }
     toast.dismiss(toastId);
     setConfirmationDialog(false);
@@ -58,7 +58,7 @@ function EmployeeCard({ emp }: Props) {
       }
     } catch (error: any) {
       console.error('Error updating canModify status:', error);
-      toast.error(error.message);
+      toast.error(error?.data?.message || error?.message || 'Something went wrong!');
     }
     toast.dismiss(toastId);
   };
@@ -74,7 +74,7 @@ function EmployeeCard({ emp }: Props) {
       }
     } catch (error: any) {
       console.error('Error deleting user:', error);
-      toast.error(error.message);
+      toast.error(error?.data?.message || error?.message || 'Something went wrong!');
     }
     toast.dismiss(toastId);
   };
@@ -143,15 +143,13 @@ function EmployeeCard({ emp }: Props) {
           type="button"
           disabled={updateEmployeeLoader}
           onClick={toggleCanModify}
-          className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
-            emp.canModify ? 'bg-primary' : 'bg-gray-300'
-          }`}
+          className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${emp.canModify ? 'bg-primary' : 'bg-gray-300'
+            }`}
         >
           <span className="sr-only">Toggle Modification Access</span>
           <span
-            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-              emp.canModify ? 'translate-x-2.5' : '-translate-x-2.5'
-            }`}
+            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${emp.canModify ? 'translate-x-2.5' : '-translate-x-2.5'
+              }`}
           />
         </button>
         <span className="ml-3 text-xs font-medium text-muted-foreground">

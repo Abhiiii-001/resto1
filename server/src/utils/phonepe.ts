@@ -34,7 +34,7 @@ export const initiatePhonePePayment = async (
 
   try {
     const response = await client.pay(request);
-    
+
     return {
       success: response.state === 'COMPLETED' || response.state === 'REDIRECT' || response.state === 'PENDING',
       state: response.state,
@@ -51,7 +51,7 @@ export const initiatePhonePePayment = async (
     console.error("PhonePe SDK Pay Error:", error);
     return {
       success: false,
-      message: error.message || "Internal SDK Error",
+      message: error.message || error?.data?.message || "Internal SDK Error",
       error: error
     };
   }
@@ -63,7 +63,7 @@ export const initiatePhonePePayment = async (
 export const verifyPhonePePayment = async (transactionId: string) => {
   const client = getPhonePeClient();
   const response = await client.getOrderStatus(transactionId);
-  
+
   return {
     success: response.state === 'COMPLETED',
     code: response.state === 'COMPLETED' ? "PAYMENT_SUCCESS" : response.state,

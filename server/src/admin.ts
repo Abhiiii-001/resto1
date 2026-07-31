@@ -38,18 +38,21 @@ function buildResourceOptions(modelName: string) {
     navigation: getNavigationGroup(modelName),
   };
 
-  // Hide sensitive fields
-  if (modelName === "Restaurant" || modelName === "User") {
-    options.properties = {
-      password: { isVisible: false },
-      verificationToken: { isVisible: { list: false, show: false, edit: false, filter: false } },
-    };
-  }
+  options.actions = {};
 
   if (!hasWriteAccess) {
     options.actions = {
       new: { isAccessible: false },
       edit: { isAccessible: false },
+      delete: { isAccessible: false },
+      bulkDelete: { isAccessible: false },
+    };
+  }
+
+  // Explicitly restrict deletion for Restaurants, even with write access
+  if (modelName === "Restaurant" && hasWriteAccess) {
+    options.actions = {
+      ...options.actions,
       delete: { isAccessible: false },
       bulkDelete: { isAccessible: false },
     };

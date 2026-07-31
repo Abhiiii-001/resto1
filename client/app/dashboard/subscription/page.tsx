@@ -29,6 +29,7 @@ import { toast } from 'react-toastify';
 import { cn } from '@/lib/utils';
 import Loader from '@/components/common/Loader';
 import AlertModal from '@/components/common/AlertModal';
+import { PLAN_TYPE } from '@/constants/SubscriptionConstant';
 
 // --- Plan Overview Component ---
 const PlanOverview = () => {
@@ -56,7 +57,7 @@ const PlanOverview = () => {
       const previewRes = await previewChange({ planId }).unwrap();
       if (previewRes.success) {
         const { willDeactivate } = previewRes.data;
-        
+
         if (
           willDeactivate.products > 0 ||
           willDeactivate.categories > 0 ||
@@ -174,7 +175,7 @@ const PlanOverview = () => {
       {/* Upgrade Options */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {plans.map((plan: any) => {
-          const isPro = plan.type === 2;
+          const isPro = plan.type === PLAN_TYPE.PRO;
           const isCurrent = currentSub?.planId === plan.id;
 
           const isAnyLoading = isCreatingOrder || isPreviewing || checkingPlanId !== null;
@@ -203,18 +204,18 @@ const PlanOverview = () => {
                   <div
                     className={cn(
                       'p-3 rounded-2xl',
-                      plan.type === 1
+                      plan.type === PLAN_TYPE.DEMO
                         ? 'bg-blue-50'
-                        : plan.type === 2
+                        : plan.type === PLAN_TYPE.PRO
                           ? 'bg-primary/10'
                           : 'bg-amber-50',
                     )}
                   >
-                    {plan.type === 1 && <Zap className="w-8 h-8 text-blue-600" />}
-                    {plan.type === 2 && (
+                    {plan.type === PLAN_TYPE.DEMO && <Zap className="w-8 h-8 text-blue-600" />}
+                    {plan.type === PLAN_TYPE.PRO && (
                       <Shield className="w-8 h-8 text-primary" />
                     )}
-                    {plan.type === 3 && (
+                    {plan.type === PLAN_TYPE.PREMIUM && (
                       <Crown className="w-8 h-8 text-amber-600" />
                     )}
                   </div>
@@ -224,9 +225,9 @@ const PlanOverview = () => {
                   {plan.name}
                 </h3>
                 <p className="text-sm text-muted-foreground mb-6">
-                  {plan.type === 1
+                  {plan.type === PLAN_TYPE.DEMO
                     ? 'Perfect for trying out our features'
-                    : plan.type === 2
+                    : plan.type === PLAN_TYPE.PRO
                       ? 'Ideal for growing restaurants'
                       : 'Unleash the full power of your business'}
                 </p>
@@ -287,7 +288,7 @@ const PlanOverview = () => {
               </div>
 
               <button
-                disabled={isAnyLoading || isCurrent || plan.id == 1}
+                disabled={isAnyLoading || isCurrent || plan.type == PLAN_TYPE.DEMO}
                 onClick={() => handleUpgrade(plan.id)}
                 className={cn(
                   'w-full py-4 rounded-xl font-black transition-all text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed',
@@ -444,8 +445,8 @@ export default function SubscriptionPage() {
     notFound();
   }
 
-  const isPageLoading = 
-    (currentTab === 'plan' && (plansLoading || subLoading)) || 
+  const isPageLoading =
+    (currentTab === 'plan' && (plansLoading || subLoading)) ||
     (currentTab === 'history' && historyLoading);
 
   if (isPageLoading) return <Loader />;

@@ -43,7 +43,7 @@ function EmployeesPage() {
       }
     } catch (error: any) {
       console.error('Error adding employee:', error);
-      toast.error(error.message || 'Failed to add employee');
+      toast.error(error?.data?.message || error?.message || 'Failed to add employee');
     }
     setIsModalOpen(false);
     toast.dismiss(toastId);

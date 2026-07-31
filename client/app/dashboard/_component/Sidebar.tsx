@@ -21,7 +21,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { USER_ROLE_TYPE } from '@/constants/CommonConstant';
-import { useGetRestaurantDetailsQuery } from '@/redux/api/restaurant';
+import { useGlobalDetails } from '@/hooks/useGlobalDetails';
 
 interface SidebarLinkProps {
   href: string;
@@ -75,12 +75,7 @@ const Sidebar = () => {
     (state) => state.auth,
   );
 
-  const { data: restaurantDetails } = useGetRestaurantDetailsQuery(
-    restaurantId,
-    {
-      skip: !restaurantId,
-    },
-  );
+  const { restaurantDetails } = useGlobalDetails();
 
   const plan = restaurantDetails?.subscription?.plan;
   const planType = plan?.type; // 1=DEMO, 2=PRO, 3=PREMIUM

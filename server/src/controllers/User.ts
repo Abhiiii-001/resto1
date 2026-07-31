@@ -13,7 +13,9 @@ export const GetAllUsers = async (req: Request, res: Response): Promise<any> => 
             }
         })
 
-        return res.status(200).json({ success: true, message: "All user fetched successfully!", users: users })
+        const safeUsers = users.map(({ password, verificationToken, ...safeUser }) => safeUser);
+
+        return res.status(200).json({ success: true, message: "All user fetched successfully!", users: safeUsers })
 
     } catch (error) {
         //console.log(error);
@@ -32,7 +34,8 @@ export const UpdateUser = async (req: Request, res: Response): Promise<any> => {
 
         if (!user) return res.status(404).json({ success: false, message: "User not found!" });
 
-        return res.status(200).json({ success: true, message: "User updated!", data: user });
+        const { password, verificationToken, ...safeUser } = user;
+        return res.status(200).json({ success: true, message: "User updated!", data: safeUser });
     } catch (error) {
         //console.log(error);
         return res.status(500).json({ succcess: false, message: "Something wrong during user updating!" })
@@ -117,10 +120,11 @@ export const CreateUser = async (req: Request, res: Response): Promise<any> => {
             })
         );
 
+        const { password, verificationToken, ...safeUser } = user;
         return res.status(200).json({
             success: true,
             message: "User created successfully!",
-            data: user
+            data: safeUser
         })
 
     } catch (error) {
@@ -145,6 +149,25 @@ export const GetUserDetailsById = async (req: Request, res: Response): Promise<a
         const userDetails = await prisma.user.findFirst({
             where: {
                 id: userId
+            },
+            include: {
+                restaurant: {
+                    select: {
+                        id: true,
+                        name: true,
+                        resCode: true,
+                        thumbnail: true,
+                        slogan: true,
+                        address: true,
+                        isOpen: true,
+                        isPublished: true,
+                        subscription: {
+                            include: {
+                                plan: true
+                            }
+                        }
+                    }
+                }
             }
         });
 
@@ -155,10 +178,11 @@ export const GetUserDetailsById = async (req: Request, res: Response): Promise<a
             });
         }
 
+        const { password, verificationToken, ...safeUserDetails } = userDetails;
         return res.status(200).json({
-            success: false,
+            success: true,
             message: 'User data fetched successfully',
-            data: userDetails
+            data: safeUserDetails
         });
 
     } catch (error: any) {

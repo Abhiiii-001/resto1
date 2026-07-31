@@ -3,13 +3,17 @@ import uploadToCloudinary from "../utils/cloudinaryUploader";
 import prisma from "../config/prisma";
 import mailSender from "../utils/mailSender";
 import { renderContactThankYou, renderRestuarantApproval } from "../emails";
+import { SUBSCRIPTION_STATUS } from "../constants";
 
 export const GetAllRestaurants = async (req: Request, res: Response): Promise<any> => {
     try {
         const restaurant = await prisma.restaurant.findMany({
             where: {
                 isActive: true,
-                isPublished: true
+                isPublished: true,
+                subscription: {
+                    status: SUBSCRIPTION_STATUS.ACTIVE
+                }
             },
             select: {
                 id: true,

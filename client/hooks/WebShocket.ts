@@ -26,7 +26,7 @@ const useSocket = (restaurantId: string | null, url: string) => {
     socketRef.current = io(url, {
       reconnection: true,
       reconnectionAttempts: 5,
-      transports: ['websocket', 'polling'],
+      // transports: ['websocket', 'polling'],
     });
 
     socketRef.current.on('connect', () => {

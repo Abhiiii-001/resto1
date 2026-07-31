@@ -5,13 +5,11 @@ import { useVerifyPaymentMutation } from '@/redux/api/subscription';
 import { Loader2, CheckCircle2, XCircle } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useAppSelector } from '@/redux/redux';
-import { useGetRestaurantDetailsQuery } from '@/redux/api/restaurant';
 
 export default function VerifyPaymentPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { restaurantId } = useAppSelector((state) => state.auth);
-  const { refetch } = useGetRestaurantDetailsQuery(restaurantId);
   const [verifyPayment, { isLoading }] = useVerifyPaymentMutation();
   const [status, setStatus] = useState<'verifying' | 'success' | 'failed'>(
     'verifying',
@@ -39,7 +37,6 @@ export default function VerifyPaymentPage() {
           setTimeout(() => {
             router.push('/dashboard/subscription');
           }, 3000);
-          refetch();
         } else {
           setStatus('failed');
         }
