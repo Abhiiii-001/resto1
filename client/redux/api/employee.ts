@@ -11,6 +11,11 @@ export const employeeApi = createApi({
 
   //fetch all call
   endpoints: (builder) => ({
+    getEmployeeDetails: builder.query<User & { restaurant?: any }, string>({
+      query: (userId) => ({ url: `/id/${userId}` }),
+      providesTags: ['getallEmployees'],
+      transformResponse: (response: { data: User & { restaurant?: any } }) => response.data,
+    }),
     getAllEmployees: builder.query<User[], string>({
       query: (restaurantId) => ({ url: `/${restaurantId}` }),
       providesTags: ['getallEmployees'],
@@ -51,6 +56,7 @@ export const employeeApi = createApi({
 });
 
 export const {
+  useGetEmployeeDetailsQuery,
   useGetAllEmployeesQuery,
   useAddEmployeeMutation,
   useUpdateEmployeeMutation,

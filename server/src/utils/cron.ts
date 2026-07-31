@@ -9,7 +9,7 @@ import logger from "./logger";
 cron.schedule("5 0 * * *", async () => {
   try {
     const now = new Date();
-    
+
     // Find active subscriptions that have passed their currentPeriodEnd
     const expiredSubscriptions = await prisma.subscription.updateMany({
       where: {
@@ -17,12 +17,12 @@ cron.schedule("5 0 * * *", async () => {
         currentPeriodEnd: { lt: now }
       },
       data: {
-        status: SUBSCRIPTION_STATUS.EXPIRED
+        status: SUBSCRIPTION_STATUS.EXPIRED,
       }
     });
 
     if (expiredSubscriptions.count > 0) {
-       logger.info(`[Cron] Expired ${expiredSubscriptions.count} subscriptions.`);
+      logger.info(`[Cron] Expired ${expiredSubscriptions.count} subscriptions.`);
     }
   } catch (error) {
     logger.error("[Cron] Subscription Expiry Error:", error);

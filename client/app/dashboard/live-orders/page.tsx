@@ -5,9 +5,9 @@ import Link from 'next/link';
 import { Search, Activity, ChevronRight } from 'lucide-react';
 import { useAppSelector } from '@/redux/redux';
 import { useGetAllOrdersQuery } from '@/redux/api/order';
-import { useGetRestaurantDetailsQuery } from '@/redux/api/restaurant';
 import { Input } from '@/components/ui/input';
 import { skipToken } from '@reduxjs/toolkit/query';
+import { useGlobalDetails } from '@/hooks/useGlobalDetails';
 
 function LiveOrders() {
   const { orders, socketConnected } = useAppSelector((state) => state.order);
@@ -15,12 +15,7 @@ function LiveOrders() {
 
   const [query, setQuery] = useState('');
 
-  const { data: restaurantDetails } = useGetRestaurantDetailsQuery(
-    restaurantId,
-    {
-      skip: !restaurantId,
-    },
-  );
+  const { restaurantDetails } = useGlobalDetails();
 
   const isShopOpen = restaurantDetails?.isOpen ?? false;
 

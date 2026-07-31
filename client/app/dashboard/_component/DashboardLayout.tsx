@@ -6,7 +6,7 @@ import Sidebar from './Sidebar';
 import { cn } from '@/lib/utils';
 import { useEffect } from 'react';
 import useSocket from '@/hooks/WebShocket';
-import { useGetRestaurantDetailsQuery } from '@/redux/api/restaurant';
+import { useGlobalDetails } from '@/hooks/useGlobalDetails';
 
 export const DashboardLayout = ({
   children,
@@ -17,12 +17,7 @@ export const DashboardLayout = ({
   const { isSidebarCollapsed } = useAppSelector((state) => state.global);
   const { restaurantId } = useAppSelector((state) => state.auth);
 
-  const { data: restaurantDetails } = useGetRestaurantDetailsQuery(
-    restaurantId,
-    {
-      skip: !restaurantId,
-    },
-  );
+  const { restaurantDetails } = useGlobalDetails();
 
   const isShopOpen = restaurantDetails?.isOpen ?? false;
 

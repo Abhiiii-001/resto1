@@ -41,7 +41,7 @@ function OrderCard({ data }: Props) {
       }
       toast.success(`Order status changed to ${status}`);
     } catch (error: any) {
-      toast.error(error.message);
+      toast.error(error?.data?.message || error?.message || 'Something went wrong!');
     }
     setAlertModal(null);
     toast.dismiss(toastId);
@@ -98,12 +98,12 @@ function OrderCard({ data }: Props) {
         <div className="flex items-center gap-2">
           <span
             className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider ring-1 ring-inset ${data.status == 'Ready'
-                ? 'bg-green-50 text-green-700 ring-green-600/20'
-                : data.status == 'Pending'
-                  ? 'bg-amber-50 text-amber-700 ring-amber-600/20'
-                  : data.status == 'Cancelled'
-                    ? 'bg-red-50 text-red-700 ring-red-600/20'
-                    : 'bg-primary/10 text-primary ring-primary/20'
+              ? 'bg-green-50 text-green-700 ring-green-600/20'
+              : data.status == 'Pending'
+                ? 'bg-amber-50 text-amber-700 ring-amber-600/20'
+                : data.status == 'Cancelled'
+                  ? 'bg-red-50 text-red-700 ring-red-600/20'
+                  : 'bg-primary/10 text-primary ring-primary/20'
               }`}
           >
             {data.status}
@@ -127,8 +127,8 @@ function OrderCard({ data }: Props) {
           <div className="mt-2 flex flex-wrap gap-2">
             <span
               className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium ${data.isPack
-                  ? 'bg-blue-50 text-blue-700'
-                  : 'bg-purple-50 text-purple-700'
+                ? 'bg-blue-50 text-blue-700'
+                : 'bg-purple-50 text-purple-700'
                 }`}
             >
               {data.isPack ? (

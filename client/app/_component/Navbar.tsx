@@ -17,14 +17,11 @@ import { useLogoutMutation } from '@/redux/api/auth';
 import { toast } from 'react-toastify';
 import { setLogout } from '@/redux/states/authSlice';
 import { usePathname } from 'next/navigation';
-import {
-  useGetRestaurantDetailsQuery,
-  useUpdateRestuarantDetailsMutation,
-} from '@/redux/api/restaurant';
-import { skipToken } from '@reduxjs/toolkit/query';
+import { useUpdateRestuarantDetailsMutation } from '@/redux/api/restaurant';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { USER_ROLE_TYPE } from '@/constants/CommonConstant';
+import { useGlobalDetails } from '@/hooks/useGlobalDetails';
 
 function Navbar() {
   const dispatch = useAppDispatch();
@@ -34,10 +31,7 @@ function Navbar() {
   const { user, token, isAuthenticated, restaurantId, canManage, role } =
     useAppSelector((state) => state.auth);
 
-  const { data: restaurantDetails, isLoading: isLoadingRestaurantDetails } =
-    useGetRestaurantDetailsQuery(
-      restaurantId && token ? restaurantId : skipToken,
-    );
+  const { restaurantDetails, isLoading: isLoadingRestaurantDetails } = useGlobalDetails();
 
   const canToggleStoreStatus =
     user?.role === USER_ROLE_TYPE.RESTAURANT || canManage;
@@ -101,9 +95,8 @@ function Navbar() {
       }
       setIsOpen(!isOpen);
       toast.success('Store status updated!');
-    } catch (error) {
-      if (error instanceof Error) toast.error(error.message);
-      else toast.error('Something went wrong!');
+    } catch (error: any) {
+      toast.error(error.message || error?.data?.message || 'Something went wrong!');
     }
     toast.dismiss(toastId);
   };

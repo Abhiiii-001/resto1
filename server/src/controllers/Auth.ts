@@ -130,11 +130,13 @@ export const UserSignup = async (req: Request, res: Response): Promise<any> => {
          })
       );
 
+      const { password: _, verificationToken: __, ...safeUser } = user;
+
       logger.info(`New Employee Signed Up: ${email}`);
       return res.status(200).json({
          success: true,
          message: "User created! , Waiting for verification by Restaurant",
-         user: user,
+         user: safeUser,
       });
 
    } catch (error: any) {
@@ -202,6 +204,10 @@ export const RestaurantSignup = async (req: Request, res: Response): Promise<any
             email,
             password: hashedPassword,
             verificationToken
+         },
+         omit: {
+            password: true,
+            verificationToken: true,
          }
       });
       if (!restaurant)
@@ -314,13 +320,15 @@ export const Login = async (req: Request, res: Response): Promise<any> => {
          maxAge: 3600000 * 8
       })
 
+      const { password: _, verificationToken: __, ...safeUser } = user;
+
       logger.info(`Successful login for: ${email}`);
       return res.status(200)
          .set('Authorization', `Bearer ${token}`)
          .json({
             success: true,
             message: "Login successful",
-            user: user,
+            user: safeUser,
             token: token
          });
    } catch (error: any) {

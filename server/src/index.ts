@@ -32,7 +32,7 @@ dotenv.config();
 const app = express();
 
 const allowedOrigins = [
-    process.env.CLIENT_URL || 'http://localhost:3000', 
+    process.env.CLIENT_URL || 'http://localhost:3000',
     process.env.RESTAURANT_CLIENT_URL || 'http://localhost:3001',
     process.env.BACKEND_URL || "http://localhost:8000",
     process.env.BASE_RESTAURANT_URL || "http://localhost:3000"
@@ -82,7 +82,7 @@ async function startServer() {
             methods: ["GET", "POST", "PUT", "DELETE"],
             credentials: true
         },
-        transports: ["websocket", "polling"],
+        // transports: ["websocket", "polling"],
     });
 
     registerSocketHandlers(io);
@@ -92,7 +92,7 @@ async function startServer() {
         req.io = io;  // Attach io instance to every request
         next();
     });
-    
+
     webpush.setVapidDetails(
         `mailto:${process.env.MAIL_USER}`,
         process.env.PUBLIC_VAPID_KEY || "",

@@ -19,7 +19,7 @@ import { toPng } from 'html-to-image';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAppSelector } from '@/redux/redux';
-import { useGetRestaurantDetailsQuery, useRaiseApprovalRequestMutation } from '@/redux/api/restaurant';
+import { useRaiseApprovalRequestMutation } from '@/redux/api/restaurant';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { RESTAURANT_BASE_URL } from '@/constants/Urls';
 import ShareModal from '@/app/_component/ShareLinkModal';
@@ -29,13 +29,13 @@ import { toast } from 'react-toastify';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 
+import { useGlobalDetails } from '@/hooks/useGlobalDetails';
+
 export default function QRDisplayPage() {
   const router = useRouter();
   const { restaurantId, user } = useAppSelector((state) => state.auth);
   const isRestaurant = user?.role === 'Restaurant';
-  const { data: restaurantData, isLoading } = useGetRestaurantDetailsQuery(
-    restaurantId ?? skipToken,
-  );
+  const { restaurantDetails: restaurantData, isLoading } = useGlobalDetails();
   const [raiseApproval, { isLoading: isRaisingApproval }] =
     useRaiseApprovalRequestMutation();
   const [isDownloading, setIsDownloading] = useState(false);

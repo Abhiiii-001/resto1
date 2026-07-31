@@ -31,7 +31,7 @@ import {
   useUpdateRestuarantDetailsMutation,
 } from '@/redux/api/restaurant';
 import { toast } from 'react-toastify';
-import { setUser } from '@/redux/states/authSlice';
+import { setLogout, setUser } from '@/redux/states/authSlice';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { USER_ROLE_TYPE } from '@/constants/CommonConstant';
@@ -113,7 +113,7 @@ export default function EmployeeSettings() {
       toast.success('Password changed successfully!');
       setExpanded(null);
     } catch (error: any) {
-      toast.error(error?.message || 'Failed to change password');
+      toast.error(error?.data?.message || error?.message || 'Failed to change password');
     }
   };
 
@@ -141,7 +141,7 @@ export default function EmployeeSettings() {
       dispatch(setUser(response?.data));
       toast.success('Information Updated successfully!');
     } catch (error: any) {
-      toast.error(error?.message || 'Something went wrong!');
+      toast.error(error?.data?.message || error?.message || 'Something went wrong!');
     }
   };
 
@@ -161,8 +161,9 @@ export default function EmployeeSettings() {
       }
 
       toast.success('Account Deleted!');
+      dispatch(setLogout());
     } catch (error: any) {
-      toast.error(error?.message || 'Something went wrong!');
+      toast.error(error?.data?.message || error?.message || 'Something went wrong!');
     }
   };
 
@@ -558,7 +559,7 @@ export default function EmployeeSettings() {
           </motion.div>
 
           {/* Delete Account Section */}
-          <motion.div
+          {role !== USER_ROLE_TYPE.RESTAURANT && <motion.div
             variants={itemVariants}
             className="overflow-hidden rounded-2xl border border-red-100 bg-red-50/30 shadow-sm transition-all hover:shadow-md hover:bg-red-50/50"
           >
@@ -622,7 +623,7 @@ export default function EmployeeSettings() {
                 </motion.div>
               )}
             </AnimatePresence>
-          </motion.div>
+          </motion.div>}
         </div>
       </motion.div>
 

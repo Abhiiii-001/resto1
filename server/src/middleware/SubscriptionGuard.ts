@@ -15,7 +15,7 @@ export const SubscriptionGuard = async (req: Request, res: Response, next: NextF
       include: { plan: true },
     });
 
-    if (!subscription || subscription.status === SUBSCRIPTION_STATUS.EXPIRED) {
+    if (!subscription || subscription.status !== SUBSCRIPTION_STATUS.ACTIVE) {
       return res.status(403).json({
         success: false,
         message: "Subscription required or expired",
