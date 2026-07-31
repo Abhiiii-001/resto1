@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { ApiResponse } from '@/types/common';
+import { API_URLS } from '@/constants/Urls';
 
 export interface ContactUsPayload {
   name: string;
@@ -13,12 +14,12 @@ export interface ContactUsPayload {
 export const contactApi = createApi({
   reducerPath: 'contactApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
+    baseUrl: API_URLS.contact,
   }),
   endpoints: (build) => ({
     submitContact: build.mutation<ApiResponse<string>, ContactUsPayload>({
       query: (data) => ({
-        url: '/contact',
+        url: '/',
         method: 'POST',
         body: data,
       }),
