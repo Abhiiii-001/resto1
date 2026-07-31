@@ -23,7 +23,7 @@ export const DashboardLayout = ({
 
   // Only connect to socket if restaurantId is available AND shop is open
   const socketUrl =
-    process.env.NEXT_PUBLIC_API_BASE_URL?.replace('/api', '') ||
+    process.env.NEXT_PUBLIC_API_BASE_URL ||
     'http://localhost:8000';
   useSocket(restaurantId && isShopOpen ? restaurantId : null, socketUrl);
 

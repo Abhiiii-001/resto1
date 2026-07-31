@@ -7,10 +7,11 @@ import {
   CreatePaymentOrderResponse,
   GetPaymentHistoryResponse,
 } from '@/types/Subscription';
+import { API_URLS } from '@/constants/Urls';
 
 export const subscriptionApi = createApi({
   reducerPath: 'subscriptionApi',
-  baseQuery: baseQueryWithAuth(`${process.env.NEXT_PUBLIC_API_BASE_URL}/subscription`),
+  baseQuery: baseQueryWithAuth(API_URLS.subscription),
   tagTypes: ['Subscription', 'Payments', 'RestaurantDetails'],
   endpoints: (builder) => ({
     getPlans: builder.query({
