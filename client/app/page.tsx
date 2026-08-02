@@ -120,7 +120,8 @@ const FAQItem = ({
 // --- Sections ---
 
 const Hero = ({ onOpenDemo }: { onOpenDemo: () => void }) => {
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, role } = useAppSelector((state) => state.auth);
+  const isRestaurant = role === USER_ROLE_TYPE.RESTAURANT;
 
   return (
     <section className="relative pt-16 pb-20 overflow-hidden bg-white">
@@ -148,7 +149,7 @@ const Hero = ({ onOpenDemo }: { onOpenDemo: () => void }) => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               {isAuthenticated ? (
-                <Link href="/dashboard">
+                <Link href={isRestaurant ? '/dashboard' : '/dashboard/live-orders'}>
                   <Button
                     size="lg"
                     className="h-14 px-10 text-lg font-bold group bg-primary hover:bg-primary/90"
