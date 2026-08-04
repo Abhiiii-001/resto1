@@ -144,7 +144,7 @@ const Sidebar = () => {
             label="QR Code"
             isCollapsed={isSidebarCollapsed}
           />
-          {canManage ||
+          {/* {canManage ||
             (role === USER_ROLE_TYPE.RESTAURANT && (
               <div className="relative">
                 <SidebarLink
@@ -166,7 +166,7 @@ const Sidebar = () => {
                   </span>
                 )}
               </div>
-            ))}
+            ))} */}
           <SidebarLink
             href="/dashboard/settings"
             icon={SlidersHorizontal}
